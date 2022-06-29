@@ -12,7 +12,7 @@
 -main Main
 
 # JavaScript target
--js bin/example_js_gitlab.js
+-js docs/example_js_gitlab.js
 
 # You can use -D source-map-content (requires Haxe 3.1+) to have the .hx
 # files directly embedded into the map file, this way you only have to

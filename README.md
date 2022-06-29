@@ -6,28 +6,19 @@ This is a [Haxe](http://www.haxe.org) project, read more about it in the [README
 
 ![](icon.png)
 
-- project target : js
-- project license : MIT
-- project author : Matthijs Kamstra aka [mck]
-- project website :
+## resources
 
-# Why = The Purpose
+- https://dev.to/dailydevtips1/making-divs-user-resizable-with-css-3ga
+- https://medium.com/the-z/making-a-resizable-div-in-js-is-not-easy-as-you-think-bda19a1bc53d
 
-**What is your cause? What do you believe?**
+Making a resizable div in JS is not easy as you think | by Nguyễn Việt Hưng | The happy lone guy | Medium
 
-> Simon Sinek: Very few origanizations know WHY they do what they do. WHY is not about making money. That's a result. It's a purpose, cause or belief. It's the very reason your organization exists.
-> Apple: We believe in challenging the status quo and doing this differently
+[https://medium.com/the-z/making-a-resizable-div-in-js-is-not-easy-as-you-think-bda19a1bc53d]
 
-# How = The Proces
+Make a resizable element - HTML DOM
 
-**Specific action taken to realize the Why.**
+[https://htmldom.dev/make-a-resizable-element/]
 
-> Simon Sinek: Some organizations know HOW they do it. These are the things that make them special or set them apart from their competition.
-> Apple: Our products are beautifully designed and easy to use
+interact.js - JavaScript drag and drop, resizing and multi-touch gestures for modern browsers
 
-# What = The Result
-
-**What do you do? The result of Why. Proof**
-
-> Simon Sinek: Every origanization on the planet knows WHAT they do. These are products they sell or the services they offer.
-> Apple: We make computers
+[https://interactjs.io/docs/resizable/]
