@@ -29,10 +29,10 @@ class DragElement {
 	}
 
 	function init(el:DivElement) {
-		var currentX:Int = 0;
-		var currentY:Int = 0;
-		var initialX:Int = 0;
-		var initialY:Int = 0;
+		var xCurrent:Int = 0;
+		var yCurrent:Int = 0;
+		var xInitial:Int = 0;
+		var yInitial:Int = 0;
 		var xOffset:Int = 0;
 		var yOffset:Int = 0;
 
@@ -50,25 +50,25 @@ class DragElement {
 			var el = e.target;
 
 			if (e.type == "touchmove") {
-				currentX = e.touches[0].clientX - initialX;
-				currentY = e.touches[0].clientY - initialY;
+				xCurrent = e.touches[0].clientX - xInitial;
+				yCurrent = e.touches[0].clientY - yInitial;
 			} else {
-				currentX = e.clientX - initialX;
-				currentY = e.clientY - initialY;
+				xCurrent = e.clientX - xInitial;
+				yCurrent = e.clientY - yInitial;
 			}
 
-			xOffset = currentX;
-			yOffset = currentY;
+			xOffset = xCurrent;
+			yOffset = yCurrent;
 
-			setTranslate(el, currentX, currentY);
+			setTranslate(el, xCurrent, yCurrent);
 		}
 
 		function onMouseEnd(e) {
 			// trace('onMouseEnd');
 			var el = e.target;
 
-			initialX = currentX;
-			initialY = currentY;
+			xInitial = xCurrent;
+			yInitial = yCurrent;
 
 			el.classList.remove('active');
 
@@ -88,11 +88,11 @@ class DragElement {
 			el.classList.add('active');
 
 			if (e.type == "touchstart") {
-				initialX = e.touches[0].clientX - xOffset;
-				initialY = e.touches[0].clientY - yOffset;
+				xInitial = e.touches[0].clientX - xOffset;
+				yInitial = e.touches[0].clientY - yOffset;
 			} else {
-				initialX = e.clientX - xOffset;
-				initialY = e.clientY - yOffset;
+				xInitial = e.clientX - xOffset;
+				yInitial = e.clientY - yOffset;
 			}
 
 			el.onmouseup = onMouseEnd;

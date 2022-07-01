@@ -1,5 +1,6 @@
 package;
 
+import kluez.ResizeElement;
 import kluez.DragElement;
 import kluez.CreateElement;
 import kluez.DynamicStyle;
@@ -20,6 +21,10 @@ class Main {
 		// create container setup
 		// // Make the DIV element draggable:
 		new DragElement(document.getElementById("kluez-drag-container"));
+
+		// create container setup
+		// // Make the DIV element draggable:
+		new ResizeElement(document.getElementById("kluez-resize-container"));
 	}
 
 	static public function main() {

@@ -1,5 +1,7 @@
 package kluez;
 
+import utils.MathUtil;
+import const.Colors;
 import js.html.Element;
 import utils.UUID;
 import js.html.DivElement;
@@ -9,10 +11,14 @@ import js.Browser.*;
 using hxColorToolkit.ColorToolkit;
 using StringTools;
 
-class CreateElement {
-	public function new(el:Element) {
-		// Make the DIV element draggable:
-		init(cast el);
+class ResizeElement {
+	public function new(container:Element) {
+		var arr = container.getElementsByClassName('resizeable');
+		for (i in 0...arr.length) {
+			var _arr = arr[i];
+			trace(_arr);
+			init(cast _arr);
+		}
 	}
 
 	function init(el:DivElement) {
@@ -23,11 +29,18 @@ class CreateElement {
 		var xOffset:Int = 0;
 		var yOffset:Int = 0;
 
-		var div:DivElement = document.createDivElement();
+		function setTranslate(el, xPos, yPos) {
+			el.style.transform = 'translate3d(${Std.string(xPos)}px, 0px, 0)';
+			// el.style.transform = 'translate3d(${Std.string(xPos)}px, ${Std.string(yPos)}px, 0)';
+		}
 
 		function onMouseMove(e) {
 			// trace('onMouseMove');
 			// trace(e);
+
+			// e.preventDefault();
+
+			var el = e.target;
 
 			if (e.type == "touchmove") {
 				xCurrent = e.touches[0].clientX - xInitial;
@@ -40,22 +53,20 @@ class CreateElement {
 			xOffset = xCurrent;
 			yOffset = yCurrent;
 
-			div.style.width = '${xOffset}px';
-			// div.style.height = '${yOffset}px';
+			setTranslate(el, xCurrent, yCurrent);
 		}
 
-		function onMouseUp(e) {
-			// trace('onMouseUp');
+		function onMouseEnd(e) {
+			// trace('onMouseEnd');
+			var el = e.target;
 
 			xInitial = xCurrent;
 			yInitial = yCurrent;
 
-			div.className = 'klz-el';
-			div.style.height = '50px';
-			div.innerText = '...';
+			el.classList.remove('active');
 
-			xOffset = 0;
-			yOffset = 0;
+			// xOffset = 0;
+			// yOffset = 0;
 
 			el.onmouseup = null;
 			el.onmousemove = null;
@@ -66,6 +77,9 @@ class CreateElement {
 			// trace('onMouseDown');
 			// trace(e);
 
+			var el:DivElement = e.target;
+			el.classList.add('active');
+
 			if (e.type == "touchstart") {
 				xInitial = e.touches[0].clientX - xOffset;
 				yInitial = e.touches[0].clientY - yOffset;
@@ -74,25 +88,9 @@ class CreateElement {
 				yInitial = e.clientY - yOffset;
 			}
 
-			// trace(xInitial, yInitial);
-
-			// div
-			div = document.createDivElement();
-			// div.innerText = ('...');
-			div.classList.add('klz-dotted');
-			div.id = UUID.uuid();
-			div.style.left = '${xInitial}px';
-			div.style.top = '${yInitial}px';
-			// div.style.width = '50px';
-			div.style.height = '50px';
-			div.style.position = 'absolute';
-			document.body.append(div);
-			// el.append(div);
-
-			// mouse
-			el.onmouseup = onMouseUp;
+			el.onmouseup = onMouseEnd;
 			el.onmousemove = onMouseMove;
-			el.onmouseleave = onMouseUp;
+			el.onmouseleave = onMouseEnd;
 		}
 
 		el.ontouchstart = onMouseDown;

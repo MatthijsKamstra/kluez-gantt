@@ -1,9 +1,10 @@
 (function ($global) { "use strict";
 var Main = function() {
-	console.log("src/Main.hx:14:","Main");
+	console.log("src/Main.hx:15:","Main");
 	kluez_DynamicStyle.setStyle();
 	new kluez_CreateElement(window.document.getElementById("kluez-create-container"));
-	new kluez_KlzDragElement(window.document.getElementById("kluez-drag-container"));
+	new kluez_DragElement(window.document.getElementById("kluez-drag-container"));
+	new kluez_ResizeElement(window.document.getElementById("kluez-resize-container"));
 };
 Main.__name__ = true;
 Main.main = function() {
@@ -271,28 +272,28 @@ var kluez_CreateElement = function(el) {
 kluez_CreateElement.__name__ = true;
 kluez_CreateElement.prototype = {
 	init: function(el) {
-		var currentX = 0;
-		var currentY = 0;
-		var initialX = 0;
-		var initialY = 0;
+		var xCurrent = 0;
+		var yCurrent = 0;
+		var xInitial = 0;
+		var yInitial = 0;
 		var xOffset = 0;
 		var yOffset = 0;
 		var div = window.document.createElement("div");
 		var onMouseMove = function(e) {
 			if(e.type == "touchmove") {
-				currentX = e.touches[0].clientX - initialX;
-				currentY = e.touches[0].clientY - initialY;
+				xCurrent = e.touches[0].clientX - xInitial;
+				yCurrent = e.touches[0].clientY - yInitial;
 			} else {
-				currentX = e.clientX - initialX;
-				currentY = e.clientY - initialY;
+				xCurrent = e.clientX - xInitial;
+				yCurrent = e.clientY - yInitial;
 			}
-			xOffset = currentX;
-			yOffset = currentY;
+			xOffset = xCurrent;
+			yOffset = yCurrent;
 			div.style.width = "" + xOffset + "px";
 		};
 		var onMouseUp = function(e) {
-			initialX = currentX;
-			initialY = currentY;
+			xInitial = xCurrent;
+			yInitial = yCurrent;
 			div.className = "klz-el";
 			div.style.height = "50px";
 			div.innerText = "...";
@@ -304,23 +305,95 @@ kluez_CreateElement.prototype = {
 		};
 		var onMouseDown = function(e) {
 			if(e.type == "touchstart") {
-				initialX = e.touches[0].clientX - xOffset;
-				initialY = e.touches[0].clientY - yOffset;
+				xInitial = e.touches[0].clientX - xOffset;
+				yInitial = e.touches[0].clientY - yOffset;
 			} else {
-				initialX = e.clientX - xOffset;
-				initialY = e.clientY - yOffset;
+				xInitial = e.clientX - xOffset;
+				yInitial = e.clientY - yOffset;
 			}
 			div = window.document.createElement("div");
 			div.classList.add("klz-dotted");
 			div.id = utils_UUID.uuid();
-			div.style.left = "" + initialX + "px";
-			div.style.top = "" + initialY + "px";
+			div.style.left = "" + xInitial + "px";
+			div.style.top = "" + yInitial + "px";
 			div.style.height = "50px";
 			div.style.position = "absolute";
 			window.document.body.append(div);
 			el.onmouseup = onMouseUp;
 			el.onmousemove = onMouseMove;
 			el.onmouseleave = onMouseUp;
+		};
+		el.ontouchstart = onMouseDown;
+		el.onmousedown = onMouseDown;
+	}
+};
+var kluez_DragElement = function(element) {
+	this.createElements(element);
+};
+kluez_DragElement.__name__ = true;
+kluez_DragElement.prototype = {
+	createElements: function(element) {
+		var i = 0;
+		var h = const_Colors.colorMap.h;
+		var color_h = h;
+		var color_keys = Object.keys(h);
+		var color_length = color_keys.length;
+		var color_current = 0;
+		while(color_current < color_length) {
+			var color = color_keys[color_current++];
+			var hex = const_Colors.colorMap.h[color];
+			var e = kluez_El.create(element,hex,utils_MathUtil.randomInteger(10,300),i * 60 + 10,utils_MathUtil.randomInteger(50,500));
+			e.classList.add("klz-el-" + color,"draggable");
+			++i;
+			this.init(e);
+		}
+		element.style.height = "" + (60 * i + 10) + "px";
+	}
+	,init: function(el) {
+		var xCurrent = 0;
+		var yCurrent = 0;
+		var xInitial = 0;
+		var yInitial = 0;
+		var xOffset = 0;
+		var yOffset = 0;
+		var setTranslate = function(el,xPos,yPos) {
+			el.style.transform = "translate3d(" + (xPos == null ? "null" : "" + xPos) + "px, 0px, 0)";
+		};
+		var onMouseMove = function(e) {
+			var el = e.target;
+			if(e.type == "touchmove") {
+				xCurrent = e.touches[0].clientX - xInitial;
+				yCurrent = e.touches[0].clientY - yInitial;
+			} else {
+				xCurrent = e.clientX - xInitial;
+				yCurrent = e.clientY - yInitial;
+			}
+			xOffset = xCurrent;
+			yOffset = yCurrent;
+			setTranslate(el,xCurrent,yCurrent);
+		};
+		var onMouseEnd = function(e) {
+			var el = e.target;
+			xInitial = xCurrent;
+			yInitial = yCurrent;
+			el.classList.remove("active");
+			el.onmouseup = null;
+			el.onmousemove = null;
+			el.onmouseleave = null;
+		};
+		var onMouseDown = function(e) {
+			var el = e.target;
+			el.classList.add("active");
+			if(e.type == "touchstart") {
+				xInitial = e.touches[0].clientX - xOffset;
+				yInitial = e.touches[0].clientY - yOffset;
+			} else {
+				xInitial = e.clientX - xOffset;
+				yInitial = e.clientY - yOffset;
+			}
+			el.onmouseup = onMouseEnd;
+			el.onmousemove = onMouseMove;
+			el.onmouseleave = onMouseEnd;
 		};
 		el.ontouchstart = onMouseDown;
 		el.onmousedown = onMouseDown;
@@ -364,33 +437,24 @@ kluez_El.create = function(el,text,x,y,width) {
 	el.append(div);
 	return div;
 };
-var kluez_KlzDragElement = function(element) {
-	this.createElements(element);
-};
-kluez_KlzDragElement.__name__ = true;
-kluez_KlzDragElement.prototype = {
-	createElements: function(element) {
-		var i = 0;
-		var h = const_Colors.colorMap.h;
-		var color_h = h;
-		var color_keys = Object.keys(h);
-		var color_length = color_keys.length;
-		var color_current = 0;
-		while(color_current < color_length) {
-			var color = color_keys[color_current++];
-			var hex = const_Colors.colorMap.h[color];
-			var e = kluez_El.create(element,hex,utils_MathUtil.randomInteger(10,300),i * 60 + 10,utils_MathUtil.randomInteger(50,500));
-			e.classList.add("klz-el-" + color,"draggable");
-			++i;
-			this.init(e);
-		}
-		element.style.height = "" + (60 * i + 10) + "px";
+var kluez_ResizeElement = function(container) {
+	var arr = container.getElementsByClassName("resizeable");
+	var _g = 0;
+	var _g1 = arr.length;
+	while(_g < _g1) {
+		var i = _g++;
+		var _arr = arr[i];
+		console.log("src/kluez/ResizeElement.hx:19:",_arr);
+		this.init(_arr);
 	}
-	,init: function(el) {
-		var currentX = 0;
-		var currentY = 0;
-		var initialX = 0;
-		var initialY = 0;
+};
+kluez_ResizeElement.__name__ = true;
+kluez_ResizeElement.prototype = {
+	init: function(el) {
+		var xCurrent = 0;
+		var yCurrent = 0;
+		var xInitial = 0;
+		var yInitial = 0;
 		var xOffset = 0;
 		var yOffset = 0;
 		var setTranslate = function(el,xPos,yPos) {
@@ -399,20 +463,20 @@ kluez_KlzDragElement.prototype = {
 		var onMouseMove = function(e) {
 			var el = e.target;
 			if(e.type == "touchmove") {
-				currentX = e.touches[0].clientX - initialX;
-				currentY = e.touches[0].clientY - initialY;
+				xCurrent = e.touches[0].clientX - xInitial;
+				yCurrent = e.touches[0].clientY - yInitial;
 			} else {
-				currentX = e.clientX - initialX;
-				currentY = e.clientY - initialY;
+				xCurrent = e.clientX - xInitial;
+				yCurrent = e.clientY - yInitial;
 			}
-			xOffset = currentX;
-			yOffset = currentY;
-			setTranslate(el,currentX,currentY);
+			xOffset = xCurrent;
+			yOffset = yCurrent;
+			setTranslate(el,xCurrent,yCurrent);
 		};
 		var onMouseEnd = function(e) {
 			var el = e.target;
-			initialX = currentX;
-			initialY = currentY;
+			xInitial = xCurrent;
+			yInitial = yCurrent;
 			el.classList.remove("active");
 			el.onmouseup = null;
 			el.onmousemove = null;
@@ -422,11 +486,11 @@ kluez_KlzDragElement.prototype = {
 			var el = e.target;
 			el.classList.add("active");
 			if(e.type == "touchstart") {
-				initialX = e.touches[0].clientX - xOffset;
-				initialY = e.touches[0].clientY - yOffset;
+				xInitial = e.touches[0].clientX - xOffset;
+				yInitial = e.touches[0].clientY - yOffset;
 			} else {
-				initialX = e.clientX - xOffset;
-				initialY = e.clientY - yOffset;
+				xInitial = e.clientX - xOffset;
+				yInitial = e.clientY - yOffset;
 			}
 			el.onmouseup = onMouseEnd;
 			el.onmousemove = onMouseMove;
