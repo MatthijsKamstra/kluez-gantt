@@ -2,7 +2,7 @@
 var Main = function() {
 	console.log("src/Main.hx:14:","Main");
 	kluez_DynamicStyle.setStyle();
-	new kluez_KlzElement(window.document.getElementById("kluez-create-container"));
+	new kluez_CreateElement(window.document.getElementById("kluez-create-container"));
 	new kluez_KlzDragElement(window.document.getElementById("kluez-drag-container"));
 };
 Main.__name__ = true;
@@ -265,6 +265,67 @@ js_Boot.__string_rec = function(o,s) {
 		return String(o);
 	}
 };
+var kluez_CreateElement = function(el) {
+	this.init(el);
+};
+kluez_CreateElement.__name__ = true;
+kluez_CreateElement.prototype = {
+	init: function(el) {
+		var currentX = 0;
+		var currentY = 0;
+		var initialX = 0;
+		var initialY = 0;
+		var xOffset = 0;
+		var yOffset = 0;
+		var div = window.document.createElement("div");
+		var onMouseMove = function(e) {
+			if(e.type == "touchmove") {
+				currentX = e.touches[0].clientX - initialX;
+				currentY = e.touches[0].clientY - initialY;
+			} else {
+				currentX = e.clientX - initialX;
+				currentY = e.clientY - initialY;
+			}
+			xOffset = currentX;
+			yOffset = currentY;
+			div.style.width = "" + xOffset + "px";
+		};
+		var onMouseUp = function(e) {
+			initialX = currentX;
+			initialY = currentY;
+			div.className = "klz-el";
+			div.style.height = "50px";
+			div.innerText = "...";
+			xOffset = 0;
+			yOffset = 0;
+			el.onmouseup = null;
+			el.onmousemove = null;
+			el.onmouseleave = null;
+		};
+		var onMouseDown = function(e) {
+			if(e.type == "touchstart") {
+				initialX = e.touches[0].clientX - xOffset;
+				initialY = e.touches[0].clientY - yOffset;
+			} else {
+				initialX = e.clientX - xOffset;
+				initialY = e.clientY - yOffset;
+			}
+			div = window.document.createElement("div");
+			div.classList.add("klz-dotted");
+			div.id = utils_UUID.uuid();
+			div.style.left = "" + initialX + "px";
+			div.style.top = "" + initialY + "px";
+			div.style.height = "50px";
+			div.style.position = "absolute";
+			window.document.body.append(div);
+			el.onmouseup = onMouseUp;
+			el.onmousemove = onMouseMove;
+			el.onmouseleave = onMouseUp;
+		};
+		el.ontouchstart = onMouseDown;
+		el.onmousedown = onMouseDown;
+	}
+};
 var kluez_DynamicStyle = function() { };
 kluez_DynamicStyle.__name__ = true;
 kluez_DynamicStyle.setStyle = function() {
@@ -319,7 +380,7 @@ kluez_KlzDragElement.prototype = {
 			var color = color_keys[color_current++];
 			var hex = const_Colors.colorMap.h[color];
 			var e = kluez_El.create(element,hex,utils_MathUtil.randomInteger(10,300),i * 60 + 10,utils_MathUtil.randomInteger(50,500));
-			e.classList.add("klz-el-" + color);
+			e.classList.add("klz-el-" + color,"draggable");
 			++i;
 			this.init(e);
 		}
@@ -352,14 +413,14 @@ kluez_KlzDragElement.prototype = {
 			var el = e.target;
 			initialX = currentX;
 			initialY = currentY;
-			el.classList.remove("draggable");
+			el.classList.remove("active");
 			el.onmouseup = null;
 			el.onmousemove = null;
 			el.onmouseleave = null;
 		};
 		var onMouseDown = function(e) {
 			var el = e.target;
-			el.classList.add("draggable");
+			el.classList.add("active");
 			if(e.type == "touchstart") {
 				initialX = e.touches[0].clientX - xOffset;
 				initialY = e.touches[0].clientY - yOffset;
@@ -370,67 +431,6 @@ kluez_KlzDragElement.prototype = {
 			el.onmouseup = onMouseEnd;
 			el.onmousemove = onMouseMove;
 			el.onmouseleave = onMouseEnd;
-		};
-		el.ontouchstart = onMouseDown;
-		el.onmousedown = onMouseDown;
-	}
-};
-var kluez_KlzElement = function(el) {
-	this.init(el);
-};
-kluez_KlzElement.__name__ = true;
-kluez_KlzElement.prototype = {
-	init: function(el) {
-		var currentX = 0;
-		var currentY = 0;
-		var initialX = 0;
-		var initialY = 0;
-		var xOffset = 0;
-		var yOffset = 0;
-		var div = window.document.createElement("div");
-		var onMouseMove = function(e) {
-			if(e.type == "touchmove") {
-				currentX = e.touches[0].clientX - initialX;
-				currentY = e.touches[0].clientY - initialY;
-			} else {
-				currentX = e.clientX - initialX;
-				currentY = e.clientY - initialY;
-			}
-			xOffset = currentX;
-			yOffset = currentY;
-			div.style.width = "" + xOffset + "px";
-		};
-		var onMouseUp = function(e) {
-			initialX = currentX;
-			initialY = currentY;
-			div.className = "klz-el";
-			div.style.height = "50px";
-			div.innerText = "...";
-			xOffset = 0;
-			yOffset = 0;
-			el.onmouseup = null;
-			el.onmousemove = null;
-			el.onmouseleave = null;
-		};
-		var onMouseDown = function(e) {
-			if(e.type == "touchstart") {
-				initialX = e.touches[0].clientX - xOffset;
-				initialY = e.touches[0].clientY - yOffset;
-			} else {
-				initialX = e.clientX - xOffset;
-				initialY = e.clientY - yOffset;
-			}
-			div = window.document.createElement("div");
-			div.classList.add("klz-dotted");
-			div.id = utils_UUID.uuid();
-			div.style.left = "" + initialX + "px";
-			div.style.top = "" + initialY + "px";
-			div.style.height = "50px";
-			div.style.position = "absolute";
-			window.document.body.append(div);
-			el.onmouseup = onMouseUp;
-			el.onmousemove = onMouseMove;
-			el.onmouseleave = onMouseUp;
 		};
 		el.ontouchstart = onMouseDown;
 		el.onmousedown = onMouseDown;

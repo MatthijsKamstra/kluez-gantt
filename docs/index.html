@@ -143,16 +143,33 @@
 
 		}
 
+
+		.klz-el.draggable::after {
+			content: '';
+			position: absolute;
+			cursor: col-resize;
+			height: 100%;
+			right: -2px;
+			top: 0;
+			width: 10px;
+			/* background-color: pink; */
+		}
+
+		/* .resizer-r:hover {
+			background-color: red;
+		} */
+
 		.klz-el.draggable:hover {
 			cursor: -webkit-grab;
 			cursor: grab;
 		}
 
-		.klz-el.draggable {
+		.klz-el.draggable.active {
 			cursor: -webkit-grabbing;
 			cursor: grabbing;
 			opacity: 0.8;
 		}
+
 
 		.klz-el.locked {
 			cursor: not-allowed;
@@ -258,10 +275,11 @@
 
 		<div id="kluez-example-container" class="container-klz">
 			<p>example container</p>
-			<div class="klz-el"></div>
-			<div class="klz-el klz-el-red locked"></div>
-			<div class="klz-el klz-el-blue draggable"></div>
-			<div class="klz-el klz-el-purple"></div>
+			<div class="klz-el">default</div>
+			<div class="klz-el klz-el-purple">purple</div>
+			<div class="klz-el klz-el-red locked">locked</div>
+			<div class="klz-el klz-el-blue draggable">draggable</div>
+			<div class="klz-el klz-el-blue draggable active">draggable active</div>
 		</div>
 
 		<div id="kluez-drag-container" class="container-klz">

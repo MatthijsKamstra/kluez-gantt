@@ -11,7 +11,7 @@ import js.Browser.*;
 using hxColorToolkit.ColorToolkit;
 using StringTools;
 
-class KlzDragElement {
+class DragElement {
 	public function new(element:Element) {
 		createElements(element);
 	}
@@ -21,7 +21,7 @@ class KlzDragElement {
 		for (color in Colors.colorMap.keys()) {
 			var hex = Colors.colorMap[color];
 			var e = El.create(element, hex, MathUtil.randomInteger(10, 300), (i * 60) + 10, MathUtil.randomInteger(50, 500));
-			e.classList.add('klz-el-${color}');
+			e.classList.add('klz-el-${color}', 'draggable');
 			i++;
 			init(cast e);
 		}
@@ -70,7 +70,7 @@ class KlzDragElement {
 			initialX = currentX;
 			initialY = currentY;
 
-			el.classList.remove('draggable');
+			el.classList.remove('active');
 
 			// xOffset = 0;
 			// yOffset = 0;
@@ -85,7 +85,7 @@ class KlzDragElement {
 			// trace(e);
 
 			var el:DivElement = e.target;
-			el.classList.add('draggable');
+			el.classList.add('active');
 
 			if (e.type == "touchstart") {
 				initialX = e.touches[0].clientX - xOffset;

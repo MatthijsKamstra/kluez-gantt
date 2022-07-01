@@ -1,8 +1,8 @@
 package kluez;
 
+import js.Browser.*;
 import js.html.Element;
 import utils.UUID;
-import js.Browser.*;
 
 class El {
 	public static function create(el:Element, text:String, x:Int, y:Int, width:Int) {

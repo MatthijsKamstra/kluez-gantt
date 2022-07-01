@@ -9,7 +9,7 @@ import js.Browser.*;
 using hxColorToolkit.ColorToolkit;
 using StringTools;
 
-class KlzElement {
+class CreateElement {
 	public function new(el:Element) {
 		// Make the DIV element draggable:
 		init(cast el);
