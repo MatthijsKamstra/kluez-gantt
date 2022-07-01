@@ -28,11 +28,18 @@ class ResizeElement {
 		var yInitial:Int = 0;
 		var xOffset:Int = 0;
 		var yOffset:Int = 0;
+		//
+		var xOriginal:Int = 0;
+		var yOriginal:Int = 0;
+		var wOriginal:Int = 0;
+		var hOriginal:Int = 0;
+		var xMouseOriginal:Int = 0;
+		var yMouseOriginal:Int = 0;
 
-		function setTranslate(el, xPos, yPos) {
-			el.style.transform = 'translate3d(${Std.string(xPos)}px, 0px, 0)';
-			// el.style.transform = 'translate3d(${Std.string(xPos)}px, ${Std.string(yPos)}px, 0)';
-		}
+		// function setTranslate(el, xPos, yPos) {
+		// 	el.style.transform = 'translate3d(${Std.string(xPos)}px, 0px, 0)';
+		// 	// el.style.transform = 'translate3d(${Std.string(xPos)}px, ${Std.string(yPos)}px, 0)';
+		// }
 
 		function onMouseMove(e) {
 			// trace('onMouseMove');
@@ -53,7 +60,14 @@ class ResizeElement {
 			xOffset = xCurrent;
 			yOffset = yCurrent;
 
-			setTranslate(el, xCurrent, yCurrent);
+			// trace(xOffset);
+
+			var width = wOriginal + (e.pageX - xMouseOriginal);
+			// trace(width);
+
+			el.style.width = '${width}px';
+
+			// setTranslate(el, xCurrent, yCurrent);
 		}
 
 		function onMouseEnd(e) {
@@ -87,6 +101,15 @@ class ResizeElement {
 				xInitial = e.clientX - xOffset;
 				yInitial = e.clientY - yOffset;
 			}
+
+			wOriginal = Std.parseInt(window.getComputedStyle(el, null).getPropertyValue('width').replace('px', ''));
+			hOriginal = Std.parseInt(window.getComputedStyle(el, null).getPropertyValue('height').replace('px', ''));
+			xOriginal = Std.int(el.getBoundingClientRect().left);
+			yOriginal = Std.int(el.getBoundingClientRect().top);
+			xMouseOriginal = e.pageX;
+			yMouseOriginal = e.pageY;
+
+			// trace('w:$wOriginal, h:$hOriginal, x:$xOriginal, y:$yOriginal, xm:$xMouseOriginal, ym:$yMouseOriginal');
 
 			el.onmouseup = onMouseEnd;
 			el.onmousemove = onMouseMove;

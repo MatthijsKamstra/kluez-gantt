@@ -291,7 +291,7 @@ kluez_CreateElement.prototype = {
 			yOffset = yCurrent;
 			div.style.width = "" + xOffset + "px";
 		};
-		var onMouseUp = function(e) {
+		var onMouseEnd = function(e) {
 			xInitial = xCurrent;
 			yInitial = yCurrent;
 			div.className = "klz-el";
@@ -319,9 +319,9 @@ kluez_CreateElement.prototype = {
 			div.style.height = "50px";
 			div.style.position = "absolute";
 			window.document.body.append(div);
-			el.onmouseup = onMouseUp;
+			el.onmouseup = onMouseEnd;
 			el.onmousemove = onMouseMove;
-			el.onmouseleave = onMouseUp;
+			el.onmouseleave = onMouseEnd;
 		};
 		el.ontouchstart = onMouseDown;
 		el.onmousedown = onMouseDown;
@@ -457,9 +457,12 @@ kluez_ResizeElement.prototype = {
 		var yInitial = 0;
 		var xOffset = 0;
 		var yOffset = 0;
-		var setTranslate = function(el,xPos,yPos) {
-			el.style.transform = "translate3d(" + (xPos == null ? "null" : "" + xPos) + "px, 0px, 0)";
-		};
+		var xOriginal = 0;
+		var yOriginal = 0;
+		var wOriginal = 0;
+		var hOriginal = 0;
+		var xMouseOriginal = 0;
+		var yMouseOriginal = 0;
 		var onMouseMove = function(e) {
 			var el = e.target;
 			if(e.type == "touchmove") {
@@ -471,7 +474,8 @@ kluez_ResizeElement.prototype = {
 			}
 			xOffset = xCurrent;
 			yOffset = yCurrent;
-			setTranslate(el,xCurrent,yCurrent);
+			var width = wOriginal + (e.pageX - xMouseOriginal);
+			el.style.width = "" + width + "px";
 		};
 		var onMouseEnd = function(e) {
 			var el = e.target;
@@ -492,6 +496,12 @@ kluez_ResizeElement.prototype = {
 				xInitial = e.clientX - xOffset;
 				yInitial = e.clientY - yOffset;
 			}
+			wOriginal = Std.parseInt(StringTools.replace(window.getComputedStyle(el,null).getPropertyValue("width"),"px",""));
+			hOriginal = Std.parseInt(StringTools.replace(window.getComputedStyle(el,null).getPropertyValue("height"),"px",""));
+			xOriginal = el.getBoundingClientRect().left | 0;
+			yOriginal = el.getBoundingClientRect().top | 0;
+			xMouseOriginal = e.pageX;
+			yMouseOriginal = e.pageY;
 			el.onmouseup = onMouseEnd;
 			el.onmousemove = onMouseMove;
 			el.onmouseleave = onMouseEnd;

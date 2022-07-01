@@ -44,8 +44,8 @@ class CreateElement {
 			// div.style.height = '${yOffset}px';
 		}
 
-		function onMouseUp(e) {
-			// trace('onMouseUp');
+		function onMouseEnd(e) {
+			// trace('onMouseEnd');
 
 			xInitial = xCurrent;
 			yInitial = yCurrent;
@@ -90,9 +90,9 @@ class CreateElement {
 			// el.append(div);
 
 			// mouse
-			el.onmouseup = onMouseUp;
+			el.onmouseup = onMouseEnd;
 			el.onmousemove = onMouseMove;
-			el.onmouseleave = onMouseUp;
+			el.onmouseleave = onMouseEnd;
 		}
 
 		el.ontouchstart = onMouseDown;
