@@ -303,12 +303,12 @@ kluez_El.create = function(el,text,x,y,width) {
 	el.append(div);
 	return div;
 };
-var kluez_KlzDragElement = function(el) {
-	this.createElements(el);
+var kluez_KlzDragElement = function(element) {
+	this.createElements(element);
 };
 kluez_KlzDragElement.__name__ = true;
 kluez_KlzDragElement.prototype = {
-	createElements: function(el) {
+	createElements: function(element) {
 		var i = 0;
 		var h = const_Colors.colorMap.h;
 		var color_h = h;
@@ -318,11 +318,61 @@ kluez_KlzDragElement.prototype = {
 		while(color_current < color_length) {
 			var color = color_keys[color_current++];
 			var hex = const_Colors.colorMap.h[color];
-			var ell = kluez_El.create(el,hex,utils_MathUtil.randomInteger(10,300),i * 60 + 10,utils_MathUtil.randomInteger(50,500));
-			ell.classList.add("klz-el-" + color);
+			var e = kluez_El.create(element,hex,utils_MathUtil.randomInteger(10,300),i * 60 + 10,utils_MathUtil.randomInteger(50,500));
+			e.classList.add("klz-el-" + color);
 			++i;
+			this.init(e);
 		}
-		el.style.height = "" + (60 * i + 10) + "px";
+		element.style.height = "" + (60 * i + 10) + "px";
+	}
+	,init: function(el) {
+		var currentX = 0;
+		var currentY = 0;
+		var initialX = 0;
+		var initialY = 0;
+		var xOffset = 0;
+		var yOffset = 0;
+		var setTranslate = function(el,xPos,yPos) {
+			el.style.transform = "translate3d(" + (xPos == null ? "null" : "" + xPos) + "px, 0px, 0)";
+		};
+		var onMouseMove = function(e) {
+			var el = e.target;
+			if(e.type == "touchmove") {
+				currentX = e.touches[0].clientX - initialX;
+				currentY = e.touches[0].clientY - initialY;
+			} else {
+				currentX = e.clientX - initialX;
+				currentY = e.clientY - initialY;
+			}
+			xOffset = currentX;
+			yOffset = currentY;
+			setTranslate(el,currentX,currentY);
+		};
+		var onMouseEnd = function(e) {
+			var el = e.target;
+			initialX = currentX;
+			initialY = currentY;
+			el.classList.remove("active");
+			el.onmouseup = null;
+			el.onmousemove = null;
+			el.onmouseleave = null;
+		};
+		var onMouseDown = function(e) {
+			var el = e.target;
+			el.classList.add("active");
+			if(e.type == "touchstart") {
+				initialX = e.touches[0].clientX - xOffset;
+				initialY = e.touches[0].clientY - yOffset;
+			} else {
+				initialX = e.clientX - xOffset;
+				initialY = e.clientY - yOffset;
+			}
+			el.onmouseup = onMouseEnd;
+			el.onmousemove = onMouseMove;
+			el.onmouseleave = onMouseEnd;
+		};
+		el.ontouchstart = onMouseDown;
+		el.onmousedown = onMouseDown;
 	}
 };
 var kluez_KlzElement = function(el) {

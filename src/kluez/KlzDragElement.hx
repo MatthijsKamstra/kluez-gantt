@@ -12,24 +12,20 @@ using hxColorToolkit.ColorToolkit;
 using StringTools;
 
 class KlzDragElement {
-	public function new(el:Element) {
-		createElements(el);
-
-		// init(cast el);
+	public function new(element:Element) {
+		createElements(element);
 	}
 
-	function createElements(el) {
+	function createElements(element) {
 		var i = 0;
 		for (color in Colors.colorMap.keys()) {
 			var hex = Colors.colorMap[color];
-
-			var element = El.create(el, hex, MathUtil.randomInteger(10, 300), (i * 60) + 10, MathUtil.randomInteger(50, 500));
-			// trace(element);
-			element.classList.add('klz-el-${color}');
+			var e = El.create(element, hex, MathUtil.randomInteger(10, 300), (i * 60) + 10, MathUtil.randomInteger(50, 500));
+			e.classList.add('klz-el-${color}');
 			i++;
+			init(cast e);
 		}
-
-		el.style.height = '${(60 * i) + 10}px';
+		element.style.height = '${(60 * i) + 10}px';
 	}
 
 	function init(el:DivElement) {
@@ -40,11 +36,18 @@ class KlzDragElement {
 		var xOffset:Int = 0;
 		var yOffset:Int = 0;
 
-		var div:DivElement = document.createDivElement();
+		function setTranslate(el, xPos, yPos) {
+			el.style.transform = 'translate3d(${Std.string(xPos)}px, 0px, 0)';
+			// el.style.transform = 'translate3d(${Std.string(xPos)}px, ${Std.string(yPos)}px, 0)';
+		}
 
 		function onMouseMove(e) {
 			// trace('onMouseMove');
 			// trace(e);
+
+			// e.preventDefault();
+
+			var el = e.target;
 
 			if (e.type == "touchmove") {
 				currentX = e.touches[0].clientX - initialX;
@@ -57,22 +60,20 @@ class KlzDragElement {
 			xOffset = currentX;
 			yOffset = currentY;
 
-			div.style.width = '${xOffset}px';
-			// div.style.height = '${yOffset}px';
+			setTranslate(el, currentX, currentY);
 		}
 
-		function onMouseUp(e) {
-			// trace('onMouseUp');
+		function onMouseEnd(e) {
+			// trace('onMouseEnd');
+			var el = e.target;
 
 			initialX = currentX;
 			initialY = currentY;
 
-			div.className = 'klz-el';
-			div.style.height = '50px';
-			div.innerText = '...';
+			el.classList.remove('active');
 
-			xOffset = 0;
-			yOffset = 0;
+			// xOffset = 0;
+			// yOffset = 0;
 
 			el.onmouseup = null;
 			el.onmousemove = null;
@@ -83,6 +84,9 @@ class KlzDragElement {
 			// trace('onMouseDown');
 			// trace(e);
 
+			var el:DivElement = e.target;
+			el.classList.add('active');
+
 			if (e.type == "touchstart") {
 				initialX = e.touches[0].clientX - xOffset;
 				initialY = e.touches[0].clientY - yOffset;
@@ -91,25 +95,9 @@ class KlzDragElement {
 				initialY = e.clientY - yOffset;
 			}
 
-			// trace(initialX, initialY);
-
-			// div
-			div = document.createDivElement();
-			// div.innerText = ('...');
-			div.classList.add('klz-dotted');
-			div.id = UUID.uuid();
-			div.style.left = '${initialX}px';
-			div.style.top = '${initialY}px';
-			// div.style.width = '50px';
-			div.style.height = '50px';
-			div.style.position = 'absolute';
-			document.body.append(div);
-			// el.append(div);
-
-			// mouse
-			el.onmouseup = onMouseUp;
+			el.onmouseup = onMouseEnd;
 			el.onmousemove = onMouseMove;
-			el.onmouseleave = onMouseUp;
+			el.onmouseleave = onMouseEnd;
 		}
 
 		el.ontouchstart = onMouseDown;

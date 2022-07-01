@@ -139,9 +139,21 @@
 
 			user-select: none;
 
-			transition: all 0.5s;
+			/* transition: all 0.5s; */
 
 		}
+
+		.klz-el:hover {
+			cursor: -webkit-grab;
+			cursor: grab;
+		}
+
+		.klz-el.active {
+			cursor: -webkit-grabbing;
+			cursor: grabbing;
+			opacity: 0.8;
+		}
+
 
 		.klz-el-blue {
 			background-color: var(--kluez-blue-color);
