@@ -1,7 +1,7 @@
 -lib hxColorToolkit
 -cp src
 -main Main
--js docs/example_js_gitlab.js
+-js docs/kluez-experiments.js
 -D source-map-content
 -debug
 -dce full

@@ -352,14 +352,14 @@ kluez_KlzDragElement.prototype = {
 			var el = e.target;
 			initialX = currentX;
 			initialY = currentY;
-			el.classList.remove("active");
+			el.classList.remove("draggable");
 			el.onmouseup = null;
 			el.onmousemove = null;
 			el.onmouseleave = null;
 		};
 		var onMouseDown = function(e) {
 			var el = e.target;
-			el.classList.add("active");
+			el.classList.add("draggable");
 			if(e.type == "touchstart") {
 				initialX = e.touches[0].clientX - xOffset;
 				initialY = e.touches[0].clientY - yOffset;
@@ -485,4 +485,4 @@ kluez_DynamicStyle.colorMap = (function($this) {
 Main.main();
 })({});
 
-//# sourceMappingURL=example_js_gitlab.js.map
+//# sourceMappingURL=kluez-experiments.js.map

@@ -143,40 +143,50 @@
 
 		}
 
-		.klz-el:hover {
+		.klz-el.draggable:hover {
 			cursor: -webkit-grab;
 			cursor: grab;
 		}
 
-		.klz-el.active {
+		.klz-el.draggable {
 			cursor: -webkit-grabbing;
 			cursor: grabbing;
 			opacity: 0.8;
 		}
 
-
-		.klz-el-blue {
-			background-color: var(--kluez-blue-color);
-			border-color: var(--kluez-blue-color-darken);
-
-			width: 200px;
-
-			top: 100px;
-			left: 400px;
-		}
-
-		.klz-el-purple {
-			background-color: var(--kluez-purple-color);
-			border-color: var(--kluez-purple-color-darken);
-
-			width: 200px;
-
-			top: 200px;
-			left: 50px;
+		.klz-el.locked {
+			cursor: not-allowed;
 		}
 
 
 
+
+		#kluez-example-container.container-klz div.klz-el {
+			left: 10px;
+			margin-bottom: 10px;
+		}
+
+
+
+		#kluez-example-container.container-klz div.klz-el {
+			width: 200px;
+		}
+
+		#kluez-example-container.container-klz div.klz-el.klz-el-red {
+			width: 300px;
+		}
+
+		#kluez-example-container.container-klz div.klz-el.klz-el-blue {
+			width: 400px;
+		}
+
+		#kluez-example-container.container-klz div.klz-el.klz-el-purple {
+			width: 500px;
+		}
+
+		/* #kluez-example-container.container-klz .klz-el:nth-child(3) {
+			background-color: pink;
+		} */
 
 		.container-klz {
 			border: 1px solid var(--kluez-gray-color);
@@ -246,10 +256,13 @@
 		</div>
 
 
-
-		<div class="klz-el klz-el-blue"></div>
-		<div class="klz-el klz-el-purple"></div>
-		<div class="klz-el "></div>
+		<div id="kluez-example-container" class="container-klz">
+			<p>example container</p>
+			<div class="klz-el"></div>
+			<div class="klz-el klz-el-red locked"></div>
+			<div class="klz-el klz-el-blue draggable"></div>
+			<div class="klz-el klz-el-purple"></div>
+		</div>
 
 		<div id="kluez-drag-container" class="container-klz">
 			<p>drag container</p>
@@ -268,7 +281,7 @@
 
 
 	<!-- Code generated using Haxe -->
-	<script type="text/javascript" src="example_js_gitlab.js"></script>
+	<script type="text/javascript" src="kluez-experiments.js"></script>
 </body>
 
 </html>

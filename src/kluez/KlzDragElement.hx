@@ -70,7 +70,7 @@ class KlzDragElement {
 			initialX = currentX;
 			initialY = currentY;
 
-			el.classList.remove('active');
+			el.classList.remove('draggable');
 
 			// xOffset = 0;
 			// yOffset = 0;
@@ -85,7 +85,7 @@ class KlzDragElement {
 			// trace(e);
 
 			var el:DivElement = e.target;
-			el.classList.add('active');
+			el.classList.add('draggable');
 
 			if (e.type == "touchstart") {
 				initialX = e.touches[0].clientX - xOffset;
