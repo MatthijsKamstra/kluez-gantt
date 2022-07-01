@@ -8,5 +8,5 @@
 - [ ] create grid (pattern) on screen
 - [ ] line between divs
   - [ ] svg right
-  - [ ] svg curled
+  - [ ] svg curved
 - [ ] read mermaid files (https://mermaid-js.github.io/mermaid/#/gantt)

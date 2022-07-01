@@ -164,10 +164,15 @@
 		}
 
 
-		#canvas {
+
+
+		.container-klz {
+			border: 1px solid var(--kluez-gray-color);
+			background-color: #ecf0f1;
 			width: 100%;
-			height: 300px;
-			background-color: silver;
+			min-height: 300px;
+			/* margin-bottom: 50px; */
+			position: relative;
 		}
 	</style>
 	<!--
@@ -234,14 +239,15 @@
 		<div class="klz-el klz-el-purple"></div>
 		<div class="klz-el "></div>
 
+		<div id="kluez-drag-container" class="container-klz">
+			<p>drag container</p>
+		</div>
 
-
-
-		<div id="canvas"></div>
+		<div id="kluez-create-container" class="container-klz">
+			<p>create container</p>
+		</div>
 
 	</main>
-
-
 
 	<!-- Option 1: Bootstrap Bundle with Popper -->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"

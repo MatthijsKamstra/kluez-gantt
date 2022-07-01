@@ -1,8 +1,9 @@
 (function ($global) { "use strict";
 var Main = function() {
-	console.log("src/Main.hx:13:","Main");
+	console.log("src/Main.hx:14:","Main");
 	kluez_DynamicStyle.setStyle();
-	var temp = new kluez_KlzElement();
+	new kluez_KlzElement(window.document.getElementById("kluez-create-container"));
+	new kluez_KlzDragElement(window.document.getElementById("kluez-drag-container"));
 };
 Main.__name__ = true;
 Main.main = function() {
@@ -58,6 +59,8 @@ var haxe_ds_StringMap = function() {
 	this.h = Object.create(null);
 };
 haxe_ds_StringMap.__name__ = true;
+var const_Colors = function() { };
+const_Colors.__name__ = true;
 var haxe_iterators_ArrayIterator = function(array) {
 	this.current = 0;
 	this.array = array;
@@ -265,6 +268,7 @@ js_Boot.__string_rec = function(o,s) {
 var kluez_DynamicStyle = function() { };
 kluez_DynamicStyle.__name__ = true;
 kluez_DynamicStyle.setStyle = function() {
+	var xtraStyle = "";
 	var str = "";
 	var h = kluez_DynamicStyle.colorMap.h;
 	var color_h = h;
@@ -277,14 +281,52 @@ kluez_DynamicStyle.setStyle = function() {
 		var color1 = Std.parseInt(StringTools.replace(hex,"#","0x"));
 		var hsl = new hxColorToolkit_spaces_HSL().setColor(color1);
 		str += "\n\t\t\t--kluez-" + color + ": " + hex + ";\n\n\t\t\t--kluez-" + color + "-color: hsl(" + hsl.get_hue() + ", " + hsl.get_saturation() + "%, " + hsl.get_lightness() + "%);\n\n\t\t\t--kluez-" + color + "-color-lighten: hsl(" + hsl.get_hue() + ", " + hsl.get_saturation() + "%, " + (hsl.get_lightness() + 10) + "%);\n\n\t\t\t--kluez-" + color + "-color-darken: hsl(" + hsl.get_hue() + ", " + hsl.get_saturation() + "%, " + (hsl.get_lightness() - 10) + "%);\n\n\t\t\t";
+		xtraStyle += "\n\t\t\t.klz-el-" + color + " {\n\t\t\t\tbackground-color: var(--kluez-" + color + "-color);\n\t\t\t\tborder-color: var(--kluez-" + color + "-color-darken);\n\t\t\t}\n\t\t\t";
 	}
 	var style2 = ":root { --kluez-blue: #3498db; }";
 	var st = window.document.createElement("style");
-	st.textContent = ":root { " + str + " }";
+	st.textContent = ":root { " + str + " }\n" + xtraStyle;
 	window.document.head.append(st);
 };
-var kluez_KlzElement = function() {
-	this.init(window.document.getElementById("canvas"));
+var kluez_El = function() { };
+kluez_El.__name__ = true;
+kluez_El.create = function(el,text,x,y,width) {
+	var div = window.document.createElement("div");
+	div.innerText = text;
+	div.classList.add("klz-el");
+	div.id = utils_UUID.uuid();
+	div.style.left = "" + x + "px";
+	div.style.top = "" + y + "px";
+	div.style.width = "" + width + "px";
+	div.style.height = "50px";
+	div.style.position = "absolute";
+	el.append(div);
+	return div;
+};
+var kluez_KlzDragElement = function(el) {
+	this.createElements(el);
+};
+kluez_KlzDragElement.__name__ = true;
+kluez_KlzDragElement.prototype = {
+	createElements: function(el) {
+		var i = 0;
+		var h = const_Colors.colorMap.h;
+		var color_h = h;
+		var color_keys = Object.keys(h);
+		var color_length = color_keys.length;
+		var color_current = 0;
+		while(color_current < color_length) {
+			var color = color_keys[color_current++];
+			var hex = const_Colors.colorMap.h[color];
+			var ell = kluez_El.create(el,hex,utils_MathUtil.randomInteger(10,300),i * 60 + 10,utils_MathUtil.randomInteger(50,500));
+			ell.classList.add("klz-el-" + color);
+			++i;
+		}
+		el.style.height = "" + (60 * i + 10) + "px";
+	}
+};
+var kluez_KlzElement = function(el) {
+	this.init(el);
 };
 kluez_KlzElement.__name__ = true;
 kluez_KlzElement.prototype = {
@@ -344,6 +386,15 @@ kluez_KlzElement.prototype = {
 		el.onmousedown = onMouseDown;
 	}
 };
+var utils_MathUtil = function() { };
+utils_MathUtil.__name__ = true;
+utils_MathUtil.randomInteger = function(min,max) {
+	if(max == null) {
+		max = min;
+		min = 0;
+	}
+	return Math.floor(Math.random() * (max + 1 - min)) + min;
+};
 var utils_UUID = function() { };
 utils_UUID.__name__ = true;
 utils_UUID.uuid = function() {
@@ -357,6 +408,18 @@ String.__name__ = true;
 Array.__name__ = true;
 Date.__name__ = "Date";
 js_Boot.__toStr = ({ }).toString;
+const_Colors.colorMap = (function($this) {
+	var $r;
+	var _g = new haxe_ds_StringMap();
+	_g.h["green"] = "#1abc9c";
+	_g.h["blue"] = "#3498db";
+	_g.h["purple"] = "#9b59b6";
+	_g.h["yellow"] = "#f1c40f";
+	_g.h["red"] = "#e74c3c";
+	_g.h["gray"] = "#95a5a6";
+	$r = _g;
+	return $r;
+}(this));
 kluez_DynamicStyle.colorMap = (function($this) {
 	var $r;
 	var _g = new haxe_ds_StringMap();

@@ -1,5 +1,7 @@
 package kluez;
 
+import utils.MathUtil;
+import const.Colors;
 import js.html.Element;
 import utils.UUID;
 import js.html.DivElement;
@@ -9,10 +11,25 @@ import js.Browser.*;
 using hxColorToolkit.ColorToolkit;
 using StringTools;
 
-class KlzElement {
+class KlzDragElement {
 	public function new(el:Element) {
-		// Make the DIV element draggable:
-		init(cast el);
+		createElements(el);
+
+		// init(cast el);
+	}
+
+	function createElements(el) {
+		var i = 0;
+		for (color in Colors.colorMap.keys()) {
+			var hex = Colors.colorMap[color];
+
+			var element = El.create(el, hex, MathUtil.randomInteger(10, 300), (i * 60) + 10, MathUtil.randomInteger(50, 500));
+			// trace(element);
+			element.classList.add('klz-el-${color}');
+			i++;
+		}
+
+		el.style.height = '${(60 * i) + 10}px';
 	}
 
 	function init(el:DivElement) {

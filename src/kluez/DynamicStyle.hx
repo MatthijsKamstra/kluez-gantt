@@ -34,6 +34,7 @@ class DynamicStyle {
 		// var hsl = 0x9b59b6.toHSL();
 		// trace(hsl);
 
+		var xtraStyle = '';
 		var str = '';
 		for (color in colorMap.keys()) {
 			var hex = colorMap[color];
@@ -48,13 +49,19 @@ class DynamicStyle {
 			--kluez-${color}-color-lighten: hsl(${hsl.hue}, ${hsl.saturation}%, ${hsl.lightness + 10}%);\n
 			--kluez-${color}-color-darken: hsl(${hsl.hue}, ${hsl.saturation}%, ${hsl.lightness - 10}%);\n
 			';
+			xtraStyle += '
+			.klz-el-${color} {
+				background-color: var(--kluez-${color}-color);
+				border-color: var(--kluez-${color}-color-darken);
+			}
+			';
 		}
 
 		var style2 = ':root { --kluez-blue: #3498db; }';
 
 		var st = document.createStyleElement();
 		// st.textContent = (style2);
-		st.textContent = ':root { ${str} }';
+		st.textContent = ':root { ${str} }\n${xtraStyle}';
 
 		document.head.append(st);
 	}

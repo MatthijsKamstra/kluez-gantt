@@ -1,5 +1,6 @@
 package;
 
+import kluez.KlzDragElement;
 import kluez.KlzElement;
 import kluez.DynamicStyle;
 import js.html.DivElement;
@@ -13,7 +14,11 @@ class Main {
 		trace('Main');
 		DynamicStyle.setStyle();
 
-		var temp = new KlzElement();
+		// create container setup
+		new KlzElement(document.getElementById("kluez-create-container"));
+
+		// create container setup
+		new KlzDragElement(document.getElementById("kluez-drag-container"));
 
 		// // Make the DIV element draggable:
 		// initDrag(cast document.getElementById("resizeMe"));
