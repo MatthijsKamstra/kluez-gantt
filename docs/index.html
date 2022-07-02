@@ -149,10 +149,16 @@
 			position: absolute;
 			cursor: col-resize;
 			height: 100%;
-			right: -20px;
 			top: 0;
-			width: 40px;
+			right: -10px;
+			width: 20px;
 			/* background-color: pink; */
+		}
+
+		.klz-el.draggable.active::after {
+			right: -50px;
+			width: 100px;
+			/* background-color: green; */
 		}
 
 		/* .resizer-r:hover {
@@ -280,6 +286,7 @@
 		<div id="kluez-resize-container" class="container-klz">
 			<p>resize container</p>
 			<div class="klz-el klz-el-yellow draggable resizeable" style="width: 333px;">purple</div>
+			<div class="klz-el klz-el-green draggable resizeable" style="left:100px;width: 333px;">purple</div>
 		</div>
 
 		<div id="kluez-example-container" class="container-klz">
