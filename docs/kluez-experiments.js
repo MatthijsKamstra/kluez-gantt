@@ -354,8 +354,6 @@ kluez_CombiElement.init = function(el) {
 		}
 	};
 	var onMouseEnd = function(e) {
-		xInitial = xCurrent;
-		yInitial = yCurrent;
 		el.classList.remove("active");
 		xCurrent = 0;
 		yCurrent = 0;

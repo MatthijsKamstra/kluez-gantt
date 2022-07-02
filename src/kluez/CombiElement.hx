@@ -87,8 +87,8 @@ class CombiElement {
 			// trace('onMouseEnd');
 			// var el = e.target;
 
-			xInitial = xCurrent;
-			yInitial = yCurrent;
+			// xInitial = xCurrent;
+			// yInitial = yCurrent;
 
 			el.classList.remove('active');
 
