@@ -76,6 +76,7 @@ class CombiElement {
 
 			if (isDrag) {
 				setTranslate(el, xCurrent, yCurrent);
+				// el.style.left = '${xOriginal + xCurrent}px';
 			} else {
 				var width = wOriginal + (e.pageX - xMouseOriginal);
 				el.style.width = '${width}px';
