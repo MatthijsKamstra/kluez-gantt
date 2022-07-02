@@ -16,7 +16,7 @@ class ResizeElement {
 		var arr = container.getElementsByClassName('resizeable');
 		for (i in 0...arr.length) {
 			var _arr = arr[i];
-			trace(_arr);
+			// trace(_arr);
 			init(cast _arr);
 		}
 	}

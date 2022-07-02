@@ -30,11 +30,11 @@ class CreateElement {
 			// trace(e);
 
 			if (e.type == "touchmove") {
-				xCurrent = e.touches[0].clientX - xInitial;
-				yCurrent = e.touches[0].clientY - yInitial;
+				xCurrent = e.touches[0].pageX - xInitial;
+				yCurrent = e.touches[0].pageY - yInitial;
 			} else {
-				xCurrent = e.clientX - xInitial;
-				yCurrent = e.clientY - yInitial;
+				xCurrent = e.pageX - xInitial;
+				yCurrent = e.pageY - yInitial;
 			}
 
 			xOffset = xCurrent;
@@ -63,15 +63,15 @@ class CreateElement {
 		}
 
 		function onMouseDown(e) {
-			// trace('onMouseDown');
-			// trace(e);
+			trace('onMouseDown');
+			trace(e);
 
 			if (e.type == "touchstart") {
-				xInitial = e.touches[0].clientX - xOffset;
-				yInitial = e.touches[0].clientY - yOffset;
+				xInitial = e.touches[0].pageX - xOffset;
+				yInitial = e.touches[0].pageY - yOffset;
 			} else {
-				xInitial = e.clientX - xOffset;
-				yInitial = e.clientY - yOffset;
+				xInitial = e.pageX - xOffset;
+				yInitial = e.pageY - yOffset;
 			}
 
 			// trace(xInitial, yInitial);

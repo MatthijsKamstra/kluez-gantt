@@ -1,6 +1,6 @@
 (function ($global) { "use strict";
 var Main = function() {
-	console.log("src/Main.hx:15:","Main");
+	$global.console.info("Kluez");
 	kluez_DynamicStyle.setStyle();
 	new kluez_CreateElement(window.document.getElementById("kluez-create-container"));
 	new kluez_DragElement(window.document.getElementById("kluez-drag-container"));
@@ -281,11 +281,11 @@ kluez_CreateElement.prototype = {
 		var div = window.document.createElement("div");
 		var onMouseMove = function(e) {
 			if(e.type == "touchmove") {
-				xCurrent = e.touches[0].clientX - xInitial;
-				yCurrent = e.touches[0].clientY - yInitial;
+				xCurrent = e.touches[0].pageX - xInitial;
+				yCurrent = e.touches[0].pageY - yInitial;
 			} else {
-				xCurrent = e.clientX - xInitial;
-				yCurrent = e.clientY - yInitial;
+				xCurrent = e.pageX - xInitial;
+				yCurrent = e.pageY - yInitial;
 			}
 			xOffset = xCurrent;
 			yOffset = yCurrent;
@@ -304,12 +304,14 @@ kluez_CreateElement.prototype = {
 			container.onmouseleave = null;
 		};
 		var onMouseDown = function(e) {
+			console.log("src/kluez/CreateElement.hx:66:","onMouseDown");
+			console.log("src/kluez/CreateElement.hx:67:",e);
 			if(e.type == "touchstart") {
-				xInitial = e.touches[0].clientX - xOffset;
-				yInitial = e.touches[0].clientY - yOffset;
+				xInitial = e.touches[0].pageX - xOffset;
+				yInitial = e.touches[0].pageY - yOffset;
 			} else {
-				xInitial = e.clientX - xOffset;
-				yInitial = e.clientY - yOffset;
+				xInitial = e.pageX - xOffset;
+				yInitial = e.pageY - yOffset;
 			}
 			div = kluez_El.create("...",xInitial,yInitial,10);
 			div.classList.add("klz-dotted");
@@ -439,7 +441,6 @@ var kluez_ResizeElement = function(container) {
 	while(_g < _g1) {
 		var i = _g++;
 		var _arr = arr[i];
-		console.log("src/kluez/ResizeElement.hx:19:",_arr);
 		this.init(_arr);
 	}
 };
@@ -552,6 +553,6 @@ kluez_DynamicStyle.colorMap = (function($this) {
 	return $r;
 }(this));
 Main.main();
-})({});
+})(typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
 
 //# sourceMappingURL=kluez-experiments.js.map

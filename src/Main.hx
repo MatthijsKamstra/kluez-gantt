@@ -12,7 +12,7 @@ using StringTools;
 
 class Main {
 	public function new() {
-		trace('Main');
+		console.info('Kluez');
 		DynamicStyle.setStyle();
 
 		// create container setup
