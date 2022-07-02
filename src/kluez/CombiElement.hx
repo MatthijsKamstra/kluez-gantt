@@ -1,5 +1,6 @@
 package kluez;
 
+import const.ClassNames;
 import utils.MathUtil;
 import const.Colors;
 import js.html.Element;
@@ -11,8 +12,15 @@ import js.Browser.*;
 using hxColorToolkit.ColorToolkit;
 using StringTools;
 
-class DragElement {
-	public function new(element:Element) {}
+class CombiElement {
+	public function new(container:Element) {
+		// var arr = container.getElementsByClassName('resizeable');
+		// for (i in 0...arr.length) {
+		// 	var _arr = arr[i];
+		// 	// trace(_arr);
+		// 	init(cast _arr);
+		// }
+	}
 
 	public static function init(el:DivElement) {
 		var xCurrent:Int = 0;
@@ -21,6 +29,28 @@ class DragElement {
 		var yInitial:Int = 0;
 		var xOffset:Int = 0;
 		var yOffset:Int = 0;
+		//
+		var xOriginal:Int = 0;
+		var yOriginal:Int = 0;
+		var wOriginal:Int = 0;
+		var hOriginal:Int = 0;
+		var xMouseOriginal:Int = 0;
+		var yMouseOriginal:Int = 0;
+		//
+		var isDrag = true; // or isResize
+
+		if (el.classList.contains(ClassNames.RESIZEABLE)) {
+			// TODO: needs to check if its already done
+			var resizeEl = document.createDivElement();
+			resizeEl.classList.add('resizer-r');
+			el.appendChild(resizeEl);
+			resizeEl.onmouseover = () -> {
+				isDrag = false;
+			};
+			resizeEl.onmouseout = () -> {
+				isDrag = true;
+			};
+		}
 
 		function setTranslate(el, xPos, yPos) {
 			el.style.transform = 'translate3d(${Std.string(xPos)}px, 0px, 0)';
@@ -31,7 +61,7 @@ class DragElement {
 			// trace('onMouseMove');
 			// trace(e);
 
-			var el = e.target;
+			// var el = e.target;
 
 			if (e.type == "touchmove") {
 				xCurrent = e.touches[0].clientX - xInitial;
@@ -44,12 +74,17 @@ class DragElement {
 			xOffset = xCurrent;
 			yOffset = yCurrent;
 
-			setTranslate(el, xCurrent, yCurrent);
+			if (isDrag) {
+				setTranslate(el, xCurrent, yCurrent);
+			} else {
+				var width = wOriginal + (e.pageX - xMouseOriginal);
+				el.style.width = '${width}px';
+			}
 		}
 
 		function onMouseEnd(e) {
 			// trace('onMouseEnd');
-			var el = e.target;
+			// var el = e.target;
 
 			xInitial = xCurrent;
 			yInitial = yCurrent;
@@ -68,7 +103,7 @@ class DragElement {
 			// trace('onMouseDown');
 			// trace(e);
 
-			var el:DivElement = e.target;
+			// var el:DivElement = e.target;
 			el.classList.add('active');
 
 			if (e.type == "touchstart") {
@@ -78,6 +113,15 @@ class DragElement {
 				xInitial = e.clientX - xOffset;
 				yInitial = e.clientY - yOffset;
 			}
+
+			wOriginal = Std.parseInt(window.getComputedStyle(el, null).getPropertyValue('width').replace('px', ''));
+			hOriginal = Std.parseInt(window.getComputedStyle(el, null).getPropertyValue('height').replace('px', ''));
+			xOriginal = Std.int(el.getBoundingClientRect().left);
+			yOriginal = Std.int(el.getBoundingClientRect().top);
+			xMouseOriginal = e.pageX;
+			yMouseOriginal = e.pageY;
+
+			// trace('w:$wOriginal, h:$hOriginal, x:$xOriginal, y:$yOriginal, xm:$xMouseOriginal, ym:$yMouseOriginal');
 
 			el.onmouseup = onMouseEnd;
 			el.onmousemove = onMouseMove;

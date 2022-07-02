@@ -3,12 +3,51 @@ var Main = function() {
 	$global.console.info("Kluez");
 	kluez_DynamicStyle.setStyle();
 	new kluez_CreateElement(window.document.getElementById("kluez-create-container"));
-	new kluez_DragElement(window.document.getElementById("kluez-drag-container"));
 	new kluez_ResizeElement(window.document.getElementById("kluez-resize-container"));
+	this.setupResize(window.document.getElementById("kluez-drag-container"));
+	this.setupCombi(window.document.getElementById("kluez-combi-container"));
 };
 Main.__name__ = true;
 Main.main = function() {
 	var app = new Main();
+};
+Main.prototype = {
+	setupResize: function(container) {
+		var i = 0;
+		var h = const_Colors.colorMap.h;
+		var color_h = h;
+		var color_keys = Object.keys(h);
+		var color_length = color_keys.length;
+		var color_current = 0;
+		while(color_current < color_length) {
+			var color = color_keys[color_current++];
+			var hex = const_Colors.colorMap.h[color];
+			var el = kluez_El.create("resize-" + hex,utils_MathUtil.randomInteger(10,300),i * 60 + 10,utils_MathUtil.randomInteger(50,500));
+			el.classList.add("klz-el-" + color,"draggable");
+			container.append(el);
+			++i;
+			kluez_DragElement.init(el);
+		}
+		container.style.height = "" + (60 * i + 10) + "px";
+	}
+	,setupCombi: function(container) {
+		var i = 0;
+		var h = const_Colors.colorMap.h;
+		var color_h = h;
+		var color_keys = Object.keys(h);
+		var color_length = color_keys.length;
+		var color_current = 0;
+		while(color_current < color_length) {
+			var color = color_keys[color_current++];
+			var hex = const_Colors.colorMap.h[color];
+			var el = kluez_El.create("combi-" + hex,utils_MathUtil.randomInteger(10,300),i * 60 + 10,utils_MathUtil.randomInteger(50,500));
+			el.classList.add("klz-el-" + color,const_ClassNames.DRAGGABLE,const_ClassNames.RESIZEABLE);
+			container.append(el);
+			++i;
+			kluez_CombiElement.init(el);
+		}
+		container.style.height = "" + (60 * i + 10) + "px";
+	}
 };
 Math.__name__ = true;
 var Std = function() { };
@@ -56,6 +95,8 @@ StringTools.hex = function(n,digits) {
 	}
 	return s;
 };
+var const_ClassNames = function() { };
+const_ClassNames.__name__ = true;
 var haxe_ds_StringMap = function() {
 	this.h = Object.create(null);
 };
@@ -266,6 +307,85 @@ js_Boot.__string_rec = function(o,s) {
 		return String(o);
 	}
 };
+var kluez_CombiElement = function() { };
+kluez_CombiElement.__name__ = true;
+kluez_CombiElement.init = function(el) {
+	var xCurrent = 0;
+	var yCurrent = 0;
+	var xInitial = 0;
+	var yInitial = 0;
+	var xOffset = 0;
+	var yOffset = 0;
+	var xOriginal = 0;
+	var yOriginal = 0;
+	var wOriginal = 0;
+	var hOriginal = 0;
+	var xMouseOriginal = 0;
+	var yMouseOriginal = 0;
+	var isDrag = true;
+	if(el.classList.contains(const_ClassNames.RESIZEABLE)) {
+		var resizeEl = window.document.createElement("div");
+		resizeEl.classList.add("resizer-r");
+		el.appendChild(resizeEl);
+		resizeEl.onmouseover = function() {
+			isDrag = false;
+			return isDrag;
+		};
+		resizeEl.onmouseout = function() {
+			isDrag = true;
+			return isDrag;
+		};
+	}
+	var setTranslate = function(el,xPos,yPos) {
+		el.style.transform = "translate3d(" + (xPos == null ? "null" : "" + xPos) + "px, 0px, 0)";
+	};
+	var onMouseMove = function(e) {
+		if(e.type == "touchmove") {
+			xCurrent = e.touches[0].clientX - xInitial;
+			yCurrent = e.touches[0].clientY - yInitial;
+		} else {
+			xCurrent = e.clientX - xInitial;
+			yCurrent = e.clientY - yInitial;
+		}
+		xOffset = xCurrent;
+		yOffset = yCurrent;
+		if(isDrag) {
+			setTranslate(el,xCurrent,yCurrent);
+		} else {
+			var width = wOriginal + (e.pageX - xMouseOriginal);
+			el.style.width = "" + width + "px";
+		}
+	};
+	var onMouseEnd = function(e) {
+		xInitial = xCurrent;
+		yInitial = yCurrent;
+		el.classList.remove("active");
+		el.onmouseup = null;
+		el.onmousemove = null;
+		el.onmouseleave = null;
+	};
+	var onMouseDown = function(e) {
+		el.classList.add("active");
+		if(e.type == "touchstart") {
+			xInitial = e.touches[0].clientX - xOffset;
+			yInitial = e.touches[0].clientY - yOffset;
+		} else {
+			xInitial = e.clientX - xOffset;
+			yInitial = e.clientY - yOffset;
+		}
+		wOriginal = Std.parseInt(StringTools.replace(window.getComputedStyle(el,null).getPropertyValue("width"),"px",""));
+		hOriginal = Std.parseInt(StringTools.replace(window.getComputedStyle(el,null).getPropertyValue("height"),"px",""));
+		xOriginal = el.getBoundingClientRect().left | 0;
+		yOriginal = el.getBoundingClientRect().top | 0;
+		xMouseOriginal = e.pageX;
+		yMouseOriginal = e.pageY;
+		el.onmouseup = onMouseEnd;
+		el.onmousemove = onMouseMove;
+		el.onmouseleave = onMouseEnd;
+	};
+	el.ontouchstart = onMouseDown;
+	el.onmousedown = onMouseDown;
+};
 var kluez_CreateElement = function(container) {
 	this.init(container);
 };
@@ -322,78 +442,56 @@ kluez_CreateElement.prototype = {
 		container.onmousedown = onMouseDown;
 	}
 };
-var kluez_DragElement = function(element) {
-	this.createElements(element);
-};
+var kluez_DragElement = function() { };
 kluez_DragElement.__name__ = true;
-kluez_DragElement.prototype = {
-	createElements: function(element) {
-		var i = 0;
-		var h = const_Colors.colorMap.h;
-		var color_h = h;
-		var color_keys = Object.keys(h);
-		var color_length = color_keys.length;
-		var color_current = 0;
-		while(color_current < color_length) {
-			var color = color_keys[color_current++];
-			var hex = const_Colors.colorMap.h[color];
-			var e = kluez_El.create(hex,utils_MathUtil.randomInteger(10,300),i * 60 + 10,utils_MathUtil.randomInteger(50,500));
-			e.classList.add("klz-el-" + color,"draggable");
-			element.append(e);
-			++i;
-			this.init(e);
+kluez_DragElement.init = function(el) {
+	var xCurrent = 0;
+	var yCurrent = 0;
+	var xInitial = 0;
+	var yInitial = 0;
+	var xOffset = 0;
+	var yOffset = 0;
+	var setTranslate = function(el,xPos,yPos) {
+		el.style.transform = "translate3d(" + (xPos == null ? "null" : "" + xPos) + "px, 0px, 0)";
+	};
+	var onMouseMove = function(e) {
+		var el = e.target;
+		if(e.type == "touchmove") {
+			xCurrent = e.touches[0].clientX - xInitial;
+			yCurrent = e.touches[0].clientY - yInitial;
+		} else {
+			xCurrent = e.clientX - xInitial;
+			yCurrent = e.clientY - yInitial;
 		}
-		element.style.height = "" + (60 * i + 10) + "px";
-	}
-	,init: function(el) {
-		var xCurrent = 0;
-		var yCurrent = 0;
-		var xInitial = 0;
-		var yInitial = 0;
-		var xOffset = 0;
-		var yOffset = 0;
-		var setTranslate = function(el,xPos,yPos) {
-			el.style.transform = "translate3d(" + (xPos == null ? "null" : "" + xPos) + "px, 0px, 0)";
-		};
-		var onMouseMove = function(e) {
-			var el = e.target;
-			if(e.type == "touchmove") {
-				xCurrent = e.touches[0].clientX - xInitial;
-				yCurrent = e.touches[0].clientY - yInitial;
-			} else {
-				xCurrent = e.clientX - xInitial;
-				yCurrent = e.clientY - yInitial;
-			}
-			xOffset = xCurrent;
-			yOffset = yCurrent;
-			setTranslate(el,xCurrent,yCurrent);
-		};
-		var onMouseEnd = function(e) {
-			var el = e.target;
-			xInitial = xCurrent;
-			yInitial = yCurrent;
-			el.classList.remove("active");
-			el.onmouseup = null;
-			el.onmousemove = null;
-			el.onmouseleave = null;
-		};
-		var onMouseDown = function(e) {
-			var el = e.target;
-			el.classList.add("active");
-			if(e.type == "touchstart") {
-				xInitial = e.touches[0].clientX - xOffset;
-				yInitial = e.touches[0].clientY - yOffset;
-			} else {
-				xInitial = e.clientX - xOffset;
-				yInitial = e.clientY - yOffset;
-			}
-			el.onmouseup = onMouseEnd;
-			el.onmousemove = onMouseMove;
-			el.onmouseleave = onMouseEnd;
-		};
-		el.ontouchstart = onMouseDown;
-		el.onmousedown = onMouseDown;
-	}
+		xOffset = xCurrent;
+		yOffset = yCurrent;
+		setTranslate(el,xCurrent,yCurrent);
+	};
+	var onMouseEnd = function(e) {
+		var el = e.target;
+		xInitial = xCurrent;
+		yInitial = yCurrent;
+		el.classList.remove("active");
+		el.onmouseup = null;
+		el.onmousemove = null;
+		el.onmouseleave = null;
+	};
+	var onMouseDown = function(e) {
+		var el = e.target;
+		el.classList.add("active");
+		if(e.type == "touchstart") {
+			xInitial = e.touches[0].clientX - xOffset;
+			yInitial = e.touches[0].clientY - yOffset;
+		} else {
+			xInitial = e.clientX - xOffset;
+			yInitial = e.clientY - yOffset;
+		}
+		el.onmouseup = onMouseEnd;
+		el.onmousemove = onMouseMove;
+		el.onmouseleave = onMouseEnd;
+	};
+	el.ontouchstart = onMouseDown;
+	el.onmousedown = onMouseDown;
 };
 var kluez_DynamicStyle = function() { };
 kluez_DynamicStyle.__name__ = true;
@@ -526,6 +624,8 @@ String.__name__ = true;
 Array.__name__ = true;
 Date.__name__ = "Date";
 js_Boot.__toStr = ({ }).toString;
+const_ClassNames.DRAGGABLE = "draggable";
+const_ClassNames.RESIZEABLE = "resizeable";
 const_Colors.colorMap = (function($this) {
 	var $r;
 	var _g = new haxe_ds_StringMap();
