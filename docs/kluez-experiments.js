@@ -336,9 +336,6 @@ kluez_CombiElement.init = function(el) {
 			return isDrag;
 		};
 	}
-	var setTranslate = function(el,xPos,yPos) {
-		el.style.transform = "translate3d(" + (xPos == null ? "null" : "" + xPos) + "px, 0px, 0)";
-	};
 	var onMouseMove = function(e) {
 		if(e.type == "touchmove") {
 			xCurrent = e.touches[0].clientX - xInitial;
@@ -350,7 +347,7 @@ kluez_CombiElement.init = function(el) {
 		xOffset = xCurrent;
 		yOffset = yCurrent;
 		if(isDrag) {
-			setTranslate(el,xCurrent,yCurrent);
+			el.style.left = "" + (xOriginal + xCurrent) + "px";
 		} else {
 			var width = wOriginal + (e.pageX - xMouseOriginal);
 			el.style.width = "" + width + "px";
@@ -360,6 +357,13 @@ kluez_CombiElement.init = function(el) {
 		xInitial = xCurrent;
 		yInitial = yCurrent;
 		el.classList.remove("active");
+		xCurrent = 0;
+		yCurrent = 0;
+		xInitial = 0;
+		yInitial = 0;
+		xOffset = 0;
+		yOffset = 0;
+		xOriginal = 0;
 		el.onmouseup = null;
 		el.onmousemove = null;
 		el.onmouseleave = null;

@@ -52,10 +52,10 @@ class CombiElement {
 			};
 		}
 
-		function setTranslate(el, xPos, yPos) {
-			el.style.transform = 'translate3d(${Std.string(xPos)}px, 0px, 0)';
-			// el.style.transform = 'translate3d(${Std.string(xPos)}px, ${Std.string(yPos)}px, 0)';
-		}
+		// function setTranslate(el, xPos, yPos) {
+		// 	el.style.transform = 'translate3d(${Std.string(xPos)}px, 0px, 0)';
+		// 	// el.style.transform = 'translate3d(${Std.string(xPos)}px, ${Std.string(yPos)}px, 0)';
+		// }
 
 		function onMouseMove(e) {
 			// trace('onMouseMove');
@@ -75,8 +75,8 @@ class CombiElement {
 			yOffset = yCurrent;
 
 			if (isDrag) {
-				setTranslate(el, xCurrent, yCurrent);
-				// el.style.left = '${xOriginal + xCurrent}px';
+				// setTranslate(el, xCurrent, yCurrent);
+				el.style.left = '${xOriginal + xCurrent}px';
 			} else {
 				var width = wOriginal + (e.pageX - xMouseOriginal);
 				el.style.width = '${width}px';
@@ -92,8 +92,13 @@ class CombiElement {
 
 			el.classList.remove('active');
 
-			// xOffset = 0;
-			// yOffset = 0;
+			xCurrent = 0;
+			yCurrent = 0;
+			xInitial = 0;
+			yInitial = 0;
+			xOffset = 0;
+			yOffset = 0;
+			xOriginal = 0;
 
 			el.onmouseup = null;
 			el.onmousemove = null;
