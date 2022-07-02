@@ -10,12 +10,12 @@ using hxColorToolkit.ColorToolkit;
 using StringTools;
 
 class CreateElement {
-	public function new(el:Element) {
+	public function new(container:Element) {
 		// Make the DIV element draggable:
-		init(cast el);
+		init(cast container);
 	}
 
-	function init(el:DivElement) {
+	function init(container:DivElement) {
 		var xCurrent:Int = 0;
 		var yCurrent:Int = 0;
 		var xInitial:Int = 0;
@@ -57,9 +57,9 @@ class CreateElement {
 			xOffset = 0;
 			yOffset = 0;
 
-			el.onmouseup = null;
-			el.onmousemove = null;
-			el.onmouseleave = null;
+			container.onmouseup = null;
+			container.onmousemove = null;
+			container.onmouseleave = null;
 		}
 
 		function onMouseDown(e) {
@@ -77,25 +77,17 @@ class CreateElement {
 			// trace(xInitial, yInitial);
 
 			// div
-			div = document.createDivElement();
-			// div.innerText = ('...');
+			div = El.create('...', xInitial, yInitial, 10);
 			div.classList.add('klz-dotted');
-			div.id = UUID.uuid();
-			div.style.left = '${xInitial}px';
-			div.style.top = '${yInitial}px';
-			// div.style.width = '50px';
-			div.style.height = '50px';
-			div.style.position = 'absolute';
 			document.body.append(div);
-			// el.append(div);
 
 			// mouse
-			el.onmouseup = onMouseEnd;
-			el.onmousemove = onMouseMove;
-			el.onmouseleave = onMouseEnd;
+			container.onmouseup = onMouseEnd;
+			container.onmousemove = onMouseMove;
+			container.onmouseleave = onMouseEnd;
 		}
 
-		el.ontouchstart = onMouseDown;
-		el.onmousedown = onMouseDown;
+		container.ontouchstart = onMouseDown;
+		container.onmousedown = onMouseDown;
 	}
 }

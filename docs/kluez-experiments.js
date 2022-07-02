@@ -266,12 +266,12 @@ js_Boot.__string_rec = function(o,s) {
 		return String(o);
 	}
 };
-var kluez_CreateElement = function(el) {
-	this.init(el);
+var kluez_CreateElement = function(container) {
+	this.init(container);
 };
 kluez_CreateElement.__name__ = true;
 kluez_CreateElement.prototype = {
-	init: function(el) {
+	init: function(container) {
 		var xCurrent = 0;
 		var yCurrent = 0;
 		var xInitial = 0;
@@ -299,9 +299,9 @@ kluez_CreateElement.prototype = {
 			div.innerText = "...";
 			xOffset = 0;
 			yOffset = 0;
-			el.onmouseup = null;
-			el.onmousemove = null;
-			el.onmouseleave = null;
+			container.onmouseup = null;
+			container.onmousemove = null;
+			container.onmouseleave = null;
 		};
 		var onMouseDown = function(e) {
 			if(e.type == "touchstart") {
@@ -311,20 +311,15 @@ kluez_CreateElement.prototype = {
 				xInitial = e.clientX - xOffset;
 				yInitial = e.clientY - yOffset;
 			}
-			div = window.document.createElement("div");
+			div = kluez_El.create("...",xInitial,yInitial,10);
 			div.classList.add("klz-dotted");
-			div.id = utils_UUID.uuid();
-			div.style.left = "" + xInitial + "px";
-			div.style.top = "" + yInitial + "px";
-			div.style.height = "50px";
-			div.style.position = "absolute";
 			window.document.body.append(div);
-			el.onmouseup = onMouseEnd;
-			el.onmousemove = onMouseMove;
-			el.onmouseleave = onMouseEnd;
+			container.onmouseup = onMouseEnd;
+			container.onmousemove = onMouseMove;
+			container.onmouseleave = onMouseEnd;
 		};
-		el.ontouchstart = onMouseDown;
-		el.onmousedown = onMouseDown;
+		container.ontouchstart = onMouseDown;
+		container.onmousedown = onMouseDown;
 	}
 };
 var kluez_DragElement = function(element) {
@@ -342,8 +337,9 @@ kluez_DragElement.prototype = {
 		while(color_current < color_length) {
 			var color = color_keys[color_current++];
 			var hex = const_Colors.colorMap.h[color];
-			var e = kluez_El.create(element,hex,utils_MathUtil.randomInteger(10,300),i * 60 + 10,utils_MathUtil.randomInteger(50,500));
+			var e = kluez_El.create(hex,utils_MathUtil.randomInteger(10,300),i * 60 + 10,utils_MathUtil.randomInteger(50,500));
 			e.classList.add("klz-el-" + color,"draggable");
+			element.append(e);
 			++i;
 			this.init(e);
 		}
@@ -424,7 +420,7 @@ kluez_DynamicStyle.setStyle = function() {
 };
 var kluez_El = function() { };
 kluez_El.__name__ = true;
-kluez_El.create = function(el,text,x,y,width) {
+kluez_El.create = function(text,x,y,width) {
 	var div = window.document.createElement("div");
 	div.innerText = text;
 	div.classList.add("klz-el");
@@ -434,7 +430,6 @@ kluez_El.create = function(el,text,x,y,width) {
 	div.style.width = "" + width + "px";
 	div.style.height = "50px";
 	div.style.position = "absolute";
-	el.append(div);
 	return div;
 };
 var kluez_ResizeElement = function(container) {

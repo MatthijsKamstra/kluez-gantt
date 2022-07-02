@@ -16,12 +16,13 @@ class DragElement {
 		createElements(element);
 	}
 
-	function createElements(element) {
+	function createElements(element:Element) {
 		var i = 0;
 		for (color in Colors.colorMap.keys()) {
 			var hex = Colors.colorMap[color];
-			var e = El.create(element, hex, MathUtil.randomInteger(10, 300), (i * 60) + 10, MathUtil.randomInteger(50, 500));
+			var e = El.create(hex, MathUtil.randomInteger(10, 300), (i * 60) + 10, MathUtil.randomInteger(50, 500));
 			e.classList.add('klz-el-${color}', 'draggable');
+			element.append(e);
 			i++;
 			init(cast e);
 		}

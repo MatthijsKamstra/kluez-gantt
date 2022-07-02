@@ -5,7 +5,18 @@ import js.html.Element;
 import utils.UUID;
 
 class El {
-	public static function create(el:Element, text:String, x:Int, y:Int, width:Int) {
+	/**
+	 * @example
+	 *			var el = El.create(hex, MathUtil.randomInteger(10, 300), (i * 60) + 10, MathUtil.randomInteger(50, 500));
+	 *			el.classList.add('klz-el-${color}', 'draggable');
+	 *			document.body.append(e);
+	 *
+	 * @param text
+	 * @param x
+	 * @param y
+	 * @param width
+	 */
+	public static function create(text:String, x:Int, y:Int, width:Int) {
 		// div
 		var div = document.createDivElement();
 		div.innerText = text;
@@ -16,7 +27,6 @@ class El {
 		div.style.width = '${width}px';
 		div.style.height = '50px';
 		div.style.position = 'absolute';
-		el.append(div);
 		return div;
 	}
 }

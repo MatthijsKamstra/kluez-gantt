@@ -102,17 +102,6 @@
 
 		}
 
-		.klz-dotted {
-			/* border: 2px dashed black; */
-			border-width: 2px;
-			border-style: dashed;
-			border-color: var(--kluez-gray-color-darken);
-
-			border-radius: 8px;
-
-			user-select: none;
-			pointer-events: none;
-		}
 
 		.klz-el {
 			color: white;
@@ -122,7 +111,6 @@
 
 			border-width: 2px;
 			border-style: solid;
-
 			border-radius: 8px;
 
 			width: 50px;
@@ -140,7 +128,20 @@
 			user-select: none;
 
 			/* transition: all 0.5s; */
+			transition: background-color 0.5s;
+		}
 
+		.klz-dotted {
+			background-color: transparent;
+			border-color: var(--kluez-gray-color-darken);
+
+			border-width: 2px;
+			border-style: dashed;
+
+			border-radius: 8px;
+
+			user-select: none;
+			pointer-events: none;
 		}
 
 
@@ -282,6 +283,13 @@
 		<div id="kluez-dummy-container" class="container-klz">
 			<p>dummy container</p>
 		</div>
+		<div id="kluez-dummy-container" class="container-klz">
+			<p>dummy container</p>
+		</div>
+
+		<div id="kluez-create-container" class="container-klz">
+			<p>create container</p>
+		</div>
 
 		<div id="kluez-resize-container" class="container-klz">
 			<p>resize container</p>
@@ -302,9 +310,7 @@
 			<p>drag container</p>
 		</div>
 
-		<div id="kluez-create-container" class="container-klz">
-			<p>create container</p>
-		</div>
+
 
 	</main>
 
