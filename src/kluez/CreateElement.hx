@@ -63,8 +63,8 @@ class CreateElement {
 		}
 
 		function onMouseDown(e) {
-			trace('onMouseDown');
-			trace(e);
+			// trace('onMouseDown');
+			// trace(e);
 
 			if (e.type == "touchstart") {
 				xInitial = e.touches[0].pageX - xOffset;

@@ -304,8 +304,6 @@ kluez_CreateElement.prototype = {
 			container.onmouseleave = null;
 		};
 		var onMouseDown = function(e) {
-			console.log("src/kluez/CreateElement.hx:66:","onMouseDown");
-			console.log("src/kluez/CreateElement.hx:67:",e);
 			if(e.type == "touchstart") {
 				xInitial = e.touches[0].pageX - xOffset;
 				yInitial = e.touches[0].pageY - yOffset;
