@@ -451,11 +451,8 @@ kluez_DragElement.init = function(el) {
 	var yInitial = 0;
 	var xOffset = 0;
 	var yOffset = 0;
-	var setTranslate = function(el,xPos,yPos) {
-		el.style.transform = "translate3d(" + (xPos == null ? "null" : "" + xPos) + "px, 0px, 0)";
-	};
+	var xOriginal = 0;
 	var onMouseMove = function(e) {
-		var el = e.target;
 		if(e.type == "touchmove") {
 			xCurrent = e.touches[0].clientX - xInitial;
 			yCurrent = e.touches[0].clientY - yInitial;
@@ -465,19 +462,22 @@ kluez_DragElement.init = function(el) {
 		}
 		xOffset = xCurrent;
 		yOffset = yCurrent;
-		setTranslate(el,xCurrent,yCurrent);
+		el.style.left = "" + (xOriginal + xCurrent) + "px";
 	};
 	var onMouseEnd = function(e) {
-		var el = e.target;
-		xInitial = xCurrent;
-		yInitial = yCurrent;
+		xCurrent = 0;
+		yCurrent = 0;
+		xInitial = 0;
+		yInitial = 0;
+		xOffset = 0;
+		yOffset = 0;
+		xOriginal = 0;
 		el.classList.remove("active");
 		el.onmouseup = null;
 		el.onmousemove = null;
 		el.onmouseleave = null;
 	};
 	var onMouseDown = function(e) {
-		var el = e.target;
 		el.classList.add("active");
 		if(e.type == "touchstart") {
 			xInitial = e.touches[0].clientX - xOffset;
@@ -486,6 +486,7 @@ kluez_DragElement.init = function(el) {
 			xInitial = e.clientX - xOffset;
 			yInitial = e.clientY - yOffset;
 		}
+		xOriginal = el.getBoundingClientRect().left | 0;
 		el.onmouseup = onMouseEnd;
 		el.onmousemove = onMouseMove;
 		el.onmouseleave = onMouseEnd;

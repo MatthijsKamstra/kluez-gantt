@@ -117,8 +117,10 @@ class CombiElement {
 
 			wOriginal = Std.parseInt(window.getComputedStyle(el, null).getPropertyValue('width').replace('px', ''));
 			hOriginal = Std.parseInt(window.getComputedStyle(el, null).getPropertyValue('height').replace('px', ''));
+
 			xOriginal = Std.int(el.getBoundingClientRect().left);
 			yOriginal = Std.int(el.getBoundingClientRect().top);
+
 			xMouseOriginal = e.pageX;
 			yMouseOriginal = e.pageY;
 

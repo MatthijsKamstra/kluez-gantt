@@ -21,17 +21,19 @@ class DragElement {
 		var yInitial:Int = 0;
 		var xOffset:Int = 0;
 		var yOffset:Int = 0;
+		//
+		var xOriginal:Int = 0;
 
-		function setTranslate(el, xPos, yPos) {
-			el.style.transform = 'translate3d(${Std.string(xPos)}px, 0px, 0)';
-			// el.style.transform = 'translate3d(${Std.string(xPos)}px, ${Std.string(yPos)}px, 0)';
-		}
+		// function setTranslate(el, xPos, yPos) {
+		// 	el.style.transform = 'translate3d(${Std.string(xPos)}px, 0px, 0)';
+		// 	// el.style.transform = 'translate3d(${Std.string(xPos)}px, ${Std.string(yPos)}px, 0)';
+		// }
 
 		function onMouseMove(e) {
 			// trace('onMouseMove');
 			// trace(e);
 
-			var el = e.target;
+			// var el = e.target;
 
 			if (e.type == "touchmove") {
 				xCurrent = e.touches[0].clientX - xInitial;
@@ -44,20 +46,29 @@ class DragElement {
 			xOffset = xCurrent;
 			yOffset = yCurrent;
 
-			setTranslate(el, xCurrent, yCurrent);
+			// setTranslate(el, xCurrent, yCurrent);
+			el.style.left = '${xOriginal + xCurrent}px';
+			// el.style.left = '${xCurrent}px';
 		}
 
 		function onMouseEnd(e) {
 			// trace('onMouseEnd');
-			var el = e.target;
+			// var el = e.target;
 
-			xInitial = xCurrent;
-			yInitial = yCurrent;
+			// xInitial = xCurrent;
+			// yInitial = yCurrent;
+
+			// xOriginal = Std.int(el.getBoundingClientRect().left);
+			xCurrent = 0;
+			yCurrent = 0;
+			xInitial = 0;
+			yInitial = 0;
+			xOffset = 0;
+			yOffset = 0;
+			//
+			xOriginal = 0;
 
 			el.classList.remove('active');
-
-			// xOffset = 0;
-			// yOffset = 0;
 
 			el.onmouseup = null;
 			el.onmousemove = null;
@@ -68,7 +79,7 @@ class DragElement {
 			// trace('onMouseDown');
 			// trace(e);
 
-			var el:DivElement = e.target;
+			// var el:DivElement = e.target;
 			el.classList.add('active');
 
 			if (e.type == "touchstart") {
@@ -78,6 +89,14 @@ class DragElement {
 				xInitial = e.clientX - xOffset;
 				yInitial = e.clientY - yOffset;
 			}
+
+			xOriginal = Std.int(el.getBoundingClientRect().left);
+			// yOriginal = Std.int(el.getBoundingClientRect().top);
+
+			// xOffset = xInitial;
+			// yOffset = yInitial;
+
+			// trace('xInitial:$xInitial, yInitial:$yInitial');
 
 			el.onmouseup = onMouseEnd;
 			el.onmousemove = onMouseMove;
