@@ -58,17 +58,15 @@ class DragElement {
 			// xInitial = xCurrent;
 			// yInitial = yCurrent;
 
-			// xOriginal = Std.int(el.getBoundingClientRect().left);
+			el.classList.remove('active');
+
 			xCurrent = 0;
 			yCurrent = 0;
 			xInitial = 0;
 			yInitial = 0;
 			xOffset = 0;
 			yOffset = 0;
-			//
 			xOriginal = 0;
-
-			el.classList.remove('active');
 
 			el.onmouseup = null;
 			el.onmousemove = null;
@@ -79,7 +77,6 @@ class DragElement {
 			// trace('onMouseDown');
 			// trace(e);
 
-			// var el:DivElement = e.target;
 			el.classList.add('active');
 
 			if (e.type == "touchstart") {
@@ -92,11 +89,6 @@ class DragElement {
 
 			xOriginal = Std.int(el.getBoundingClientRect().left);
 			// yOriginal = Std.int(el.getBoundingClientRect().top);
-
-			// xOffset = xInitial;
-			// yOffset = yInitial;
-
-			// trace('xInitial:$xInitial, yInitial:$yInitial');
 
 			el.onmouseup = onMouseEnd;
 			el.onmousemove = onMouseMove;

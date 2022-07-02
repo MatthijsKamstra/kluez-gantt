@@ -465,6 +465,7 @@ kluez_DragElement.init = function(el) {
 		el.style.left = "" + (xOriginal + xCurrent) + "px";
 	};
 	var onMouseEnd = function(e) {
+		el.classList.remove("active");
 		xCurrent = 0;
 		yCurrent = 0;
 		xInitial = 0;
@@ -472,7 +473,6 @@ kluez_DragElement.init = function(el) {
 		xOffset = 0;
 		yOffset = 0;
 		xOriginal = 0;
-		el.classList.remove("active");
 		el.onmouseup = null;
 		el.onmousemove = null;
 		el.onmouseleave = null;
@@ -521,7 +521,7 @@ var kluez_El = function() { };
 kluez_El.__name__ = true;
 kluez_El.create = function(text,x,y,width) {
 	var div = window.document.createElement("div");
-	div.innerText = text;
+	div.innerHTML = "<span>" + text + "</span>";
 	div.classList.add("klz-el");
 	div.id = utils_UUID.uuid();
 	div.style.left = "" + x + "px";

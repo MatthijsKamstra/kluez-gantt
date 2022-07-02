@@ -19,7 +19,7 @@ class El {
 	public static function create(text:String, x:Int, y:Int, width:Int) {
 		// div
 		var div = document.createDivElement();
-		div.innerText = text;
+		div.innerHTML = '<span>$text</span>';
 		div.classList.add('klz-el');
 		div.id = UUID.uuid();
 		div.style.left = '${x}px';

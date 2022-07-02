@@ -104,7 +104,6 @@ class CombiElement {
 			// trace('onMouseDown');
 			// trace(e);
 
-			// var el:DivElement = e.target;
 			el.classList.add('active');
 
 			if (e.type == "touchstart") {
