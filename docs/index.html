@@ -26,6 +26,16 @@
 
 	<!-- custom css -->
 	<style>
+		/* main>.container {
+			padding: 60px 15px 0;
+		} */
+
+		main {
+			padding-top: 60px;
+
+		}
+
+
 		/* https://www.w3schools.com/colors/colors_converter.asp */
 		:root {
 			--green: #1abc9c;
@@ -168,7 +178,7 @@
 <body class="d-flex flex-column h-100">
 
 
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+	<nav class="navbar fixed-top navbar-expand-md navbar-dark bg-dark">
 		<div class="container-fluid">
 			<a class="navbar-brand" href="#">🐝</a>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
@@ -181,26 +191,24 @@
 					<li class="nav-item">
 						<a class="nav-link active" aria-current="page" href="#">Home</a>
 					</li>
-					<li class="nav-item">
+					<!-- <li class="nav-item">
 						<a class="nav-link" href="#">Link</a>
-					</li>
+					</li> -->
 					<li class="nav-item dropdown">
 						<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
 							data-bs-toggle="dropdown" aria-expanded="false">
 							Dropdown
 						</a>
 						<ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-							<li><a class="dropdown-item" href="#">Action</a></li>
-							<li><a class="dropdown-item" href="#">Another action</a></li>
-							<li>
-								<hr class="dropdown-divider">
-							</li>
-							<li><a class="dropdown-item" href="#">Something else here</a></li>
+							<li><a class="dropdown-item" href="#kluez-example-container">example</a></li>
+							<li><a class="dropdown-item" href="#kluez-dummy-container">dummy</a></li>
+							<li><a class="dropdown-item" href="#kluez-combi-container">combi</a></li>
+							<li><a class="dropdown-item" href="#kluez-create-container">create</a></li>
+							<li><a class="dropdown-item" href="#kluez-resize-container">resize</a></li>
+							<li><a class="dropdown-item" href="#kluez-drag-container">drag</a></li>
 						</ul>
 					</li>
-					<li class="nav-item">
-						<a class="nav-link disabled">Disabled</a>
-					</li>
+
 				</ul>
 
 			</div>
@@ -256,6 +264,12 @@
 
 
 	</main>
+
+	<footer class="footer mt-auto py-3 bg-light">
+		<div class="container">
+			<span class="text-muted">Place sticky footer content here.</span>
+		</div>
+	</footer>
 
 	<!-- Option 1: Bootstrap Bundle with Popper -->
 	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
