@@ -22,7 +22,7 @@ class Main {
 		console.info('Kluez');
 		DynamicStyle.setStyle();
 
-		// Convert.gantt();
+		new Convert().gantt();
 
 		// create container setup
 		new CreateElement(document.getElementById("kluez-create-container"));

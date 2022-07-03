@@ -1,7 +1,154 @@
 (function ($global) { "use strict";
+function $extend(from, fields) {
+	var proto = Object.create(from);
+	for (var name in fields) proto[name] = fields[name];
+	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
+	return proto;
+}
+var DateTools = function() { };
+DateTools.__name__ = true;
+DateTools.__format_get = function(d,e) {
+	switch(e) {
+	case "%":
+		return "%";
+	case "A":
+		return DateTools.DAY_NAMES[d.getDay()];
+	case "B":
+		return DateTools.MONTH_NAMES[d.getMonth()];
+	case "C":
+		return StringTools.lpad(Std.string(d.getFullYear() / 100 | 0),"0",2);
+	case "D":
+		return DateTools.__format(d,"%m/%d/%y");
+	case "F":
+		return DateTools.__format(d,"%Y-%m-%d");
+	case "I":case "l":
+		var hour = d.getHours() % 12;
+		return StringTools.lpad(Std.string(hour == 0 ? 12 : hour),e == "I" ? "0" : " ",2);
+	case "M":
+		return StringTools.lpad(Std.string(d.getMinutes()),"0",2);
+	case "R":
+		return DateTools.__format(d,"%H:%M");
+	case "S":
+		return StringTools.lpad(Std.string(d.getSeconds()),"0",2);
+	case "T":
+		return DateTools.__format(d,"%H:%M:%S");
+	case "Y":
+		return Std.string(d.getFullYear());
+	case "a":
+		return DateTools.DAY_SHORT_NAMES[d.getDay()];
+	case "b":case "h":
+		return DateTools.MONTH_SHORT_NAMES[d.getMonth()];
+	case "d":
+		return StringTools.lpad(Std.string(d.getDate()),"0",2);
+	case "e":
+		return Std.string(d.getDate());
+	case "H":case "k":
+		return StringTools.lpad(Std.string(d.getHours()),e == "H" ? "0" : " ",2);
+	case "m":
+		return StringTools.lpad(Std.string(d.getMonth() + 1),"0",2);
+	case "n":
+		return "\n";
+	case "p":
+		if(d.getHours() > 11) {
+			return "PM";
+		} else {
+			return "AM";
+		}
+		break;
+	case "r":
+		return DateTools.__format(d,"%I:%M:%S %p");
+	case "s":
+		return Std.string(d.getTime() / 1000 | 0);
+	case "t":
+		return "\t";
+	case "u":
+		var t = d.getDay();
+		if(t == 0) {
+			return "7";
+		} else if(t == null) {
+			return "null";
+		} else {
+			return "" + t;
+		}
+		break;
+	case "w":
+		return Std.string(d.getDay());
+	case "y":
+		return StringTools.lpad(Std.string(d.getFullYear() % 100),"0",2);
+	default:
+		throw new haxe_exceptions_NotImplementedException("Date.format %" + e + "- not implemented yet.",null,{ fileName : "DateTools.hx", lineNumber : 101, className : "DateTools", methodName : "__format_get"});
+	}
+};
+DateTools.__format = function(d,f) {
+	var r_b = "";
+	var p = 0;
+	while(true) {
+		var np = f.indexOf("%",p);
+		if(np < 0) {
+			break;
+		}
+		var len = np - p;
+		r_b += len == null ? HxOverrides.substr(f,p,null) : HxOverrides.substr(f,p,len);
+		r_b += Std.string(DateTools.__format_get(d,HxOverrides.substr(f,np + 1,1)));
+		p = np + 2;
+	}
+	var len = f.length - p;
+	r_b += len == null ? HxOverrides.substr(f,p,null) : HxOverrides.substr(f,p,len);
+	return r_b;
+};
+DateTools.format = function(d,f) {
+	return DateTools.__format(d,f);
+};
+var HxOverrides = function() { };
+HxOverrides.__name__ = true;
+HxOverrides.strDate = function(s) {
+	switch(s.length) {
+	case 8:
+		var k = s.split(":");
+		var d = new Date();
+		d["setTime"](0);
+		d["setUTCHours"](k[0]);
+		d["setUTCMinutes"](k[1]);
+		d["setUTCSeconds"](k[2]);
+		return d;
+	case 10:
+		var k = s.split("-");
+		return new Date(k[0],k[1] - 1,k[2],0,0,0);
+	case 19:
+		var k = s.split(" ");
+		var y = k[0].split("-");
+		var t = k[1].split(":");
+		return new Date(y[0],y[1] - 1,y[2],t[0],t[1],t[2]);
+	default:
+		throw haxe_Exception.thrown("Invalid date format : " + s);
+	}
+};
+HxOverrides.cca = function(s,index) {
+	var x = s.charCodeAt(index);
+	if(x != x) {
+		return undefined;
+	}
+	return x;
+};
+HxOverrides.substr = function(s,pos,len) {
+	if(len == null) {
+		len = s.length;
+	} else if(len < 0) {
+		if(pos == 0) {
+			len = s.length + len;
+		} else {
+			return "";
+		}
+	}
+	return s.substr(pos,len);
+};
+HxOverrides.now = function() {
+	return Date.now();
+};
 var Main = function() {
 	$global.console.info("Kluez");
 	kluez_DynamicStyle.setStyle();
+	new utils_Convert().gantt();
 	new kluez_CreateElement(window.document.getElementById("kluez-create-container"));
 	new kluez_ResizeElement(window.document.getElementById("kluez-resize-container"));
 	this.setupResize(window.document.getElementById("kluez-drag-container"));
@@ -77,6 +224,54 @@ Std.parseInt = function(x) {
 };
 var StringTools = function() { };
 StringTools.__name__ = true;
+StringTools.startsWith = function(s,start) {
+	if(s.length >= start.length) {
+		return s.lastIndexOf(start,0) == 0;
+	} else {
+		return false;
+	}
+};
+StringTools.isSpace = function(s,pos) {
+	var c = HxOverrides.cca(s,pos);
+	if(!(c > 8 && c < 14)) {
+		return c == 32;
+	} else {
+		return true;
+	}
+};
+StringTools.ltrim = function(s) {
+	var l = s.length;
+	var r = 0;
+	while(r < l && StringTools.isSpace(s,r)) ++r;
+	if(r > 0) {
+		return HxOverrides.substr(s,r,l - r);
+	} else {
+		return s;
+	}
+};
+StringTools.rtrim = function(s) {
+	var l = s.length;
+	var r = 0;
+	while(r < l && StringTools.isSpace(s,l - r - 1)) ++r;
+	if(r > 0) {
+		return HxOverrides.substr(s,0,l - r);
+	} else {
+		return s;
+	}
+};
+StringTools.trim = function(s) {
+	return StringTools.ltrim(StringTools.rtrim(s));
+};
+StringTools.lpad = function(s,c,l) {
+	if(c.length <= 0) {
+		return s;
+	}
+	var buf_b = "";
+	l -= s.length;
+	while(buf_b.length < l) buf_b += c == null ? "null" : "" + c;
+	buf_b += s == null ? "null" : "" + s;
+	return buf_b;
+};
 StringTools.replace = function(s,sub,by) {
 	return s.split(sub).join(by);
 };
@@ -103,6 +298,70 @@ var haxe_ds_StringMap = function() {
 haxe_ds_StringMap.__name__ = true;
 var const_Colors = function() { };
 const_Colors.__name__ = true;
+var const_Gantt = function() { };
+const_Gantt.__name__ = true;
+var haxe_Exception = function(message,previous,native) {
+	Error.call(this,message);
+	this.message = message;
+	this.__previousException = previous;
+	this.__nativeException = native != null ? native : this;
+};
+haxe_Exception.__name__ = true;
+haxe_Exception.thrown = function(value) {
+	if(((value) instanceof haxe_Exception)) {
+		return value.get_native();
+	} else if(((value) instanceof Error)) {
+		return value;
+	} else {
+		var e = new haxe_ValueException(value);
+		return e;
+	}
+};
+haxe_Exception.__super__ = Error;
+haxe_Exception.prototype = $extend(Error.prototype,{
+	toString: function() {
+		return this.get_message();
+	}
+	,get_message: function() {
+		return this.message;
+	}
+	,get_native: function() {
+		return this.__nativeException;
+	}
+});
+var haxe_ValueException = function(value,previous,native) {
+	haxe_Exception.call(this,String(value),previous,native);
+	this.value = value;
+};
+haxe_ValueException.__name__ = true;
+haxe_ValueException.__super__ = haxe_Exception;
+haxe_ValueException.prototype = $extend(haxe_Exception.prototype,{
+});
+var haxe_exceptions_PosException = function(message,previous,pos) {
+	haxe_Exception.call(this,message,previous);
+	if(pos == null) {
+		this.posInfos = { fileName : "(unknown)", lineNumber : 0, className : "(unknown)", methodName : "(unknown)"};
+	} else {
+		this.posInfos = pos;
+	}
+};
+haxe_exceptions_PosException.__name__ = true;
+haxe_exceptions_PosException.__super__ = haxe_Exception;
+haxe_exceptions_PosException.prototype = $extend(haxe_Exception.prototype,{
+	toString: function() {
+		return "" + haxe_Exception.prototype.toString.call(this) + " in " + this.posInfos.className + "." + this.posInfos.methodName + " at " + this.posInfos.fileName + ":" + this.posInfos.lineNumber;
+	}
+});
+var haxe_exceptions_NotImplementedException = function(message,previous,pos) {
+	if(message == null) {
+		message = "Not implemented";
+	}
+	haxe_exceptions_PosException.call(this,message,previous,pos);
+};
+haxe_exceptions_NotImplementedException.__name__ = true;
+haxe_exceptions_NotImplementedException.__super__ = haxe_exceptions_PosException;
+haxe_exceptions_NotImplementedException.prototype = $extend(haxe_exceptions_PosException.prototype,{
+});
 var haxe_iterators_ArrayIterator = function(array) {
 	this.current = 0;
 	this.array = array;
@@ -605,6 +864,132 @@ kluez_ResizeElement.prototype = {
 		el.onmousedown = onMouseDown;
 	}
 };
+var utils_Convert = function() {
+};
+utils_Convert.__name__ = true;
+utils_Convert.prototype = {
+	gantt: function() {
+		var json = { };
+		json["created_date"] = new Date();
+		json["updated_date"] = new Date();
+		json["section"] = [];
+		var text = const_Gantt.TEST_0;
+		var lines = text.split("\n");
+		var _sectionArr = [];
+		var _mapBefore_h = Object.create(null);
+		var _mapAfter = new haxe_ds_StringMap();
+		var _sectionTitle = "";
+		var _startDateStr = "";
+		var _endDateStr = "";
+		var _state = "";
+		var _id = "";
+		var _startDate = new Date();
+		var _endDate = new Date();
+		var _previousStartDate = new Date();
+		var _previousEndDate = new Date();
+		var _g = 0;
+		var _g1 = lines.length;
+		while(_g < _g1) {
+			var i = _g++;
+			var ganttObj = { };
+			var line = StringTools.trim(lines[i]);
+			if(line == "") {
+				continue;
+			}
+			if(StringTools.startsWith(StringTools.trim(line),"%%")) {
+				continue;
+			}
+			if(line.indexOf("section") != -1) {
+				_sectionTitle = StringTools.trim(StringTools.trim(line).substring("section".length));
+				$global.console.info("" + _sectionTitle);
+			} else {
+				var arrr = line.split(":");
+				var _title = StringTools.trim(arrr[0]);
+				var rest = StringTools.trim(arrr[1]);
+				var restArr = rest.split(",");
+				var oArr = [];
+				$global.console.group(_title);
+				$global.console.log("- \"" + line + "\"");
+				$global.console.info("- \"" + _sectionTitle + "\"");
+				$global.console.info("- \"" + _title + "\"");
+				oArr.push(StringTools.replace(StringTools.replace(line,"\t",""),"  "," "));
+				var _g2 = 0;
+				var _g3 = restArr.length;
+				while(_g2 < _g3) {
+					var j = _g2++;
+					var _restArr = StringTools.trim(restArr[j]);
+					$global.console.log("- " + _restArr);
+					oArr.push(StringTools.trim(_restArr));
+				}
+				ganttObj["_original"] = oArr;
+				ganttObj["section"] = _sectionTitle;
+				ganttObj["title"] = _title;
+				ganttObj["start_date"] = "";
+				if(restArr.length >= 2) {
+					_startDateStr = StringTools.trim(restArr[restArr.length - 2]);
+					if(_startDateStr.split("-").length == 3) {
+						var date = HxOverrides.strDate(_startDateStr);
+						ganttObj["start_date"] = DateTools.format(date,"%F");
+						$global.console.info("start_date (xx-xx-xx): " + DateTools.format(date,"%F"));
+						_previousStartDate = date;
+					}
+					if(_startDateStr.length == 2) {
+						var nr = Std.parseInt(StringTools.trim(StringTools.replace(_startDateStr,"d","")));
+						var date1 = new Date(_previousStartDate.getTime() + nr * 24.0 * 60.0 * 60.0 * 1000.0);
+						ganttObj["start_date"] = DateTools.format(date1,"%F");
+						$global.console.info("start_date (" + _startDateStr + "): " + DateTools.format(date1,"%F"));
+						_previousStartDate = date1;
+					}
+					if(_startDateStr.indexOf("after ") != -1) {
+						var getID = StringTools.replace(_startDateStr,"after ","");
+						$global.console.info("start_date (" + _startDateStr + "): " + getID + " - " + _mapAfter.h[getID]);
+						ganttObj["start_date"] = _mapAfter.h[getID];
+					}
+				}
+				var _endDateStr = StringTools.trim(restArr[restArr.length - 1]);
+				ganttObj["end_date"] = "";
+				if(_endDateStr.split("-").length == 3) {
+					var date2 = HxOverrides.strDate(_endDateStr);
+					ganttObj["end_date"] = DateTools.format(date2,"%F");
+					$global.console.info("end_date (xx-xx-xx): " + DateTools.format(date2,"%F"));
+					_previousEndDate = date2;
+				}
+				if(_endDateStr.length == 2) {
+					var nr1 = Std.parseInt(StringTools.trim(StringTools.replace(_endDateStr,"d","")));
+					var date3 = new Date(_previousEndDate.getTime() + nr1 * 24.0 * 60.0 * 60.0 * 1000.0);
+					ganttObj["end_date"] = DateTools.format(date3,"%F");
+					$global.console.info("end_date (" + _endDateStr + "): " + DateTools.format(date3,"%F"));
+					_previousEndDate = date3;
+				}
+				if(_endDateStr.indexOf("after ") != -1) {
+					var getID1 = StringTools.replace(_endDateStr,"after ","");
+					$global.console.info("end_date (" + _endDateStr + "): " + getID1 + " - " + _mapAfter.h[getID1]);
+					ganttObj["end_date"] = _mapAfter.h[getID1];
+				}
+				ganttObj["id"] = "";
+				if(restArr.length >= 3) {
+					var _id = StringTools.trim(restArr[restArr.length - 3]);
+					$global.console.info("id: " + _id);
+					ganttObj["id"] = _id;
+					var value = DateTools.format(_previousEndDate,"%F");
+					_mapAfter.h[_id] = value;
+					_mapBefore_h[_id] = DateTools.format(_previousStartDate,"%F");
+				}
+				ganttObj["state"] = "";
+				if(restArr.length >= 4) {
+					var _state = StringTools.trim(restArr[restArr.length - 4]);
+					$global.console.info("state: " + _state);
+					ganttObj["state"] = _state;
+				}
+				$global.console.groupEnd();
+				_sectionArr.push(ganttObj);
+			}
+		}
+		$global.console.log("map after: " + JSON.stringify(_mapAfter));
+		json["section"] = _sectionArr;
+		$global.console.log(JSON.stringify(json,null,"  "));
+	}
+};
 var utils_MathUtil = function() { };
 utils_MathUtil.__name__ = true;
 utils_MathUtil.randomInteger = function(min,max) {
@@ -623,10 +1008,17 @@ utils_UUID.uuid = function() {
 	while(a++ < 36) uid_b += Std.string((a * 51 & 52) != 0 ? StringTools.hex((a ^ 15) != 0 ? 8 ^ (Math.random() * ((a ^ 20) != 0 ? 16 : 4) | 0) : 4) : "-");
 	return uid_b.toLowerCase();
 };
+if(typeof(performance) != "undefined" ? typeof(performance.now) == "function" : false) {
+	HxOverrides.now = performance.now.bind(performance);
+}
 String.__name__ = true;
 Array.__name__ = true;
 Date.__name__ = "Date";
 js_Boot.__toStr = ({ }).toString;
+DateTools.DAY_SHORT_NAMES = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+DateTools.DAY_NAMES = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+DateTools.MONTH_SHORT_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+DateTools.MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const_ClassNames.DRAGGABLE = "draggable";
 const_ClassNames.RESIZEABLE = "resizeable";
 const_Colors.colorMap = (function($this) {
@@ -641,6 +1033,7 @@ const_Colors.colorMap = (function($this) {
 	$r = _g;
 	return $r;
 }(this));
+const_Gantt.TEST_0 = "\n  section A section\n    Completed task            :done,    des1, 2014-01-06,2014-01-08\n    Active task               :active,  des2, 2014-01-09, 3d\n    Future task               :         des3, after des2, 5d\n    Future task2              :         des4, after des3, 5d\n    Future task3              :        2d\n";
 kluez_DynamicStyle.colorMap = (function($this) {
 	var $r;
 	var _g = new haxe_ds_StringMap();
