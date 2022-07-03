@@ -25,7 +25,7 @@ class Convert {
 		Reflect.setField(json, 'updated_date', Date.now());
 		Reflect.setField(json, 'section', []);
 
-		var text = Gantt.TEST_0;
+		var text = Gantt.TEST_1;
 		var lines = text.split('\n');
 
 		var _sectionArr = [];
@@ -83,7 +83,7 @@ class Convert {
 				Reflect.setField(ganttObj, 'title', _title);
 
 				// START DATE
-				Reflect.setField(ganttObj, 'start_date', '');
+				Reflect.setField(ganttObj, 'start_date', DateTools.format(_previousStartDate, "%F"));
 				if (restArr.length >= 2) {
 					_startDateStr = restArr[restArr.length - 2].trim();
 					// Reflect.setField(ganttObj, '__start_date', _startDateStr);
@@ -99,6 +99,7 @@ class Convert {
 						console.info('start_date (xx-xx-xx): ' + DateTools.format(date, "%F"));
 
 						_previousStartDate = date;
+						_startDate = date;
 					}
 
 					// START DATE // 5d
@@ -110,14 +111,19 @@ class Convert {
 						console.info('start_date ($_startDateStr): ' + DateTools.format(date, "%F"));
 
 						_previousStartDate = date;
+						_startDate = date;
 					}
 
 					// START DATE // after
 					if (_startDateStr.indexOf('after ') != -1) {
 						var getID = _startDateStr.replace('after ', '');
 						// console.log(_map.get(getID));
-						console.info('start_date ($_startDateStr): ' + getID + ' - ' + _mapAfter.get(getID));
+						var date = Date.fromString(_mapAfter.get(getID));
 						Reflect.setField(ganttObj, 'start_date', _mapAfter.get(getID));
+						console.info('start_date ($_startDateStr): ' + getID + ' - ' + _mapAfter.get(getID));
+
+						_previousStartDate = date;
+						_startDate = date;
 					}
 				}
 
@@ -133,25 +139,31 @@ class Convert {
 					console.info('end_date (xx-xx-xx): ' + DateTools.format(date, "%F"));
 
 					_previousEndDate = date;
+					_endDate = date;
 				}
 
 				// END DATE // 5d
 				if (_endDateStr.length == 2) {
 					var nr = Std.parseInt(_endDateStr.replace('d', '').trim());
-					// console.log('days: ' + nr);
-					var date = DateTools.delta(_previousEndDate, DateTools.days(nr));
+					console.log('days: ' + nr);
+					var date = DateTools.delta(_startDate, DateTools.days(nr));
 					Reflect.setField(ganttObj, 'end_date', DateTools.format(date, "%F"));
 					console.info('end_date ($_endDateStr): ' + DateTools.format(date, "%F"));
 
 					_previousEndDate = date;
+					_endDate = date;
 				}
 
 				// END DATE // after
 				if (_endDateStr.indexOf('after ') != -1) {
 					var getID = _endDateStr.replace('after ', '');
 					// console.log(_map.get(getID));
-					console.info('end_date ($_endDateStr): ' + getID + ' - ' + _mapAfter.get(getID));
+					var date = Date.fromString(_mapAfter.get(getID));
 					Reflect.setField(ganttObj, 'end_date', _mapAfter.get(getID));
+					console.info('end_date ($_endDateStr): ' + getID + ' - ' + _mapAfter.get(getID));
+
+					_previousEndDate = date;
+					_endDate = date;
 				}
 
 				// ID
@@ -164,6 +176,29 @@ class Convert {
 					_mapBefore.set(_id, DateTools.format(_previousStartDate, "%F"));
 				}
 
+				// trace(_startDate.getTime());
+				// trace(_endDate.getTime());
+
+				trace('start: ' + _startDate);
+				trace('end: ' + _endDate);
+				var milliseconds = (_endDate.getTime() - _startDate.getTime());
+				var seconds = Math.floor(milliseconds / 1000);
+				var minutes = Math.floor(seconds / 60);
+				var hours = Math.floor(minutes / 60);
+				var days = Math.floor(hours / 24);
+				var weeks = Math.floor(days / 7);
+				var years = Math.floor(weeks / 52);
+				var months = Math.floor(years / 12);
+
+				// trace('milliseconds: ' + milliseconds);
+				// trace('seconds: ' + seconds);
+				// trace('minutes: ' + minutes);
+				// trace('hours: ' + hours);
+				// trace('days: ' + days);
+				// trace('weeks: ' + weeks);
+				// trace('months: ' + months);
+				// trace('years: ' + years);
+
 				// STATE
 				Reflect.setField(ganttObj, 'state', '');
 				if (restArr.length >= 4) {
@@ -172,6 +207,17 @@ class Convert {
 					Reflect.setField(ganttObj, 'state', _state);
 				}
 				console.groupEnd();
+
+				Reflect.setField(ganttObj, 'date', {
+					years: '$years',
+					months: '$months',
+					weeks: '$weeks',
+					days: '${days}',
+					hours: '$hours',
+					minutes: '$minutes',
+					seconds: '$seconds',
+					milliseconds: '$milliseconds',
+				});
 
 				_sectionArr.push(ganttObj);
 			}

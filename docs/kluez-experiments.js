@@ -873,7 +873,7 @@ utils_Convert.prototype = {
 		json["created_date"] = new Date();
 		json["updated_date"] = new Date();
 		json["section"] = [];
-		var text = const_Gantt.TEST_0;
+		var text = const_Gantt.TEST_1;
 		var lines = text.split("\n");
 		var _sectionArr = [];
 		var _mapBefore_h = Object.create(null);
@@ -924,7 +924,7 @@ utils_Convert.prototype = {
 				ganttObj["_original"] = oArr;
 				ganttObj["section"] = _sectionTitle;
 				ganttObj["title"] = _title;
-				ganttObj["start_date"] = "";
+				ganttObj["start_date"] = DateTools.format(_previousStartDate,"%F");
 				if(restArr.length >= 2) {
 					_startDateStr = StringTools.trim(restArr[restArr.length - 2]);
 					if(_startDateStr.split("-").length == 3) {
@@ -932,6 +932,7 @@ utils_Convert.prototype = {
 						ganttObj["start_date"] = DateTools.format(date,"%F");
 						$global.console.info("start_date (xx-xx-xx): " + DateTools.format(date,"%F"));
 						_previousStartDate = date;
+						_startDate = date;
 					}
 					if(_startDateStr.length == 2) {
 						var nr = Std.parseInt(StringTools.trim(StringTools.replace(_startDateStr,"d","")));
@@ -939,32 +940,42 @@ utils_Convert.prototype = {
 						ganttObj["start_date"] = DateTools.format(date1,"%F");
 						$global.console.info("start_date (" + _startDateStr + "): " + DateTools.format(date1,"%F"));
 						_previousStartDate = date1;
+						_startDate = date1;
 					}
 					if(_startDateStr.indexOf("after ") != -1) {
 						var getID = StringTools.replace(_startDateStr,"after ","");
-						$global.console.info("start_date (" + _startDateStr + "): " + getID + " - " + _mapAfter.h[getID]);
+						var date2 = HxOverrides.strDate(_mapAfter.h[getID]);
 						ganttObj["start_date"] = _mapAfter.h[getID];
+						$global.console.info("start_date (" + _startDateStr + "): " + getID + " - " + _mapAfter.h[getID]);
+						_previousStartDate = date2;
+						_startDate = date2;
 					}
 				}
 				var _endDateStr = StringTools.trim(restArr[restArr.length - 1]);
 				ganttObj["end_date"] = "";
 				if(_endDateStr.split("-").length == 3) {
-					var date2 = HxOverrides.strDate(_endDateStr);
-					ganttObj["end_date"] = DateTools.format(date2,"%F");
-					$global.console.info("end_date (xx-xx-xx): " + DateTools.format(date2,"%F"));
-					_previousEndDate = date2;
+					var date3 = HxOverrides.strDate(_endDateStr);
+					ganttObj["end_date"] = DateTools.format(date3,"%F");
+					$global.console.info("end_date (xx-xx-xx): " + DateTools.format(date3,"%F"));
+					_previousEndDate = date3;
+					_endDate = date3;
 				}
 				if(_endDateStr.length == 2) {
 					var nr1 = Std.parseInt(StringTools.trim(StringTools.replace(_endDateStr,"d","")));
-					var date3 = new Date(_previousEndDate.getTime() + nr1 * 24.0 * 60.0 * 60.0 * 1000.0);
-					ganttObj["end_date"] = DateTools.format(date3,"%F");
-					$global.console.info("end_date (" + _endDateStr + "): " + DateTools.format(date3,"%F"));
-					_previousEndDate = date3;
+					$global.console.log("days: " + nr1);
+					var date4 = new Date(_startDate.getTime() + nr1 * 24.0 * 60.0 * 60.0 * 1000.0);
+					ganttObj["end_date"] = DateTools.format(date4,"%F");
+					$global.console.info("end_date (" + _endDateStr + "): " + DateTools.format(date4,"%F"));
+					_previousEndDate = date4;
+					_endDate = date4;
 				}
 				if(_endDateStr.indexOf("after ") != -1) {
 					var getID1 = StringTools.replace(_endDateStr,"after ","");
-					$global.console.info("end_date (" + _endDateStr + "): " + getID1 + " - " + _mapAfter.h[getID1]);
+					var date5 = HxOverrides.strDate(_mapAfter.h[getID1]);
 					ganttObj["end_date"] = _mapAfter.h[getID1];
+					$global.console.info("end_date (" + _endDateStr + "): " + getID1 + " - " + _mapAfter.h[getID1]);
+					_previousEndDate = date5;
+					_endDate = date5;
 				}
 				ganttObj["id"] = "";
 				if(restArr.length >= 3) {
@@ -975,6 +986,16 @@ utils_Convert.prototype = {
 					_mapAfter.h[_id] = value;
 					_mapBefore_h[_id] = DateTools.format(_previousStartDate,"%F");
 				}
+				console.log("src/utils/Convert.hx:182:","start: " + Std.string(_startDate));
+				console.log("src/utils/Convert.hx:183:","end: " + Std.string(_endDate));
+				var milliseconds = _endDate.getTime() - _startDate.getTime();
+				var seconds = Math.floor(milliseconds / 1000);
+				var minutes = Math.floor(seconds / 60);
+				var hours = Math.floor(minutes / 60);
+				var days = Math.floor(hours / 24);
+				var weeks = Math.floor(days / 7);
+				var years = Math.floor(weeks / 52);
+				var months = Math.floor(years / 12);
 				ganttObj["state"] = "";
 				if(restArr.length >= 4) {
 					var _state = StringTools.trim(restArr[restArr.length - 4]);
@@ -982,6 +1003,7 @@ utils_Convert.prototype = {
 					ganttObj["state"] = _state;
 				}
 				$global.console.groupEnd();
+				ganttObj["date"] = { years : "" + years, months : "" + months, weeks : "" + weeks, days : "" + days, hours : "" + hours, minutes : "" + minutes, seconds : "" + seconds, milliseconds : "" + milliseconds};
 				_sectionArr.push(ganttObj);
 			}
 		}
@@ -1033,7 +1055,7 @@ const_Colors.colorMap = (function($this) {
 	$r = _g;
 	return $r;
 }(this));
-const_Gantt.TEST_0 = "\n  section A section\n    Completed task            :done,    des1, 2014-01-06,2014-01-08\n    Active task               :active,  des2, 2014-01-09, 3d\n    Future task               :         des3, after des2, 5d\n    Future task2              :         des4, after des3, 5d\n    Future task3              :        2d\n";
+const_Gantt.TEST_1 = "\n  section A section\n     Completed task            :done,    des1, 2014-01-06,2014-01-08\n     Active task               :active,  des2, 2014-01-09, 3d\n     Future task               :         des3, after des2, 5d\n     Future task2              :         des4, after des3, 5d\n     Future task3              :        2d\n";
 kluez_DynamicStyle.colorMap = (function($this) {
 	var $r;
 	var _g = new haxe_ds_StringMap();
