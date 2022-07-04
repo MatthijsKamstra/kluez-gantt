@@ -22,7 +22,8 @@ class Main {
 		console.info('Kluez');
 		DynamicStyle.setStyle();
 
-		new Convert().gantt();
+		var json = new Convert().gantt(const.Gantt.TEST_1);
+		console.log(haxe.Json.stringify(json, '  '));
 
 		// create container setup
 		new CreateElement(document.getElementById("kluez-create-container"));

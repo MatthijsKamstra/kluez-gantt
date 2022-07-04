@@ -148,7 +148,8 @@ HxOverrides.now = function() {
 var Main = function() {
 	$global.console.info("Kluez");
 	kluez_DynamicStyle.setStyle();
-	new utils_Convert().gantt();
+	var json = new utils_Convert().gantt(const_Gantt.TEST_1);
+	$global.console.log(JSON.stringify(json,null,"  "));
 	new kluez_CreateElement(window.document.getElementById("kluez-create-container"));
 	new kluez_ResizeElement(window.document.getElementById("kluez-resize-container"));
 	this.setupResize(window.document.getElementById("kluez-drag-container"));
@@ -197,6 +198,27 @@ Main.prototype = {
 	}
 };
 Math.__name__ = true;
+var Reflect = function() { };
+Reflect.__name__ = true;
+Reflect.getProperty = function(o,field) {
+	var tmp;
+	if(o == null) {
+		return null;
+	} else {
+		var tmp1;
+		if(o.__properties__) {
+			tmp = o.__properties__["get_" + field];
+			tmp1 = tmp;
+		} else {
+			tmp1 = false;
+		}
+		if(tmp1) {
+			return o[tmp]();
+		} else {
+			return o[field];
+		}
+	}
+};
 var Std = function() { };
 Std.__name__ = true;
 Std.string = function(s) {
@@ -328,6 +350,7 @@ haxe_Exception.prototype = $extend(Error.prototype,{
 	,get_native: function() {
 		return this.__nativeException;
 	}
+	,__properties__: {get_native:"get_native",get_message:"get_message"}
 });
 var haxe_ValueException = function(value,previous,native) {
 	haxe_Exception.call(this,String(value),previous,native);
@@ -418,6 +441,7 @@ hxColorToolkit_spaces_RGB.prototype = {
 	,set_blue: function(value) {
 		return this.setValue(2,value);
 	}
+	,__properties__: {set_blue:"set_blue",get_blue:"get_blue",set_green:"set_green",get_green:"get_green",set_red:"set_red",get_red:"get_red"}
 };
 var hxColorToolkit_spaces_HSL = function(hue,saturation,lightness) {
 	if(lightness == null) {
@@ -499,6 +523,7 @@ hxColorToolkit_spaces_HSL.prototype = {
 	,setColor: function(color) {
 		return this.fromRGB(new hxColorToolkit_spaces_RGB(color >> 16 & 255,color >> 8 & 255,color & 255));
 	}
+	,__properties__: {set_lightness:"set_lightness",get_lightness:"get_lightness",set_saturation:"set_saturation",get_saturation:"get_saturation",set_hue:"set_hue",get_hue:"get_hue"}
 };
 var js_Boot = function() { };
 js_Boot.__name__ = true;
@@ -868,12 +893,14 @@ var utils_Convert = function() {
 };
 utils_Convert.__name__ = true;
 utils_Convert.prototype = {
-	gantt: function() {
+	gantt: function(str) {
 		var json = { };
 		json["created_date"] = new Date();
 		json["updated_date"] = new Date();
+		json["start_date"] = null;
+		json["end_date"] = null;
 		json["section"] = [];
-		var text = const_Gantt.TEST_1;
+		var text = str;
 		var lines = text.split("\n");
 		var _sectionArr = [];
 		var _mapBefore_h = Object.create(null);
@@ -913,6 +940,7 @@ utils_Convert.prototype = {
 				$global.console.info("- \"" + _sectionTitle + "\"");
 				$global.console.info("- \"" + _title + "\"");
 				oArr.push(StringTools.replace(StringTools.replace(line,"\t",""),"  "," "));
+				oArr.push(_title);
 				var _g2 = 0;
 				var _g3 = restArr.length;
 				while(_g2 < _g3) {
@@ -924,6 +952,7 @@ utils_Convert.prototype = {
 				ganttObj["_original"] = oArr;
 				ganttObj["section"] = _sectionTitle;
 				ganttObj["title"] = _title;
+				ganttObj["after_id"] = "";
 				ganttObj["start_date"] = DateTools.format(_previousStartDate,"%F");
 				if(restArr.length >= 2) {
 					_startDateStr = StringTools.trim(restArr[restArr.length - 2]);
@@ -935,8 +964,23 @@ utils_Convert.prototype = {
 						_startDate = date;
 					}
 					if(_startDateStr.length == 2) {
-						var nr = Std.parseInt(StringTools.trim(StringTools.replace(_startDateStr,"d","")));
-						var date1 = new Date(_previousStartDate.getTime() + nr * 24.0 * 60.0 * 60.0 * 1000.0);
+						var nr;
+						var addTime = 0.0;
+						if(_startDateStr.indexOf("h") != -1) {
+							nr = Std.parseInt(StringTools.trim(StringTools.replace(_startDateStr,"h","")));
+							addTime = nr * 60.0 * 60.0 * 1000.0;
+						}
+						if(_startDateStr.indexOf("d") != -1) {
+							nr = Std.parseInt(StringTools.trim(StringTools.replace(_startDateStr,"d","")));
+							addTime = nr * 24.0 * 60.0 * 60.0 * 1000.0;
+						}
+						if(_startDateStr.indexOf("w") != -1) {
+							nr = Std.parseInt(StringTools.trim(StringTools.replace(_startDateStr,"w",""))) * 7 | 0;
+							addTime = nr * 24.0 * 60.0 * 60.0 * 1000.0;
+						}
+						nr = Std.parseInt(StringTools.trim(StringTools.replace(_startDateStr,"d","")));
+						addTime = nr * 24.0 * 60.0 * 60.0 * 1000.0;
+						var date1 = new Date(_previousStartDate.getTime() + addTime);
 						ganttObj["start_date"] = DateTools.format(date1,"%F");
 						$global.console.info("start_date (" + _startDateStr + "): " + DateTools.format(date1,"%F"));
 						_previousStartDate = date1;
@@ -946,9 +990,13 @@ utils_Convert.prototype = {
 						var getID = StringTools.replace(_startDateStr,"after ","");
 						var date2 = HxOverrides.strDate(_mapAfter.h[getID]);
 						ganttObj["start_date"] = _mapAfter.h[getID];
+						ganttObj["after_id"] = "" + getID;
 						$global.console.info("start_date (" + _startDateStr + "): " + getID + " - " + _mapAfter.h[getID]);
 						_previousStartDate = date2;
 						_startDate = date2;
+					}
+					if(Reflect.getProperty(json,"start_date") == null) {
+						json["start_date"] = DateTools.format(_startDate,"%F");
 					}
 				}
 				var _endDateStr = StringTools.trim(restArr[restArr.length - 1]);
@@ -977,6 +1025,7 @@ utils_Convert.prototype = {
 					_previousEndDate = date5;
 					_endDate = date5;
 				}
+				json["end_date"] = DateTools.format(_endDate,"%F");
 				ganttObj["id"] = "";
 				if(restArr.length >= 3) {
 					var _id = StringTools.trim(restArr[restArr.length - 3]);
@@ -986,8 +1035,8 @@ utils_Convert.prototype = {
 					_mapAfter.h[_id] = value;
 					_mapBefore_h[_id] = DateTools.format(_previousStartDate,"%F");
 				}
-				console.log("src/utils/Convert.hx:182:","start: " + Std.string(_startDate));
-				console.log("src/utils/Convert.hx:183:","end: " + Std.string(_endDate));
+				console.log("src/utils/Convert.hx:217:","start: " + Std.string(_startDate));
+				console.log("src/utils/Convert.hx:218:","end: " + Std.string(_endDate));
 				var milliseconds = _endDate.getTime() - _startDate.getTime();
 				var seconds = Math.floor(milliseconds / 1000);
 				var minutes = Math.floor(seconds / 60);
@@ -1009,7 +1058,7 @@ utils_Convert.prototype = {
 		}
 		$global.console.log("map after: " + JSON.stringify(_mapAfter));
 		json["section"] = _sectionArr;
-		$global.console.log(JSON.stringify(json,null,"  "));
+		return json;
 	}
 };
 var utils_MathUtil = function() { };

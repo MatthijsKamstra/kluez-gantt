@@ -10,6 +10,8 @@ using StringTools;
 
 // using DateTools;
 class Convert {
+	var IS_DEBUG = false;
+
 	public function new() {
 		// your code
 	}
@@ -18,14 +20,20 @@ class Convert {
 		return 2;
 	}
 
-	public function gantt() {
+	/**
+		var json = new Convert().gantt(const.Gantt.TEST_1);
+		console.log(haxe.Json.stringify(json, '  '));
+	**/
+	public function gantt(str:String) {
 		var json = {};
 
 		Reflect.setField(json, 'created_date', Date.now());
 		Reflect.setField(json, 'updated_date', Date.now());
+		Reflect.setField(json, 'start_date', null);
+		Reflect.setField(json, 'end_date', null);
 		Reflect.setField(json, 'section', []);
 
-		var text = Gantt.TEST_1;
+		var text = str;
 		var lines = text.split('\n');
 
 		var _sectionArr = [];
@@ -60,6 +68,7 @@ class Convert {
 
 				// Reflect.setField(ganttObj, 'title', sectionTitle);
 			} else {
+				// [task name]:[state],[id],[start_time],[end_time]
 				var arrr = line.split(':');
 				var _title = arrr[0].trim();
 				var rest = arrr[1].trim();
@@ -72,6 +81,7 @@ class Convert {
 				console.info('- "$_sectionTitle"');
 				console.info('- "$_title"');
 				oArr.push(line.replace('\t', '').replace('  ', ' '));
+				oArr.push(_title);
 				for (j in 0...restArr.length) {
 					var _restArr = restArr[j].trim();
 					console.log('- $_restArr');
@@ -83,6 +93,7 @@ class Convert {
 				Reflect.setField(ganttObj, 'title', _title);
 
 				// START DATE
+				Reflect.setField(ganttObj, 'after_id', "");
 				Reflect.setField(ganttObj, 'start_date', DateTools.format(_previousStartDate, "%F"));
 				if (restArr.length >= 2) {
 					_startDateStr = restArr[restArr.length - 2].trim();
@@ -104,9 +115,26 @@ class Convert {
 
 					// START DATE // 5d
 					if (_startDateStr.length == 2) {
-						var nr = Std.parseInt(_startDateStr.replace('d', '').trim());
-						// console.log('days: ' + nr);
-						var date = DateTools.delta(_previousStartDate, DateTools.days(nr));
+						var nr:Int;
+						var addTime = 0.0;
+						if (_startDateStr.indexOf('h') != -1) {
+							// hours
+							nr = Std.parseInt(_startDateStr.replace('h', '').trim());
+							addTime = DateTools.hours(nr);
+						}
+						if (_startDateStr.indexOf('d') != -1) {
+							// days
+							nr = Std.parseInt(_startDateStr.replace('d', '').trim());
+							addTime = DateTools.days(nr);
+						}
+						if (_startDateStr.indexOf('w') != -1) {
+							// weeks
+							nr = Std.int(Std.parseInt(_startDateStr.replace('w', '').trim()) * 7);
+							addTime = DateTools.days(nr);
+						}
+						nr = Std.parseInt(_startDateStr.replace('d', '').trim());
+						addTime = DateTools.days(nr);
+						var date = DateTools.delta(_previousStartDate, addTime);
 						Reflect.setField(ganttObj, 'start_date', DateTools.format(date, "%F"));
 						console.info('start_date ($_startDateStr): ' + DateTools.format(date, "%F"));
 
@@ -120,11 +148,16 @@ class Convert {
 						// console.log(_map.get(getID));
 						var date = Date.fromString(_mapAfter.get(getID));
 						Reflect.setField(ganttObj, 'start_date', _mapAfter.get(getID));
+						Reflect.setField(ganttObj, 'after_id', '$getID');
 						console.info('start_date ($_startDateStr): ' + getID + ' - ' + _mapAfter.get(getID));
 
 						_previousStartDate = date;
 						_startDate = date;
 					}
+
+					// make sure to set this value only once!
+					if (Reflect.getProperty(json, 'start_date') == null)
+						Reflect.setField(json, 'start_date', DateTools.format(_startDate, "%F"));
 				}
 
 				// END DATE
@@ -165,6 +198,8 @@ class Convert {
 					_previousEndDate = date;
 					_endDate = date;
 				}
+
+				Reflect.setField(json, 'end_date', DateTools.format(_endDate, "%F"));
 
 				// ID
 				Reflect.setField(ganttObj, 'id', '');
@@ -226,6 +261,8 @@ class Convert {
 		// console.log('map before: ' + Json.stringify(_mapBefore));
 		Reflect.setField(json, 'section', _sectionArr);
 		// console.log(json);
-		console.log(Json.stringify(json, '  '));
+		// console.log(Json.stringify(json, '  '));
+
+		return json;
 	}
 }
