@@ -75,7 +75,8 @@ class Convert {
 				var restArr = rest.split(',');
 				var oArr = [];
 
-				console.group(_title);
+				// console.group(_title);
+				console.groupCollapsed(_title);
 				// console.log(title);
 				console.log('- "$line"');
 				console.info('- "$_sectionTitle"');
@@ -257,11 +258,13 @@ class Convert {
 				_sectionArr.push(ganttObj);
 			}
 		}
-		console.log('map after: ' + Json.stringify(_mapAfter));
-		// console.log('map before: ' + Json.stringify(_mapBefore));
 		Reflect.setField(json, 'section', _sectionArr);
-		// console.log(json);
-		// console.log(Json.stringify(json, '  '));
+		if (IS_DEBUG) {
+			console.log('map after: ' + Json.stringify(_mapAfter));
+			// console.log('map before: ' + Json.stringify(_mapBefore));
+			// console.log(json);
+			// console.log(Json.stringify(json, '  '));
+		}
 
 		return json;
 	}

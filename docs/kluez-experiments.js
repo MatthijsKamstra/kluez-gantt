@@ -149,11 +149,12 @@ var Main = function() {
 	$global.console.info("Kluez");
 	kluez_DynamicStyle.setStyle();
 	var json = new utils_Convert().gantt(const_Gantt.TEST_1);
-	$global.console.log(JSON.stringify(json,null,"  "));
 	new kluez_CreateElement(window.document.getElementById("kluez-create-container"));
 	new kluez_ResizeElement(window.document.getElementById("kluez-resize-container"));
 	this.setupResize(window.document.getElementById("kluez-drag-container"));
 	this.setupCombi(window.document.getElementById("kluez-combi-container"));
+	new kluez_CreateTable(window.document.getElementById("kluez-table-container"));
+	this.setupCombi(window.document.getElementById("overstufff"));
 };
 Main.__name__ = true;
 Main.main = function() {
@@ -728,6 +729,139 @@ kluez_CreateElement.prototype = {
 		container.onmousedown = onMouseDown;
 	}
 };
+var kluez_CreateTable = function(container) {
+	this.table0 = container.getElementsByClassName("table-0")[0];
+	this.table1 = container.getElementsByClassName("table-1")[0];
+	this.table2 = container.getElementsByClassName("table-2")[0];
+	console.log("src/kluez/CreateTable.hx:19:",this.table0);
+	console.log("src/kluez/CreateTable.hx:20:",this.table1);
+	console.log("src/kluez/CreateTable.hx:21:",this.table2);
+	var t = "<table class=\"table-test\">\n";
+	t += "<tr>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "</tr>";
+	t += "<tr>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "</tr>";
+	t += "<tr>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "</tr>";
+	t += "<tr>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "</tr>";
+	t += "<tr>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "</tr>";
+	t += "<tr>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "</tr>";
+	t += "<tr>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "</tr>";
+	t += "<tr>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "</tr>";
+	t += "<tr>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "</tr>";
+	t += "<tr>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "<td></td>";
+	t += "</tr>";
+	t += "</table>";
+	var frag = window.document.createRange().createContextualFragment(t);
+	this.table2.appendChild(frag);
+};
+kluez_CreateTable.__name__ = true;
 var kluez_DragElement = function() { };
 kluez_DragElement.__name__ = true;
 kluez_DragElement.init = function(el) {
@@ -890,6 +1024,7 @@ kluez_ResizeElement.prototype = {
 	}
 };
 var utils_Convert = function() {
+	this.IS_DEBUG = false;
 };
 utils_Convert.__name__ = true;
 utils_Convert.prototype = {
@@ -935,7 +1070,7 @@ utils_Convert.prototype = {
 				var rest = StringTools.trim(arrr[1]);
 				var restArr = rest.split(",");
 				var oArr = [];
-				$global.console.group(_title);
+				$global.console.groupCollapsed(_title);
 				$global.console.log("- \"" + line + "\"");
 				$global.console.info("- \"" + _sectionTitle + "\"");
 				$global.console.info("- \"" + _title + "\"");
@@ -1035,8 +1170,8 @@ utils_Convert.prototype = {
 					_mapAfter.h[_id] = value;
 					_mapBefore_h[_id] = DateTools.format(_previousStartDate,"%F");
 				}
-				console.log("src/utils/Convert.hx:217:","start: " + Std.string(_startDate));
-				console.log("src/utils/Convert.hx:218:","end: " + Std.string(_endDate));
+				console.log("src/utils/Convert.hx:218:","start: " + Std.string(_startDate));
+				console.log("src/utils/Convert.hx:219:","end: " + Std.string(_endDate));
 				var milliseconds = _endDate.getTime() - _startDate.getTime();
 				var seconds = Math.floor(milliseconds / 1000);
 				var minutes = Math.floor(seconds / 60);
@@ -1056,8 +1191,10 @@ utils_Convert.prototype = {
 				_sectionArr.push(ganttObj);
 			}
 		}
-		$global.console.log("map after: " + JSON.stringify(_mapAfter));
 		json["section"] = _sectionArr;
+		if(this.IS_DEBUG) {
+			$global.console.log("map after: " + JSON.stringify(_mapAfter));
+		}
 		return json;
 	}
 };

@@ -1,5 +1,6 @@
 package;
 
+import kluez.CreateTable;
 import utils.Convert;
 import kluez.CombiElement;
 import const.ClassNames;
@@ -23,7 +24,7 @@ class Main {
 		DynamicStyle.setStyle();
 
 		var json = new Convert().gantt(const.Gantt.TEST_1);
-		console.log(haxe.Json.stringify(json, '  '));
+		// console.log(haxe.Json.stringify(json, '  '));
 
 		// create container setup
 		new CreateElement(document.getElementById("kluez-create-container"));
@@ -37,6 +38,10 @@ class Main {
 
 		// setup combi container with elements
 		setupCombi(document.getElementById('kluez-combi-container'));
+
+		// setup combi container with elements
+		new CreateTable(cast document.getElementById('kluez-table-container'));
+		setupCombi(document.getElementById('overstufff'));
 	}
 
 	/**
