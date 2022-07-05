@@ -15,8 +15,9 @@ class El {
 	 * @param x
 	 * @param y
 	 * @param width
+	 * @param height
 	 */
-	public static function create(text:String, x:Int, y:Int, width:Int) {
+	public static function create(text:String, x:Int, y:Int, width:Int, height:Int = 50) {
 		// div
 		var div = document.createDivElement();
 		div.innerHTML = '<span>$text</span>';
@@ -25,7 +26,7 @@ class El {
 		div.style.left = '${x}px';
 		div.style.top = '${y}px';
 		div.style.width = '${width}px';
-		div.style.height = '50px';
+		div.style.height = '${height}px';
 		div.style.position = 'absolute';
 		return div;
 	}

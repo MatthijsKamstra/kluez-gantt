@@ -163,6 +163,8 @@ Main.main = function() {
 Main.prototype = {
 	setupResize: function(container) {
 		var i = 0;
+		var gridH = 64;
+		var gridP = 8;
 		var h = const_Colors.colorMap.h;
 		var color_h = h;
 		var color_keys = Object.keys(h);
@@ -171,16 +173,22 @@ Main.prototype = {
 		while(color_current < color_length) {
 			var color = color_keys[color_current++];
 			var hex = const_Colors.colorMap.h[color];
-			var el = kluez_El.create("resize-" + hex,utils_MathUtil.randomInteger(10,300),i * 60 + 10,utils_MathUtil.randomInteger(50,500));
+			var el = kluez_El.create("resize-" + hex,utils_MathUtil.randomInteger(10,300),i * (gridH + gridP) + Math.round(gridP / 2),utils_MathUtil.randomInteger(50,500),gridH);
 			el.classList.add("klz-el-" + color,"draggable");
 			container.append(el);
 			++i;
-			kluez_DragElement.init(el);
+			var dragEl = new kluez_DragElement(el);
+			dragEl.grid = gridH;
+			dragEl.padding = gridP;
+			dragEl.isSnapToGrid = true;
+			dragEl.init();
 		}
-		container.style.height = "" + (60 * i + 10) + "px";
+		container.style.height = "" + ((gridH + gridP) * i + Math.round(gridP / 2)) + "px";
 	}
 	,setupCombi: function(container) {
 		var i = 0;
+		var gridH = 50;
+		var gridP = 10;
 		var h = const_Colors.colorMap.h;
 		var color_h = h;
 		var color_keys = Object.keys(h);
@@ -189,13 +197,17 @@ Main.prototype = {
 		while(color_current < color_length) {
 			var color = color_keys[color_current++];
 			var hex = const_Colors.colorMap.h[color];
-			var el = kluez_El.create("combi-" + hex,utils_MathUtil.randomInteger(10,300),i * 60 + 10,utils_MathUtil.randomInteger(50,500));
+			var el = kluez_El.create("combi-" + hex,utils_MathUtil.randomInteger(10,300),i * (gridH + gridP) + Math.round(gridP / 2),utils_MathUtil.randomInteger(50,500),gridH);
 			el.classList.add("klz-el-" + color,const_ClassNames.DRAGGABLE,const_ClassNames.RESIZEABLE);
 			container.append(el);
 			++i;
-			kluez_CombiElement.init(el);
+			var combiEl = new kluez_CombiElement(el);
+			combiEl.grid = gridH;
+			combiEl.padding = gridP;
+			combiEl.isSnapToGrid = true;
+			combiEl.init();
 		}
-		container.style.height = "" + (60 * i + 10) + "px";
+		container.style.height = "" + ((gridH + gridP) * i + Math.round(gridP / 2)) + "px";
 	}
 };
 Math.__name__ = true;
@@ -592,86 +604,103 @@ js_Boot.__string_rec = function(o,s) {
 		return String(o);
 	}
 };
-var kluez_CombiElement = function() { };
+var kluez_CombiElement = function(el) {
+	this.isSnapToGrid = false;
+	this.grid = 1;
+	this.el = el;
+};
 kluez_CombiElement.__name__ = true;
-kluez_CombiElement.init = function(el) {
-	var xCurrent = 0;
-	var yCurrent = 0;
-	var xInitial = 0;
-	var yInitial = 0;
-	var xOffset = 0;
-	var yOffset = 0;
-	var xOriginal = 0;
-	var yOriginal = 0;
-	var wOriginal = 0;
-	var hOriginal = 0;
-	var xMouseOriginal = 0;
-	var yMouseOriginal = 0;
-	var isDrag = true;
-	if(el.classList.contains(const_ClassNames.RESIZEABLE)) {
-		var resizeEl = window.document.createElement("div");
-		resizeEl.classList.add("resizer-r");
-		el.appendChild(resizeEl);
-		resizeEl.onmouseover = function() {
-			isDrag = false;
-			return isDrag;
+kluez_CombiElement.prototype = {
+	init: function() {
+		var _gthis = this;
+		var xCurrent = 0;
+		var yCurrent = 0;
+		var xInitial = 0;
+		var yInitial = 0;
+		var xOffset = 0;
+		var yOffset = 0;
+		var xOriginal = 0;
+		var yOriginal = 0;
+		var wOriginal = 0;
+		var hOriginal = 0;
+		var xMouseOriginal = 0;
+		var yMouseOriginal = 0;
+		var isDrag = true;
+		if(this.el.classList.contains(const_ClassNames.RESIZEABLE)) {
+			var resizeEl = window.document.createElement("div");
+			resizeEl.classList.add("resizer-r");
+			this.el.appendChild(resizeEl);
+			resizeEl.onmouseover = function() {
+				isDrag = false;
+				return isDrag;
+			};
+			resizeEl.onmouseout = function() {
+				isDrag = true;
+				return isDrag;
+			};
+		}
+		var onMouseMove = function(e) {
+			if(e.type == "touchmove") {
+				xCurrent = e.touches[0].clientX - xInitial;
+				yCurrent = e.touches[0].clientY - yInitial;
+			} else {
+				xCurrent = e.clientX - xInitial;
+				yCurrent = e.clientY - yInitial;
+			}
+			xOffset = xCurrent;
+			yOffset = yCurrent;
+			if(isDrag) {
+				var gridValue = Math.round((xOriginal + xCurrent) / _gthis.grid) * _gthis.grid;
+				if(_gthis.isSnapToGrid) {
+					_gthis.el.style.left = "" + gridValue + "px";
+				} else {
+					_gthis.el.style.left = "" + (xOriginal + xCurrent) + "px";
+				}
+			} else {
+				var width = wOriginal + (e.pageX - xMouseOriginal);
+				var gridValue = Math.round(width / _gthis.grid) * _gthis.grid;
+				if(_gthis.isSnapToGrid) {
+					_gthis.el.style.width = "" + gridValue + "px";
+				} else {
+					_gthis.el.style.width = "" + width + "px";
+				}
+			}
 		};
-		resizeEl.onmouseout = function() {
-			isDrag = true;
-			return isDrag;
+		var onMouseEnd = function(e) {
+			_gthis.el.classList.remove("active");
+			xCurrent = 0;
+			yCurrent = 0;
+			xInitial = 0;
+			yInitial = 0;
+			xOffset = 0;
+			yOffset = 0;
+			xOriginal = 0;
+			_gthis.el.onmouseup = null;
+			_gthis.el.onmousemove = null;
+			_gthis.el.onmouseleave = null;
 		};
+		var onMouseDown = function(e) {
+			_gthis.el.classList.add("active");
+			if(e.type == "touchstart") {
+				xInitial = e.touches[0].clientX - xOffset;
+				yInitial = e.touches[0].clientY - yOffset;
+			} else {
+				xInitial = e.clientX - xOffset;
+				yInitial = e.clientY - yOffset;
+			}
+			wOriginal = Std.parseInt(StringTools.replace(window.getComputedStyle(_gthis.el,null).getPropertyValue("width"),"px",""));
+			hOriginal = Std.parseInt(StringTools.replace(window.getComputedStyle(_gthis.el,null).getPropertyValue("height"),"px",""));
+			xOriginal = _gthis.el.getBoundingClientRect().left | 0;
+			yOriginal = _gthis.el.getBoundingClientRect().top | 0;
+			xMouseOriginal = e.pageX;
+			yMouseOriginal = e.pageY;
+			_gthis.el.onmouseup = onMouseEnd;
+			_gthis.el.onmousemove = onMouseMove;
+			_gthis.el.onmouseleave = onMouseEnd;
+		};
+		this.el.ontouchstart = onMouseDown;
+		this.el.onmousedown = onMouseDown;
 	}
-	var onMouseMove = function(e) {
-		if(e.type == "touchmove") {
-			xCurrent = e.touches[0].clientX - xInitial;
-			yCurrent = e.touches[0].clientY - yInitial;
-		} else {
-			xCurrent = e.clientX - xInitial;
-			yCurrent = e.clientY - yInitial;
-		}
-		xOffset = xCurrent;
-		yOffset = yCurrent;
-		if(isDrag) {
-			el.style.left = "" + (xOriginal + xCurrent) + "px";
-		} else {
-			var width = wOriginal + (e.pageX - xMouseOriginal);
-			el.style.width = "" + width + "px";
-		}
-	};
-	var onMouseEnd = function(e) {
-		el.classList.remove("active");
-		xCurrent = 0;
-		yCurrent = 0;
-		xInitial = 0;
-		yInitial = 0;
-		xOffset = 0;
-		yOffset = 0;
-		xOriginal = 0;
-		el.onmouseup = null;
-		el.onmousemove = null;
-		el.onmouseleave = null;
-	};
-	var onMouseDown = function(e) {
-		el.classList.add("active");
-		if(e.type == "touchstart") {
-			xInitial = e.touches[0].clientX - xOffset;
-			yInitial = e.touches[0].clientY - yOffset;
-		} else {
-			xInitial = e.clientX - xOffset;
-			yInitial = e.clientY - yOffset;
-		}
-		wOriginal = Std.parseInt(StringTools.replace(window.getComputedStyle(el,null).getPropertyValue("width"),"px",""));
-		hOriginal = Std.parseInt(StringTools.replace(window.getComputedStyle(el,null).getPropertyValue("height"),"px",""));
-		xOriginal = el.getBoundingClientRect().left | 0;
-		yOriginal = el.getBoundingClientRect().top | 0;
-		xMouseOriginal = e.pageX;
-		yMouseOriginal = e.pageY;
-		el.onmouseup = onMouseEnd;
-		el.onmousemove = onMouseMove;
-		el.onmouseleave = onMouseEnd;
-	};
-	el.ontouchstart = onMouseDown;
-	el.onmousedown = onMouseDown;
 };
 var kluez_CreateElement = function(container) {
 	this.init(container);
@@ -718,7 +747,7 @@ kluez_CreateElement.prototype = {
 				xInitial = e.pageX - xOffset;
 				yInitial = e.pageY - yOffset;
 			}
-			div = kluez_El.create("...",xInitial,yInitial,10);
+			div = kluez_El.create("...",xInitial,yInitial,null,10);
 			div.classList.add("klz-dotted");
 			window.document.body.append(div);
 			container.onmouseup = onMouseEnd;
@@ -862,57 +891,69 @@ var kluez_CreateTable = function(container) {
 	this.table2.appendChild(frag);
 };
 kluez_CreateTable.__name__ = true;
-var kluez_DragElement = function() { };
+var kluez_DragElement = function(el) {
+	this.isSnapToGrid = false;
+	this.grid = 1;
+	this.el = el;
+};
 kluez_DragElement.__name__ = true;
-kluez_DragElement.init = function(el) {
-	var xCurrent = 0;
-	var yCurrent = 0;
-	var xInitial = 0;
-	var yInitial = 0;
-	var xOffset = 0;
-	var yOffset = 0;
-	var xOriginal = 0;
-	var onMouseMove = function(e) {
-		if(e.type == "touchmove") {
-			xCurrent = e.touches[0].clientX - xInitial;
-			yCurrent = e.touches[0].clientY - yInitial;
-		} else {
-			xCurrent = e.clientX - xInitial;
-			yCurrent = e.clientY - yInitial;
-		}
-		xOffset = xCurrent;
-		yOffset = yCurrent;
-		el.style.left = "" + (xOriginal + xCurrent) + "px";
-	};
-	var onMouseEnd = function(e) {
-		el.classList.remove("active");
-		xCurrent = 0;
-		yCurrent = 0;
-		xInitial = 0;
-		yInitial = 0;
-		xOffset = 0;
-		yOffset = 0;
-		xOriginal = 0;
-		el.onmouseup = null;
-		el.onmousemove = null;
-		el.onmouseleave = null;
-	};
-	var onMouseDown = function(e) {
-		el.classList.add("active");
-		if(e.type == "touchstart") {
-			xInitial = e.touches[0].clientX - xOffset;
-			yInitial = e.touches[0].clientY - yOffset;
-		} else {
-			xInitial = e.clientX - xOffset;
-			yInitial = e.clientY - yOffset;
-		}
-		xOriginal = el.getBoundingClientRect().left | 0;
-		el.onmouseup = onMouseEnd;
-		el.onmousemove = onMouseMove;
-		el.onmouseleave = onMouseEnd;
-	};
-	el.ontouchstart = onMouseDown;
-	el.onmousedown = onMouseDown;
+kluez_DragElement.prototype = {
+	init: function() {
+		var _gthis = this;
+		var xCurrent = 0;
+		var yCurrent = 0;
+		var xInitial = 0;
+		var yInitial = 0;
+		var xOffset = 0;
+		var yOffset = 0;
+		var xOriginal = 0;
+		var onMouseMove = function(e) {
+			if(e.type == "touchmove") {
+				xCurrent = e.touches[0].clientX - xInitial;
+				yCurrent = e.touches[0].clientY - yInitial;
+			} else {
+				xCurrent = e.clientX - xInitial;
+				yCurrent = e.clientY - yInitial;
+			}
+			xOffset = xCurrent;
+			yOffset = yCurrent;
+			var gridValue = Math.round((xOriginal + xCurrent) / _gthis.grid) * _gthis.grid;
+			if(_gthis.isSnapToGrid) {
+				_gthis.el.style.left = "" + gridValue + "px";
+			} else {
+				_gthis.el.style.left = "" + (xOriginal + xCurrent) + "px";
+			}
+		};
+		var onMouseEnd = function(e) {
+			_gthis.el.classList.remove("active");
+			xCurrent = 0;
+			yCurrent = 0;
+			xInitial = 0;
+			yInitial = 0;
+			xOffset = 0;
+			yOffset = 0;
+			xOriginal = 0;
+			_gthis.el.onmouseup = null;
+			_gthis.el.onmousemove = null;
+			_gthis.el.onmouseleave = null;
+		};
+		var onMouseDown = function(e) {
+			_gthis.el.classList.add("active");
+			if(e.type == "touchstart") {
+				xInitial = e.touches[0].clientX - xOffset;
+				yInitial = e.touches[0].clientY - yOffset;
+			} else {
+				xInitial = e.clientX - xOffset;
+				yInitial = e.clientY - yOffset;
+			}
+			xOriginal = _gthis.el.getBoundingClientRect().left | 0;
+			_gthis.el.onmouseup = onMouseEnd;
+			_gthis.el.onmousemove = onMouseMove;
+			_gthis.el.onmouseleave = onMouseEnd;
+		};
+		this.el.ontouchstart = onMouseDown;
+		this.el.onmousedown = onMouseDown;
+	}
 };
 var kluez_DynamicStyle = function() { };
 kluez_DynamicStyle.__name__ = true;
@@ -939,7 +980,10 @@ kluez_DynamicStyle.setStyle = function() {
 };
 var kluez_El = function() { };
 kluez_El.__name__ = true;
-kluez_El.create = function(text,x,y,width) {
+kluez_El.create = function(text,x,y,width,height) {
+	if(height == null) {
+		height = 50;
+	}
 	var div = window.document.createElement("div");
 	div.innerHTML = "<span>" + text + "</span>";
 	div.classList.add("klz-el");
@@ -947,7 +991,7 @@ kluez_El.create = function(text,x,y,width) {
 	div.style.left = "" + x + "px";
 	div.style.top = "" + y + "px";
 	div.style.width = "" + width + "px";
-	div.style.height = "50px";
+	div.style.height = "" + height + "px";
 	div.style.position = "absolute";
 	return div;
 };

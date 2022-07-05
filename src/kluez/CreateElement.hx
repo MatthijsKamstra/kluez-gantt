@@ -77,7 +77,7 @@ class CreateElement {
 			// trace(xInitial, yInitial);
 
 			// div
-			div = El.create('...', xInitial, yInitial, 10);
+			div = El.create('...', xInitial, yInitial, null, 10);
 			div.classList.add('klz-dotted');
 			document.body.append(div);
 

@@ -12,9 +12,16 @@ using hxColorToolkit.ColorToolkit;
 using StringTools;
 
 class DragElement {
-	public function new(element:Element) {}
+	public var el:Element;
+	public var grid:Int = 1;
+	public var padding:Int;
+	public var isSnapToGrid:Bool = false;
 
-	public static function init(el:DivElement) {
+	public function new(el:Element) {
+		this.el = el;
+	}
+
+	public function init() {
 		var xCurrent:Int = 0;
 		var yCurrent:Int = 0;
 		var xInitial:Int = 0;
@@ -46,8 +53,13 @@ class DragElement {
 			xOffset = xCurrent;
 			yOffset = yCurrent;
 
+			var gridValue = Math.round((xOriginal + xCurrent) / grid) * grid;
+			if (isSnapToGrid) {
+				el.style.left = '${gridValue}px';
+			} else {
+				el.style.left = '${(xOriginal + xCurrent)}px';
+			}
 			// setTranslate(el, xCurrent, yCurrent);
-			el.style.left = '${xOriginal + xCurrent}px';
 			// el.style.left = '${xCurrent}px';
 		}
 

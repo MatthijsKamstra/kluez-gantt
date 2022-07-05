@@ -1,28 +1,23 @@
 package kluez;
 
 import const.ClassNames;
-import utils.MathUtil;
-import const.Colors;
-import js.html.Element;
-import utils.UUID;
-import js.html.DivElement;
-import hxColorToolkit.spaces.HSL;
 import js.Browser.*;
+import js.html.Element;
 
-using hxColorToolkit.ColorToolkit;
 using StringTools;
+using hxColorToolkit.ColorToolkit;
 
 class CombiElement {
-	public function new(container:Element) {
-		// var arr = container.getElementsByClassName('resizeable');
-		// for (i in 0...arr.length) {
-		// 	var _arr = arr[i];
-		// 	// trace(_arr);
-		// 	init(cast _arr);
-		// }
+	public var el:Element;
+	public var grid:Int = 1;
+	public var padding:Int;
+	public var isSnapToGrid:Bool = false;
+
+	public function new(el:Element) {
+		this.el = el;
 	}
 
-	public static function init(el:DivElement) {
+	public function init() {
 		var xCurrent:Int = 0;
 		var yCurrent:Int = 0;
 		var xInitial:Int = 0;
@@ -75,11 +70,20 @@ class CombiElement {
 			yOffset = yCurrent;
 
 			if (isDrag) {
-				// setTranslate(el, xCurrent, yCurrent);
-				el.style.left = '${xOriginal + xCurrent}px';
+				var gridValue = Math.round((xOriginal + xCurrent) / grid) * grid;
+				if (isSnapToGrid) {
+					el.style.left = '${gridValue}px';
+				} else {
+					el.style.left = '${(xOriginal + xCurrent)}px';
+				}
 			} else {
 				var width = wOriginal + (e.pageX - xMouseOriginal);
-				el.style.width = '${width}px';
+				var gridValue = Math.round((width) / grid) * grid;
+				if (isSnapToGrid) {
+					el.style.width = '${gridValue}px';
+				} else {
+					el.style.width = '${width}px';
+				}
 			}
 		}
 

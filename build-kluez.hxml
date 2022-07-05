@@ -1,0 +1,7 @@
+-lib hxColorToolkit
+-cp src
+-main MainKluez
+-js docs/kluez.js
+-D source-map-content
+-debug
+-dce full

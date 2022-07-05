@@ -6,7 +6,9 @@
 - [x] resize a rectangle on screen (width)
 - [x] move a rectangle on screen
 - [x] combine drag and resize
-- [ ] create grid (pattern) on screen
+- [x] create grid (pattern) on screen
+- [x] move/drag on grid
+- [ ] resize on grid
 - [ ] line between divs
   - [ ] svg right
   - [ ] svg curved
