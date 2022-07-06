@@ -1,5 +1,25 @@
 {
 	"[haxe]": {
 		"editor.formatOnSave": true
-	}
+	},
+	"compile-hero": {
+		"disable-compile-files-on-did-save-code": true,
+		"notification-toggle": false,
+		"javascript-output-directory": "./out",
+		"javascript-output-toggle": false,
+		"sass-output-directory": "./out",
+		"sass-output-toggle": true,
+		"ignore": [
+			"src/test.js",
+			"*/test.scss",
+			"**/spec/*",
+			"**/src/**/*"
+		],
+		"watch": [
+			"sass/test.sass",
+			"**/less/**/*"
+		]
+	},
+	"compile-hero.disable-compile-files-on-did-save-code": false,
+	// "compile-hero.sass-output-directory": "/out",
 }
