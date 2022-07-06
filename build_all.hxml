@@ -4,7 +4,10 @@
 # -cmd rm -rf bin_release
 
 # Uncomment (#) more build scripts if you need more
--cmd echo '\n----- build all (projectname: example_js_gitlab) -----'
+-cmd echo '\n----- build all (projectname: kluez) -----'
+-cmd echo '> build target js (build-kluez.hxml)'
+-cmd haxe build-kluez.hxml
+
 -cmd echo '> build target js (build.hxml)'
 -cmd haxe build.hxml
 
