@@ -70,16 +70,16 @@ class CombiElement {
 			yOffset = yCurrent;
 
 			if (isDrag) {
-				var gridValue = Math.round((xOriginal + xCurrent) / grid) * grid;
 				if (isSnapToGrid) {
+					var gridValue = Math.round((xOriginal + xCurrent) / grid) * grid;
 					el.style.left = '${gridValue}px';
 				} else {
 					el.style.left = '${(xOriginal + xCurrent)}px';
 				}
 			} else {
 				var width = wOriginal + (e.pageX - xMouseOriginal);
-				var gridValue = Math.round((width) / grid) * grid;
 				if (isSnapToGrid) {
+					var gridValue = Math.round((width) / grid) * grid;
 					el.style.width = '${gridValue}px';
 				} else {
 					el.style.width = '${width}px';

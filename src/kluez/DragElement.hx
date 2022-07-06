@@ -53,8 +53,8 @@ class DragElement {
 			xOffset = xCurrent;
 			yOffset = yCurrent;
 
-			var gridValue = Math.round((xOriginal + xCurrent) / grid) * grid;
 			if (isSnapToGrid) {
+				var gridValue = Math.round((xOriginal + xCurrent) / grid) * grid;
 				el.style.left = '${gridValue}px';
 			} else {
 				el.style.left = '${(xOriginal + xCurrent)}px';

@@ -650,16 +650,16 @@ kluez_CombiElement.prototype = {
 			xOffset = xCurrent;
 			yOffset = yCurrent;
 			if(isDrag) {
-				var gridValue = Math.round((xOriginal + xCurrent) / _gthis.grid) * _gthis.grid;
 				if(_gthis.isSnapToGrid) {
+					var gridValue = Math.round((xOriginal + xCurrent) / _gthis.grid) * _gthis.grid;
 					_gthis.el.style.left = "" + gridValue + "px";
 				} else {
 					_gthis.el.style.left = "" + (xOriginal + xCurrent) + "px";
 				}
 			} else {
 				var width = wOriginal + (e.pageX - xMouseOriginal);
-				var gridValue = Math.round(width / _gthis.grid) * _gthis.grid;
 				if(_gthis.isSnapToGrid) {
+					var gridValue = Math.round(width / _gthis.grid) * _gthis.grid;
 					_gthis.el.style.width = "" + gridValue + "px";
 				} else {
 					_gthis.el.style.width = "" + width + "px";
@@ -917,8 +917,8 @@ kluez_DragElement.prototype = {
 			}
 			xOffset = xCurrent;
 			yOffset = yCurrent;
-			var gridValue = Math.round((xOriginal + xCurrent) / _gthis.grid) * _gthis.grid;
 			if(_gthis.isSnapToGrid) {
+				var gridValue = Math.round((xOriginal + xCurrent) / _gthis.grid) * _gthis.grid;
 				_gthis.el.style.left = "" + gridValue + "px";
 			} else {
 				_gthis.el.style.left = "" + (xOriginal + xCurrent) + "px";
