@@ -1,0 +1,134 @@
+{
+  "created_date": "2022-07-06T15:27:27.994Z",
+  "updated_date": "2022-07-06T15:27:27.994Z",
+  "start_date": "2014-01-06",
+  "end_date": "2014-01-19",
+  "sections": [
+    {
+      "_original": [
+        "Completed task      :done,  des1, 2014-01-06,2014-01-08",
+        "Completed task",
+        "done",
+        "des1",
+        "2014-01-06",
+        "2014-01-08"
+      ],
+      "section": "A section",
+      "title": "Completed task",
+      "after_id": "",
+      "start_date": "2014-01-06",
+      "end_date": "2014-01-08",
+      "id": "des1",
+      "state": "done",
+      "total": {
+        "years": "0",
+        "months": "0",
+        "weeks": "0",
+        "days": "2",
+        "hours": "48",
+        "minutes": "2880",
+        "seconds": "172800",
+        "milliseconds": "172800000"
+      }
+    },
+    {
+      "_original": [
+        "Active task        :active, des2, 2014-01-09, 3d",
+        "Active task",
+        "active",
+        "des2",
+        "2014-01-09",
+        "3d"
+      ],
+      "section": "A section",
+      "title": "Active task",
+      "after_id": "",
+      "start_date": "2014-01-09",
+      "end_date": "2014-01-12",
+      "id": "des2",
+      "state": "active",
+      "total": {
+        "years": "0",
+        "months": "0",
+        "weeks": "0",
+        "days": "3",
+        "hours": "72",
+        "minutes": "4320",
+        "seconds": "259200",
+        "milliseconds": "259200000"
+      }
+    },
+    {
+      "_original": [
+        "Future task        :     des3, after des2, 5d",
+        "Future task",
+        "des3",
+        "after des2",
+        "5d"
+      ],
+      "section": "A section",
+      "title": "Future task",
+      "after_id": "des2",
+      "start_date": "2014-01-12",
+      "end_date": "2014-01-17",
+      "id": "des3",
+      "state": "",
+      "total": {
+        "years": "0",
+        "months": "0",
+        "weeks": "0",
+        "days": "5",
+        "hours": "120",
+        "minutes": "7200",
+        "seconds": "432000",
+        "milliseconds": "432000000"
+      }
+    },
+    {
+      "_original": [
+        "Future task2       :     des4, after des3, 5d",
+        "Future task2",
+        "des4",
+        "after des3",
+        "5d"
+      ],
+      "section": "A section",
+      "title": "Future task2",
+      "after_id": "des3",
+      "start_date": "2014-01-17",
+      "end_date": "2014-01-22",
+      "id": "des4",
+      "state": "",
+      "total": {
+        "years": "0",
+        "months": "0",
+        "weeks": "0",
+        "days": "5",
+        "hours": "120",
+        "minutes": "7200",
+        "seconds": "432000",
+        "milliseconds": "432000000"
+      }
+    },
+    {
+      "_original": ["Future task3       :    2d", "Future task3", "2d"],
+      "section": "A section",
+      "title": "Future task3",
+      "after_id": "",
+      "start_date": "2014-01-17",
+      "end_date": "2014-01-19",
+      "id": "",
+      "state": "",
+      "total": {
+        "years": "0",
+        "months": "0",
+        "weeks": "0",
+        "days": "2",
+        "hours": "48",
+        "minutes": "2880",
+        "seconds": "172800",
+        "milliseconds": "172800000"
+      }
+    }
+  ]
+}

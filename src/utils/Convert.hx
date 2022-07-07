@@ -24,14 +24,14 @@ class Convert {
 		var json = new Convert().gantt(const.Gantt.TEST_1);
 		console.log(haxe.Json.stringify(json, '  '));
 	**/
-	public function gantt(str:String) {
+	public function gantt(str:String, isDebug = false) {
 		var json = {};
 
 		Reflect.setField(json, 'created_date', Date.now());
 		Reflect.setField(json, 'updated_date', Date.now());
 		Reflect.setField(json, 'start_date', null);
 		Reflect.setField(json, 'end_date', null);
-		Reflect.setField(json, 'section', []);
+		Reflect.setField(json, 'sections', []);
 
 		var text = str;
 		var lines = text.split('\n');
@@ -64,7 +64,8 @@ class Convert {
 
 			if (line.indexOf('section') != -1) {
 				_sectionTitle = line.trim().substring('section'.length).trim();
-				console.info('${_sectionTitle}');
+				if (isDebug)
+					console.info('${_sectionTitle}');
 
 				// Reflect.setField(ganttObj, 'title', sectionTitle);
 			} else {
@@ -76,16 +77,21 @@ class Convert {
 				var oArr = [];
 
 				// console.group(_title);
-				console.groupCollapsed(_title);
+				if (isDebug)
+					console.groupCollapsed(_title);
 				// console.log(title);
-				console.log('- "$line"');
-				console.info('- "$_sectionTitle"');
-				console.info('- "$_title"');
+				if (isDebug)
+					console.log('- "$line"');
+				if (isDebug)
+					console.info('- "$_sectionTitle"');
+				if (isDebug)
+					console.info('- "$_title"');
 				oArr.push(line.replace('\t', '').replace('  ', ' '));
 				oArr.push(_title);
 				for (j in 0...restArr.length) {
 					var _restArr = restArr[j].trim();
-					console.log('- $_restArr');
+					if (isDebug)
+						console.log('- $_restArr');
 					oArr.push(_restArr.trim());
 				}
 
@@ -95,7 +101,7 @@ class Convert {
 
 				// START DATE
 				Reflect.setField(ganttObj, 'after_id', "");
-				Reflect.setField(ganttObj, 'start_date', DateTools.format(_previousStartDate, "%F"));
+				Reflect.setField(ganttObj, 'start_date', DateTools.format(_previousEndDate, "%F"));
 				if (restArr.length >= 2) {
 					_startDateStr = restArr[restArr.length - 2].trim();
 					// Reflect.setField(ganttObj, '__start_date', _startDateStr);
@@ -108,7 +114,8 @@ class Convert {
 						// console.log('// date');
 						var date = Date.fromString(_startDateStr);
 						Reflect.setField(ganttObj, 'start_date', DateTools.format(date, "%F"));
-						console.info('start_date (xx-xx-xx): ' + DateTools.format(date, "%F"));
+						if (isDebug)
+							console.info('start_date (xx-xx-xx): ' + DateTools.format(date, "%F"));
 
 						_previousStartDate = date;
 						_startDate = date;
@@ -137,7 +144,8 @@ class Convert {
 						addTime = DateTools.days(nr);
 						var date = DateTools.delta(_previousStartDate, addTime);
 						Reflect.setField(ganttObj, 'start_date', DateTools.format(date, "%F"));
-						console.info('start_date ($_startDateStr): ' + DateTools.format(date, "%F"));
+						if (isDebug)
+							console.info('start_date ($_startDateStr): ' + DateTools.format(date, "%F"));
 
 						_previousStartDate = date;
 						_startDate = date;
@@ -150,7 +158,8 @@ class Convert {
 						var date = Date.fromString(_mapAfter.get(getID));
 						Reflect.setField(ganttObj, 'start_date', _mapAfter.get(getID));
 						Reflect.setField(ganttObj, 'after_id', '$getID');
-						console.info('start_date ($_startDateStr): ' + getID + ' - ' + _mapAfter.get(getID));
+						if (isDebug)
+							console.info('start_date ($_startDateStr): ' + getID + ' - ' + _mapAfter.get(getID));
 
 						_previousStartDate = date;
 						_startDate = date;
@@ -170,7 +179,8 @@ class Convert {
 					// console.log('// date');
 					var date = Date.fromString(_endDateStr);
 					Reflect.setField(ganttObj, 'end_date', DateTools.format(date, "%F"));
-					console.info('end_date (xx-xx-xx): ' + DateTools.format(date, "%F"));
+					if (isDebug)
+						console.info('end_date (xx-xx-xx): ' + DateTools.format(date, "%F"));
 
 					_previousEndDate = date;
 					_endDate = date;
@@ -179,10 +189,12 @@ class Convert {
 				// END DATE // 5d
 				if (_endDateStr.length == 2) {
 					var nr = Std.parseInt(_endDateStr.replace('d', '').trim());
-					console.log('days: ' + nr);
+					if (isDebug)
+						console.log('days: ' + nr);
 					var date = DateTools.delta(_startDate, DateTools.days(nr));
 					Reflect.setField(ganttObj, 'end_date', DateTools.format(date, "%F"));
-					console.info('end_date ($_endDateStr): ' + DateTools.format(date, "%F"));
+					if (isDebug)
+						console.info('end_date ($_endDateStr): ' + DateTools.format(date, "%F"));
 
 					_previousEndDate = date;
 					_endDate = date;
@@ -191,22 +203,31 @@ class Convert {
 				// END DATE // after
 				if (_endDateStr.indexOf('after ') != -1) {
 					var getID = _endDateStr.replace('after ', '');
-					// console.log(_map.get(getID));
+					//	if (isDebug) console.log(_map.get(getID));
 					var date = Date.fromString(_mapAfter.get(getID));
 					Reflect.setField(ganttObj, 'end_date', _mapAfter.get(getID));
-					console.info('end_date ($_endDateStr): ' + getID + ' - ' + _mapAfter.get(getID));
+					if (isDebug)
+						console.info('end_date ($_endDateStr): ' + getID + ' - ' + _mapAfter.get(getID));
 
 					_previousEndDate = date;
 					_endDate = date;
 				}
 
+				// TODO make sure that the current end_date is later then this one
 				Reflect.setField(json, 'end_date', DateTools.format(_endDate, "%F"));
+				// if (Reflect.getProperty(json, 'end_date') != null) {
+				// 	trace(Reflect.getProperty(json, 'end_date'));
+				// 	var oldDate = Date.fromString(Reflect.getProperty(json, 'end_date'));
+				// 	if (oldDate.getTime() < _endDate.getTime())
+				// 		Reflect.setField(json, 'end_date', DateTools.format(_endDate, "%F"));
+				// }
 
 				// ID
 				Reflect.setField(ganttObj, 'id', '');
 				if (restArr.length >= 3) {
 					var _id = restArr[restArr.length - 3].trim();
-					console.info('id: ${_id}');
+					if (isDebug)
+						console.info('id: ${_id}');
 					Reflect.setField(ganttObj, 'id', _id);
 					_mapAfter.set(_id, DateTools.format(_previousEndDate, "%F"));
 					_mapBefore.set(_id, DateTools.format(_previousStartDate, "%F"));
@@ -215,8 +236,11 @@ class Convert {
 				// trace(_startDate.getTime());
 				// trace(_endDate.getTime());
 
-				trace('start: ' + _startDate);
-				trace('end: ' + _endDate);
+				if (isDebug)
+					trace('start: ' + _startDate);
+				if (isDebug)
+					trace('end: ' + _endDate);
+
 				var milliseconds = (_endDate.getTime() - _startDate.getTime());
 				var seconds = Math.floor(milliseconds / 1000);
 				var minutes = Math.floor(seconds / 60);
@@ -239,27 +263,28 @@ class Convert {
 				Reflect.setField(ganttObj, 'state', '');
 				if (restArr.length >= 4) {
 					var _state = restArr[restArr.length - 4].trim();
-					console.info('state: ${_state}');
+					if (isDebug)
+						console.info('state: ${_state}');
 					Reflect.setField(ganttObj, 'state', _state);
 				}
 				console.groupEnd();
 
-				Reflect.setField(ganttObj, 'date', {
-					years: '$years',
-					months: '$months',
-					weeks: '$weeks',
-					days: '${days}',
-					hours: '$hours',
-					minutes: '$minutes',
-					seconds: '$seconds',
-					milliseconds: '$milliseconds',
+				Reflect.setField(ganttObj, 'total', {
+					years: years,
+					months: months,
+					weeks: weeks,
+					days: days,
+					hours: hours,
+					minutes: minutes,
+					seconds: seconds,
+					milliseconds: milliseconds,
 				});
 
 				_sectionArr.push(ganttObj);
 			}
 		}
-		Reflect.setField(json, 'section', _sectionArr);
-		if (IS_DEBUG) {
+		Reflect.setField(json, 'sections', _sectionArr);
+		if (isDebug) {
 			console.log('map after: ' + Json.stringify(_mapAfter));
 			// console.log('map before: ' + Json.stringify(_mapBefore));
 			// console.log(json);
