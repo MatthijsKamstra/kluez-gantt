@@ -1,5 +1,6 @@
 package kluez;
 
+import haxe.Json;
 import js.Browser.*;
 import js.html.Element;
 import utils.UUID;
@@ -17,10 +18,10 @@ class El {
 	 * @param width
 	 * @param height
 	 */
-	public static function create(text:String, x:Int, y:Int, width:Int, height:Int = 50) {
+	public static function create(text:String, x:Int, y:Int, width:Int, height:Int = 50, obj:Dynamic) {
 		// div
 		var div = document.createDivElement();
-		div.innerHTML = '<span>$text</span>';
+		div.innerHTML = '<span>$text</span><!-- ${Json.stringify(obj, '  ')} -->';
 		div.classList.add('klz-el');
 		div.id = UUID.uuid();
 		div.style.left = '${x}px';

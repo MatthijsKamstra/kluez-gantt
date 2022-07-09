@@ -23,6 +23,10 @@ typedef GanttObj = {
 	var updated_date:Date;
 	var start_date:String;
 	var end_date:String;
+
+	var title:String;
+	var excludes:String; // weeknd,
+	var dateFormat:String; // ":"YYYY-MM-DD"
 	var sections:Array<Section>;
 };
 
@@ -35,6 +39,7 @@ typedef Section = {
 	var end_date:String;
 	var id:String;
 	var state:String;
+	var date:Date;
 	var total:Total;
 };
 
@@ -47,4 +52,13 @@ typedef Total = {
 	var minutes:Int;
 	var seconds:Int;
 	var milliseconds:Int;
+};
+
+typedef Date = {
+	var date:Date;
+	var day:Int;
+	var month:Int;
+	var year:Int;
+	var day_str:String;
+	var month_str:String;
 };

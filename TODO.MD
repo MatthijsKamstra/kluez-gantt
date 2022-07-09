@@ -23,3 +23,16 @@
 - `w` = weeks (work weeks?)
 - `start_date` undefined, use previousStart date
 -
+
+- source: https://mermaid-js.github.io/mermaid/#/gantt
+
+```
+    dateFormat  YYYY-MM-DD
+    title       Adding GANTT diagram functionality to mermaid
+    excludes    weekends
+    %% (`excludes` accepts specific dates in YYYY-MM-DD format, days of the week ("sunday") or "weekends", but not the word "weekdays".)
+```
+
+date tot date
+vs
+date + 5 days

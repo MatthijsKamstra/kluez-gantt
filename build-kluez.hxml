@@ -1,4 +1,5 @@
 -lib hxColorToolkit
+--library buddy
 -cp src
 -main MainKluez
 -js docs/kluez.js

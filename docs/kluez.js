@@ -146,29 +146,31 @@ HxOverrides.now = function() {
 	return Date.now();
 };
 var MainKluez = function() {
-	console.log("src/MainKluez.hx:27:","MainKluez");
+	haxe_Log.trace("MainKluez",{ fileName : "/Users/matthijskamstra/Documents/GIT/kluez-gantt/src/MainKluez.hx", lineNumber : 27, className : "MainKluez", methodName : "new"});
 	kluez_DynamicStyle.setStyle();
 	var wSize = 60;
 	var hSize = 60;
 	var pSize = 10;
-	var json = new utils_Convert().gantt(const_Gantt.TEST_1);
+	var json = new utils_Convert().gantt(const_Gantt.TEST_2);
 	var obj = utils_DateUtil.convert(HxOverrides.strDate(json.start_date),HxOverrides.strDate(json.end_date));
+	$global.console.log(json);
 	$global.console.log(JSON.stringify(json,null,"  "));
+	this.createDate(json,wSize,hSize);
 	var container = window.document.getElementById("container-gantt-kluez").getElementsByClassName("gantt")[0];
-	console.log("src/MainKluez.hx:39:",container);
+	haxe_Log.trace(container,{ fileName : "/Users/matthijskamstra/Documents/GIT/kluez-gantt/src/MainKluez.hx", lineNumber : 42, className : "MainKluez", methodName : "new"});
 	var _g = 0;
 	var _g1 = json.sections.length;
 	while(_g < _g1) {
 		var i = _g++;
 		var section = json.sections[i];
-		console.log("src/MainKluez.hx:47:",section.title);
+		haxe_Log.trace(section.title,{ fileName : "/Users/matthijskamstra/Documents/GIT/kluez-gantt/src/MainKluez.hx", lineNumber : 50, className : "MainKluez", methodName : "new"});
 		var title = section.title;
 		var startObj = utils_DateUtil.convert(HxOverrides.strDate(json.start_date),HxOverrides.strDate(section.start_date));
 		var xpos = startObj.days * wSize;
 		var ypos = i * hSize + Math.round(pSize / 2);
 		var w = section.total.days * wSize;
 		var h = hSize - pSize;
-		var el = kluez_El.create(title,xpos,ypos,w,h);
+		var el = kluez_El.create(title,xpos,ypos,w,h,section);
 		el.classList.add(const_ClassNames.DRAGGABLE,const_ClassNames.RESIZEABLE);
 		container.append(el);
 		var combiEl = new kluez_CombiElement(el);
@@ -179,8 +181,8 @@ var MainKluez = function() {
 	}
 	var xTotal = obj.days;
 	var yTotal = json.sections.length + 1;
-	console.log("src/MainKluez.hx:70:",xTotal);
-	console.log("src/MainKluez.hx:71:",yTotal);
+	haxe_Log.trace(xTotal,{ fileName : "/Users/matthijskamstra/Documents/GIT/kluez-gantt/src/MainKluez.hx", lineNumber : 73, className : "MainKluez", methodName : "new"});
+	haxe_Log.trace(yTotal,{ fileName : "/Users/matthijskamstra/Documents/GIT/kluez-gantt/src/MainKluez.hx", lineNumber : 74, className : "MainKluez", methodName : "new"});
 	this.createTable(xTotal,yTotal,wSize,hSize);
 };
 MainKluez.__name__ = true;
@@ -188,29 +190,61 @@ MainKluez.main = function() {
 	var app = new MainKluez();
 };
 MainKluez.prototype = {
-	createTable: function(xTotal,yTotal,wSize,hSize) {
-		var table0 = window.document.getElementById("container-gantt-kluez").getElementsByClassName("pattern")[0];
-		var colGroup = "";
+	createDate: function(json,wSize,hSize) {
+		var obj = utils_DateUtil.convert(HxOverrides.strDate(json.start_date),HxOverrides.strDate(json.end_date));
+		var sdate = HxOverrides.strDate(json.start_date);
+		var container = window.document.getElementById("container-date");
+		haxe_Log.trace(container,{ fileName : "/Users/matthijskamstra/Documents/GIT/kluez-gantt/src/MainKluez.hx", lineNumber : 85, className : "MainKluez", methodName : "createDate"});
+		var _xTotal = Math.round(obj.days * 1.5);
+		var _yTotal = Math.round(3);
 		var row = "";
+		var dateRow = "";
+		var dayRow = "";
+		var weekRow = "";
+		var monthRow = "";
+		var i = 0;
+		var dayArr = ["zo","ma","di","wo","do","vr","za"];
+		var jan1 = new Date(sdate.getFullYear(),0,1,0,0,0);
+		haxe_Log.trace(jan1,{ fileName : "/Users/matthijskamstra/Documents/GIT/kluez-gantt/src/MainKluez.hx", lineNumber : 100, className : "MainKluez", methodName : "createDate", customParams : [jan1.getDay(),dayArr[jan1.getDay()]]});
+		dayRow += "<div class=\"klz-row klz-row-day\" style=\"width: " + wSize * _xTotal + "px\">";
+		dateRow += "<div class=\"klz-row klz-row-date\" style=\"width: " + wSize * _xTotal + "px\">";
 		var _g = 0;
-		var _g1 = yTotal;
+		var _g1 = _xTotal;
+		while(_g < _g1) {
+			var x = _g++;
+			var date = new Date(sdate.getTime() + x * 24.0 * 60.0 * 60.0 * 1000.0);
+			if(date.getDay() != 0 && date.getDay() != 6) {
+				dayRow += "<div class=\"klz-item klz-day klz-day-" + dayArr[date.getDay()] + "\">" + dayArr[date.getDay()] + "<!-- x:" + x + " --></div>";
+				dateRow += "<div class=\"klz-item klz-date klz-day-" + dayArr[date.getDay()] + "\">" + date.getDate() + "<!-- x:" + x + " --></div>";
+			}
+		}
+		dayRow += "</div>";
+		dateRow += "</div>";
+		var t = "<div class=\"container-kluez-table\">" + dayRow + dateRow + "</div>";
+		var frag = window.document.createRange().createContextualFragment(t);
+		container.appendChild(frag);
+	}
+	,createTable: function(xTotal,yTotal,wSize,hSize) {
+		var container = window.document.getElementById("container-gantt-kluez").getElementsByClassName("pattern")[0];
+		var row = "";
+		var _xTotal = Math.round(xTotal * 1.5);
+		var _yTotal = Math.round(yTotal);
+		var _g = 0;
+		var _g1 = _yTotal;
 		while(_g < _g1) {
 			var y = _g++;
-			colGroup = "<colgroup>";
-			row += "<tr style=\"height:" + hSize + "px;\">";
+			row += "<div class=\"klz-row\" style=\"width: " + wSize * _xTotal + "px\">";
 			var _g2 = 0;
-			var _g3 = Math.round(xTotal * 1.5);
+			var _g3 = _xTotal;
 			while(_g2 < _g3) {
 				var x = _g2++;
-				colGroup += "<col>";
-				row += "<td><span class=\"table-cell\" style=\"width:" + wSize + "px;\"></span></td>";
+				row += "<div class=\"klz-item\"><!-- x:" + x + ", y:" + y + " --></div>";
 			}
-			colGroup += "<colgroup>";
-			row += "</tr>";
+			row += "</div>";
 		}
-		var t = "<table class=\"table-kluez\">\n" + colGroup + "\n" + row + "</table>";
+		var t = "<div class=\"container-kluez-table\">" + row + "</div>";
 		var frag = window.document.createRange().createContextualFragment(t);
-		table0.appendChild(frag);
+		container.appendChild(frag);
 	}
 };
 Math.__name__ = true;
@@ -366,6 +400,31 @@ haxe_Exception.prototype = $extend(Error.prototype,{
 	}
 	,__properties__: {get_native:"get_native",get_message:"get_message"}
 });
+var haxe_Log = function() { };
+haxe_Log.__name__ = true;
+haxe_Log.formatOutput = function(v,infos) {
+	var str = Std.string(v);
+	if(infos == null) {
+		return str;
+	}
+	var pstr = infos.fileName + ":" + infos.lineNumber;
+	if(infos.customParams != null) {
+		var _g = 0;
+		var _g1 = infos.customParams;
+		while(_g < _g1.length) {
+			var v = _g1[_g];
+			++_g;
+			str += ", " + Std.string(v);
+		}
+	}
+	return pstr + ": " + str;
+};
+haxe_Log.trace = function(v,infos) {
+	var str = haxe_Log.formatOutput(v,infos);
+	if(typeof(console) != "undefined" && console.log != null) {
+		console.log(str);
+	}
+};
 var haxe_ValueException = function(value,previous,native) {
 	haxe_Exception.call(this,String(value),previous,native);
 	this.value = value;
@@ -728,12 +787,12 @@ kluez_DynamicStyle.setStyle = function() {
 };
 var kluez_El = function() { };
 kluez_El.__name__ = true;
-kluez_El.create = function(text,x,y,width,height) {
+kluez_El.create = function(text,x,y,width,height,obj) {
 	if(height == null) {
 		height = 50;
 	}
 	var div = window.document.createElement("div");
-	div.innerHTML = "<span>" + text + "</span>";
+	div.innerHTML = "<span>" + text + "</span><!-- " + JSON.stringify(obj,null,"  ") + " -->";
 	div.classList.add("klz-el");
 	div.id = utils_UUID.uuid();
 	div.style.left = "" + x + "px";
@@ -749,19 +808,23 @@ utils_Convert.__name__ = true;
 utils_Convert.prototype = {
 	gantt: function(str,isDebug) {
 		if(isDebug == null) {
-			isDebug = false;
+			isDebug = true;
 		}
 		var json = { };
 		json["created_date"] = new Date();
 		json["updated_date"] = new Date();
+		json["title"] = "Test";
+		json["excludes"] = "weekends";
+		json["dateFormat"] = "YYYY-MM-DD";
 		json["start_date"] = null;
 		json["end_date"] = null;
+		json["total"] = { };
 		json["sections"] = [];
 		var text = str;
 		var lines = text.split("\n");
 		var _sectionArr = [];
 		var _mapBefore_h = Object.create(null);
-		var _mapAfter = new haxe_ds_StringMap();
+		var _mapAfter_h = Object.create(null);
 		var _sectionTitle = "";
 		var _startDateStr = "";
 		var _endDateStr = "";
@@ -785,9 +848,7 @@ utils_Convert.prototype = {
 			}
 			if(line.indexOf("section") != -1) {
 				_sectionTitle = StringTools.trim(StringTools.trim(line).substring("section".length));
-				if(isDebug) {
-					$global.console.info("" + _sectionTitle);
-				}
+				var isDebug1 = isDebug;
 			} else {
 				var arrr = line.split(":");
 				var _title = StringTools.trim(arrr[0]);
@@ -795,18 +856,14 @@ utils_Convert.prototype = {
 				var restArr = rest.split(",");
 				var oArr = [];
 				if(isDebug) {
-					$global.console.groupCollapsed(_title);
+					if(isDebug) {
+						if(isDebug) {
+							if(isDebug) {
+								oArr.push(StringTools.replace(StringTools.replace(line,"\t",""),"  "," "));
+							}
+						}
+					}
 				}
-				if(isDebug) {
-					$global.console.log("- \"" + line + "\"");
-				}
-				if(isDebug) {
-					$global.console.info("- \"" + _sectionTitle + "\"");
-				}
-				if(isDebug) {
-					$global.console.info("- \"" + _title + "\"");
-				}
-				oArr.push(StringTools.replace(StringTools.replace(line,"\t",""),"  "," "));
 				oArr.push(_title);
 				var _g2 = 0;
 				var _g3 = restArr.length;
@@ -814,9 +871,8 @@ utils_Convert.prototype = {
 					var j = _g2++;
 					var _restArr = StringTools.trim(restArr[j]);
 					if(isDebug) {
-						$global.console.log("- " + _restArr);
+						oArr.push(StringTools.trim(_restArr));
 					}
-					oArr.push(StringTools.trim(_restArr));
 				}
 				ganttObj["_original"] = oArr;
 				ganttObj["section"] = _sectionTitle;
@@ -829,9 +885,8 @@ utils_Convert.prototype = {
 						var date = HxOverrides.strDate(_startDateStr);
 						ganttObj["start_date"] = DateTools.format(date,"%F");
 						if(isDebug) {
-							$global.console.info("start_date (xx-xx-xx): " + DateTools.format(date,"%F"));
+							_previousStartDate = date;
 						}
-						_previousStartDate = date;
 						_startDate = date;
 					}
 					if(_startDateStr.length == 2) {
@@ -854,20 +909,18 @@ utils_Convert.prototype = {
 						var date1 = new Date(_previousStartDate.getTime() + addTime);
 						ganttObj["start_date"] = DateTools.format(date1,"%F");
 						if(isDebug) {
-							$global.console.info("start_date (" + _startDateStr + "): " + DateTools.format(date1,"%F"));
+							_previousStartDate = date1;
 						}
-						_previousStartDate = date1;
 						_startDate = date1;
 					}
 					if(_startDateStr.indexOf("after ") != -1) {
 						var getID = StringTools.replace(_startDateStr,"after ","");
-						var date2 = HxOverrides.strDate(_mapAfter.h[getID]);
-						ganttObj["start_date"] = _mapAfter.h[getID];
+						var date2 = HxOverrides.strDate(_mapAfter_h[getID]);
+						ganttObj["start_date"] = _mapAfter_h[getID];
 						ganttObj["after_id"] = "" + getID;
 						if(isDebug) {
-							$global.console.info("start_date (" + _startDateStr + "): " + getID + " - " + _mapAfter.h[getID]);
+							_previousStartDate = date2;
 						}
-						_previousStartDate = date2;
 						_startDate = date2;
 					}
 					if(Reflect.getProperty(json,"start_date") == null) {
@@ -876,36 +929,30 @@ utils_Convert.prototype = {
 				}
 				var _endDateStr = StringTools.trim(restArr[restArr.length - 1]);
 				ganttObj["end_date"] = "";
-				if(_endDateStr.split("-").length == 3) {
+				if(_endDateStr.indexOf("-") != -1 && _endDateStr.split("-").length == 3) {
 					var date3 = HxOverrides.strDate(_endDateStr);
 					ganttObj["end_date"] = DateTools.format(date3,"%F");
 					if(isDebug) {
-						$global.console.info("end_date (xx-xx-xx): " + DateTools.format(date3,"%F"));
+						_previousEndDate = date3;
 					}
-					_previousEndDate = date3;
 					_endDate = date3;
 				}
-				if(_endDateStr.length == 2) {
+				if(_endDateStr.indexOf("d") != -1 || _endDateStr.indexOf("w") != -1 || _endDateStr.indexOf("h") != -1) {
 					var nr1 = Std.parseInt(StringTools.trim(StringTools.replace(_endDateStr,"d","")));
-					if(isDebug) {
-						$global.console.log("days: " + nr1);
-					}
+					var isDebug2 = isDebug;
 					var date4 = new Date(_startDate.getTime() + nr1 * 24.0 * 60.0 * 60.0 * 1000.0);
 					ganttObj["end_date"] = DateTools.format(date4,"%F");
-					if(isDebug) {
-						$global.console.info("end_date (" + _endDateStr + "): " + DateTools.format(date4,"%F"));
-					}
+					var isDebug3 = isDebug;
 					_previousEndDate = date4;
 					_endDate = date4;
 				}
 				if(_endDateStr.indexOf("after ") != -1) {
 					var getID1 = StringTools.replace(_endDateStr,"after ","");
-					var date5 = HxOverrides.strDate(_mapAfter.h[getID1]);
-					ganttObj["end_date"] = _mapAfter.h[getID1];
+					var date5 = HxOverrides.strDate(_mapAfter_h[getID1]);
+					ganttObj["end_date"] = _mapAfter_h[getID1];
 					if(isDebug) {
-						$global.console.info("end_date (" + _endDateStr + "): " + getID1 + " - " + _mapAfter.h[getID1]);
+						_previousEndDate = date5;
 					}
-					_previousEndDate = date5;
 					_endDate = date5;
 				}
 				json["end_date"] = DateTools.format(_endDate,"%F");
@@ -913,18 +960,16 @@ utils_Convert.prototype = {
 				if(restArr.length >= 3) {
 					var _id = StringTools.trim(restArr[restArr.length - 3]);
 					if(isDebug) {
-						$global.console.info("id: " + _id);
+						ganttObj["id"] = _id;
 					}
-					ganttObj["id"] = _id;
-					var value = DateTools.format(_previousEndDate,"%F");
-					_mapAfter.h[_id] = value;
+					_mapAfter_h[_id] = DateTools.format(_previousEndDate,"%F");
 					_mapBefore_h[_id] = DateTools.format(_previousStartDate,"%F");
 				}
 				if(isDebug) {
-					console.log("src/utils/Convert.hx:240:","start: " + Std.string(_startDate));
+					haxe_Log.trace("start: " + Std.string(_startDate),{ fileName : "src/utils/Convert.hx", lineNumber : 248, className : "utils.Convert", methodName : "gantt"});
 				}
 				if(isDebug) {
-					console.log("src/utils/Convert.hx:242:","end: " + Std.string(_endDate));
+					haxe_Log.trace("end: " + Std.string(_endDate),{ fileName : "src/utils/Convert.hx", lineNumber : 250, className : "utils.Convert", methodName : "gantt"});
 				}
 				var milliseconds = _endDate.getTime() - _startDate.getTime();
 				var seconds = Math.floor(milliseconds / 1000);
@@ -938,19 +983,21 @@ utils_Convert.prototype = {
 				if(restArr.length >= 4) {
 					var _state = StringTools.trim(restArr[restArr.length - 4]);
 					if(isDebug) {
-						$global.console.info("state: " + _state);
+						ganttObj["state"] = _state;
 					}
-					ganttObj["state"] = _state;
 				}
-				$global.console.groupEnd();
+				var dayArr = ["zo","ma","di","wo","do","vr","za"];
+				var monthArr = ["jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
+				ganttObj["date"] = { "start" : { "date" : _startDate, "day" : _startDate.getDay(), "month" : _startDate.getMonth(), "year" : _startDate.getFullYear(), "day_str" : dayArr[_startDate.getDay()], "month_str" : monthArr[_startDate.getMonth()]}, "end" : { "date" : _endDate, "day" : _endDate.getDay(), "month" : _endDate.getMonth(), "year" : _endDate.getFullYear(), "day_str" : dayArr[_endDate.getDay()], "month_str" : monthArr[_endDate.getMonth()]}};
 				ganttObj["total"] = { years : years, months : months, weeks : weeks, days : days, hours : hours, minutes : minutes, seconds : seconds, milliseconds : milliseconds};
 				_sectionArr.push(ganttObj);
 			}
 		}
+		var tempStart = Reflect.getProperty(json,"start_date");
+		var tempEnd = Reflect.getProperty(json,"end_date");
+		json["total"] = utils_DateUtil.convert(HxOverrides.strDate(tempStart),HxOverrides.strDate(tempEnd));
 		json["sections"] = _sectionArr;
-		if(isDebug) {
-			$global.console.log("map after: " + JSON.stringify(_mapAfter));
-		}
+		var isDebug1 = isDebug;
 		return json;
 	}
 };
@@ -989,7 +1036,7 @@ DateTools.MONTH_SHORT_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","
 DateTools.MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const_ClassNames.DRAGGABLE = "draggable";
 const_ClassNames.RESIZEABLE = "resizeable";
-const_Gantt.TEST_1 = "\n  section A section\n     Completed task            :done,    des1, 2014-01-06,2014-01-08\n     Active task               :active,  des2, 2014-01-09, 3d\n     Future task               :         des3, after des2, 5d\n     Future task2              :         des4, after des3, 5d\n     Future task3              :        2d\n";
+const_Gantt.TEST_2 = "\n  section Duidelijk 5 day vs 7 days\n     Maandag tot vrijdag            :2022-07-11,2022-07-15\n     Maandag + 5 dagen            :2022-07-11, 5d\n     Maandag + 7 dagen            :2022-07-11, 7d\n     Vrijdag tot dinsdag         :2022-07-15,2022-07-19\n     Vrijdag + 5        :2022-07-15,5d\n     Vrijdag + 10        :2022-07-15,10d\n\n";
 kluez_DynamicStyle.colorMap = (function($this) {
 	var $r;
 	var _g = new haxe_ds_StringMap();

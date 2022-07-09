@@ -5,6 +5,11 @@ class DateUtil {
 		// your code
 	}
 
+	/**
+		@example
+			DateUtil.convert(start, end);
+
+	**/
 	public static function convert(startDate:Date, endDate:Date):{
 		years:Int,
 		months:Int,

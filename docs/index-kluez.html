@@ -26,89 +26,6 @@
 
 	<!-- custom css -->
 	<style>
-		table.table-kluez {
-			overflow: hidden;
-			display: inline-block;
-			border-collapse: collapse;
-		}
-
-		table.table-kluez td,
-		table.table-kluez th {
-			/* border: 1px solid rgb(100, 100, 100); */
-			margin: 0;
-			padding: 0;
-			/* width: 50px; */
-			/* height: 50px; */
-		}
-
-		table.table-kluez tr {
-			height: 50px;
-		}
-
-		span.table-cell {
-			width: 50px;
-			/* height: 50px; */
-			display: inline-block;
-			border: 0;
-			margin: 0;
-			padding: 0;
-		}
-
-		table.table-kluez tr:nth-child(even) {
-			background-color: rgba(100, 100, 100, 0.01);
-		}
-
-		table.table-kluez tr:hover {
-			background-color: rgba(100, 100, 100, 0.05);
-		}
-
-		table.table-kluez col:nth-child(even) {
-			background-color: rgba(100, 100, 100, 0.05);
-		}
-
-		td {
-			position: relative;
-		}
-
-		_td:hover::after {
-			background-color: rgb(255, 255, 170);
-			content: '\00a0';
-			height: 10000px;
-			left: 0;
-			position: absolute;
-			top: -5000px;
-			width: 100%;
-			z-index: -1;
-		}
-
-		table.table-kluez col:nth-child:hover(even) {
-			background: pink;
-		}
-
-		/* td:hover::before,
-		.row:hover::before {
-			background-color: #ffa;
-			content: '\00a0';
-			height: 100%;
-			left: -5000px;
-			position: absolute;
-			top: 0;
-			width: 10000px;
-			z-index: -1;
-		}
-
-		td:hover::after,
-		.col:hover::after {
-			background-color: #ffa;
-			content: '\00a0';
-			height: 10000px;
-			left: 0;
-			position: absolute;
-			top: -5000px;
-			width: 100%;
-			z-index: -1;
-		} */
-
 		.pattern {
 			position: absolute;
 			/* border: 1px solid pink; */
@@ -124,7 +41,43 @@
 			width: 100%;
 			height: 75vh;
 			background-color: white;
-			border: 1px solid silver;
+			border: 0px solid silver;
+		}
+
+		.container-kluez-table {
+			/* border: 1px solid pink; */
+			/* width: 100%; */
+		}
+
+		.klz-row {
+			display: flex;
+			flex-wrap: wrap;
+		}
+
+		.klz-row:nth-child(even) {
+			background-color: rgba(100, 100, 100, 0.05);
+		}
+
+		.klz-row:hover {
+			background-color: rgba(100, 100, 100, 0.05);
+		}
+
+		.klz-item {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			font-size: 10px;
+			width: 60px;
+			height: 60px;
+			border: 1px solid transparent;
+		}
+
+		.klz-item:nth-child(even) {
+			background-color: rgba(100, 100, 100, 0.05);
+		}
+
+		.klz-day-ma {
+			border-left: 1px solid black;
 		}
 	</style>
 	<link rel="stylesheet" href="./css/kluez.css">
@@ -136,6 +89,8 @@
 
 	<!-- Begin page content -->
 	<main class="flex-shrink-0">
+
+		<div id="container-date"></div>
 
 		<div id="container-gantt-kluez" class="container-klz">
 			<div class="pattern"></div>

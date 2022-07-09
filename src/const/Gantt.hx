@@ -17,6 +17,16 @@ class Gantt {
      Future task2              :         des4, after des3, 5d
      Future task3              :        2d
 ';
+	public static final TEST_2 = '
+  section Duidelijk 5 day vs 7 days
+     Maandag tot vrijdag            :2022-07-11,2022-07-15
+     Maandag + 5 dagen            :2022-07-11, 5d
+     Maandag + 7 dagen            :2022-07-11, 7d
+     Vrijdag tot dinsdag         :2022-07-15,2022-07-19
+     Vrijdag + 5        :2022-07-15,5d
+     Vrijdag + 10        :2022-07-15,10d
+
+';
 	public static final TEST_TOTAL = '
   section A section
     Completed task            :done,    des1, 2014-01-06,2014-01-08
