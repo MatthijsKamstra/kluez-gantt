@@ -114,6 +114,9 @@ class TestsDateUtil extends buddy.SingleSuite {
 			});
 		});
 
+		// FIXME! test above has also the weekend (-2 days)
+		// total days should be 2
+
 		describe("Vrijdag + 5", {
 			var json:GanttObj = cast new Convert().gantt(' Vrijdag + 5        :2022-07-15,5d');
 			var section:Section = json.sections[0];
