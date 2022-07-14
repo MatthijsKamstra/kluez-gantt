@@ -2,24 +2,6 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"type": "haxe",
-			"args": "active configuration",
-			"group": "build",
-			"label": "haxe: active configuration"
-		},
-		{
-			"type": "hxml",
-			"file": "build.hxml",
-			"problemMatcher": [
-				"$haxe-absolute",
-				"$haxe",
-				"$haxe-error",
-				"$haxe-trace"
-			],
-			"group": "build",
-			"label": "haxe: build.hxml"
-		},
-		{
 			"type": "hxml",
 			"file": "build-kluez.hxml",
 			"problemMatcher": [
@@ -40,11 +22,35 @@
 				"$haxe-error",
 				"$haxe-trace"
 			],
+			"group": "build",
+			"label": "haxe: build_all.hxml"
+		},
+		{
+			"type": "hxml",
+			"file": "build-experiments.hxml",
+			"problemMatcher": [
+				"$haxe-absolute",
+				"$haxe",
+				"$haxe-error",
+				"$haxe-trace"
+			],
+			"group": "build",
+			"label": "haxe: build-experiments.hxml"
+		},
+		{
+			"type": "hxml",
+			"file": "test.hxml",
+			"problemMatcher": [
+				"$haxe-absolute",
+				"$haxe",
+				"$haxe-error",
+				"$haxe-trace"
+			],
 			"group": {
 				"kind": "build",
 				"isDefault": true
 			},
-			"label": "haxe: build_all.hxml"
+			"label": "haxe: test.hxml"
 		}
 	]
 }

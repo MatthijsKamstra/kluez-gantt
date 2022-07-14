@@ -2,7 +2,7 @@
 --library buddy
 -cp src
 -main Main
--js docs/kluez.js
+-js docs/kluez-experiments.js
 -D source-map-content
 -debug
 -dce full

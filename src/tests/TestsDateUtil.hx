@@ -9,11 +9,12 @@ using buddy.Should;
 @colorize
 class TestsDateUtil extends buddy.SingleSuite {
 	public function new() {
-		describe("Using Buddy", {
-			it("should be a great testing experience");
-			it("should really make the tester happy");
-		});
-		describe("simple convert ", {
+		// describe("Using Buddy", {
+		// 	it("should be a great testing experience");
+		// 	it("should really make the tester happy");
+		// });
+
+		describe("Simple convert: \"Completed task :2014-01-06,2014-01-08\" ", {
 			var json:GanttObj = cast new Convert().gantt('Completed task :2014-01-06,2014-01-08');
 			var section:Section = json.sections[0];
 			// trace(json);
@@ -30,15 +31,114 @@ class TestsDateUtil extends buddy.SingleSuite {
 				section.total.days.should.be(2);
 			});
 		});
-		describe("simple convert ", {
-			var json:GanttObj = cast new Convert().gantt('Completed task            :done,    des1, 2014-01-06,2014-01-08');
+
+		// @include
+		describe("Complex convert: 'Completed task :done, des1, 2014-01-06,2014-01-08'", {
+			var json:GanttObj = cast new Convert().gantt('Completed task :done, des1, 2014-01-06,2014-01-08');
 			var section:Section = json.sections[0];
-			// trace(json);
+			// trace(haxe.Json.stringify(json, '  '));
 			it("check title", {
 				section.title.should.be('Completed task');
 			});
-			it("check title", {
-				section.title.should.be('Completed task');
+			it("check state", {
+				section.state.should.be('done');
+			});
+			it("check id", {
+				section.id.should.be('des1');
+			});
+			it('start date', {
+				section.start_date.should.be('2014-01-06');
+			});
+			it('end date', {
+				section.end_date.should.be('2014-01-08');
+			});
+		});
+
+		// @include
+		describe("Maandag tot vrijdag", {
+			var json:GanttObj = cast new Convert().gantt('Maandag tot vrijdag            :2022-07-11,2022-07-15');
+			var section:Section = json.sections[0];
+			it('start date', {
+				section.start_date.should.be('2022-07-11');
+			});
+			it('end date', {
+				section.end_date.should.be('2022-07-15');
+			});
+			it('total days', {
+				section.total.days.should.be(4);
+			});
+		});
+
+		describe("Maandag + 5 dagen", {
+			var json:GanttObj = cast new Convert().gantt('    Maandag + 5 dagen            :2022-07-11, 5d');
+			var section:Section = json.sections[0];
+			it('start date', {
+				section.start_date.should.be('2022-07-11');
+			});
+			it('end date', {
+				section.end_date.should.be('2022-07-16');
+			});
+			it('total days', {
+				section.total.days.should.be(5);
+			});
+		});
+
+		describe("Maandag + 7 dagen", {
+			var json:GanttObj = cast new Convert().gantt('     Maandag + 7 dagen            :2022-07-11, 7d');
+			var section:Section = json.sections[0];
+			it('start date', {
+				section.start_date.should.be('2022-07-11');
+			});
+			it('end date', {
+				section.end_date.should.be('2022-07-18');
+			});
+			it('total days', {
+				section.total.days.should.be(7);
+			});
+			it('total weeks', {
+				section.total.weeks.should.be(1);
+			});
+		});
+
+		describe("Vrijdag tot dinsdag", {
+			var json:GanttObj = cast new Convert().gantt(' Vrijdag tot dinsdag         :2022-07-15,2022-07-19');
+			var section:Section = json.sections[0];
+			it('start date', {
+				section.start_date.should.be('2022-07-15');
+			});
+			it('end date', {
+				section.end_date.should.be('2022-07-19');
+			});
+			it('total days', {
+				section.total.days.should.be(4);
+			});
+		});
+
+		describe("Vrijdag + 5", {
+			var json:GanttObj = cast new Convert().gantt(' Vrijdag + 5        :2022-07-15,5d');
+			var section:Section = json.sections[0];
+			it('start date', {
+				section.start_date.should.be('2022-07-15');
+			});
+			it('end date', {
+				section.end_date.should.be('2022-07-20');
+			});
+			it('total days', {
+				section.total.days.should.be(5);
+			});
+		});
+
+		describe("Vrijdag + 10", {
+			var json:GanttObj = cast new Convert().gantt(' Vrijdag + 10        :2022-07-15,10d');
+			var section:Section = json.sections[0];
+			it('start date', {
+				section.start_date.should.be('2022-07-15');
+			});
+			it('end date', {
+				section.end_date.should.be('2022-07-25');
+			});
+			it('total days', {
+				section.total.days.should.be(10);
 			});
 		});
 

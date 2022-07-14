@@ -1,6 +1,9 @@
 package log;
 
 import log.Colors.*;
+#if js
+import js.Browser.*;
+#end
 
 /**
  *
@@ -30,15 +33,27 @@ class Logger {
 	}
 
 	public static inline function log(v:Dynamic) {
+		#if sys
 		// Sys.println('> ' + v);
 		Sys.println('${BLUE}→ ${WHITE}${v}${RESET}');
+		#else
+		console.log(${v})
+		#end
 	}
 
 	public static inline function info(v:Dynamic) {
+		#if sys
 		Sys.println('${BLUE}♥ ${GREEN}${v}${RESET}');
+		#else
+		console.info(${v})
+		#end
 	}
 
 	public static inline function warn(v:Dynamic) {
+		#if sys
 		Sys.println('${BLUE}⚠ ${BLACK}${RED_BACKGROUND}${v}${RESET}');
+		#else
+		console.warn(${v})
+		#end
 	}
 }
