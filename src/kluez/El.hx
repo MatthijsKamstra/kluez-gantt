@@ -12,13 +12,14 @@ class El {
 	 *			el.classList.add('klz-el-${color}', 'draggable');
 	 *			document.body.append(e);
 	 *
-	 * @param text
-	 * @param x
-	 * @param y
-	 * @param width
-	 * @param height
+	 * @param text		the text in this element
+	 * @param x			x-position (css left)
+	 * @param y			y-position (css right)
+	 * @param width		width of the element (css width)
+	 * @param height	height of the element (css height) default 50
+	 * @param obj		for easier debugging?
 	 */
-	public static function create(text:String, x:Int, y:Int, width:Int, height:Int = 50, obj:Dynamic) {
+	public static function create(text:String, x:Int, y:Int, width:Int, height:Int = 50, obj:Dynamic = null) {
 		// div
 		var div = document.createDivElement();
 		div.innerHTML = '<span>$text</span><!-- ${Json.stringify(obj, '  ')} -->';

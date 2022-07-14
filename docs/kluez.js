@@ -146,7 +146,7 @@ HxOverrides.now = function() {
 	return Date.now();
 };
 var MainKluez = function() {
-	haxe_Log.trace("MainKluez",{ fileName : "/Users/matthijskamstra/Documents/GIT/kluez-gantt/src/MainKluez.hx", lineNumber : 27, className : "MainKluez", methodName : "new"});
+	haxe_Log.trace("MainKluez",{ fileName : "src/MainKluez.hx", lineNumber : 27, className : "MainKluez", methodName : "new"});
 	kluez_DynamicStyle.setStyle();
 	var wSize = 60;
 	var hSize = 60;
@@ -157,13 +157,13 @@ var MainKluez = function() {
 	$global.console.log(JSON.stringify(json,null,"  "));
 	this.createDate(json,wSize,hSize);
 	var container = window.document.getElementById("container-gantt-kluez").getElementsByClassName("gantt")[0];
-	haxe_Log.trace(container,{ fileName : "/Users/matthijskamstra/Documents/GIT/kluez-gantt/src/MainKluez.hx", lineNumber : 42, className : "MainKluez", methodName : "new"});
+	haxe_Log.trace(container,{ fileName : "src/MainKluez.hx", lineNumber : 42, className : "MainKluez", methodName : "new"});
 	var _g = 0;
 	var _g1 = json.sections.length;
 	while(_g < _g1) {
 		var i = _g++;
 		var section = json.sections[i];
-		haxe_Log.trace(section.title,{ fileName : "/Users/matthijskamstra/Documents/GIT/kluez-gantt/src/MainKluez.hx", lineNumber : 50, className : "MainKluez", methodName : "new"});
+		haxe_Log.trace(section.title,{ fileName : "src/MainKluez.hx", lineNumber : 50, className : "MainKluez", methodName : "new"});
 		var title = section.title;
 		var startObj = utils_DateUtil.convert(HxOverrides.strDate(json.start_date),HxOverrides.strDate(section.start_date));
 		var xpos = startObj.days * wSize;
@@ -181,8 +181,8 @@ var MainKluez = function() {
 	}
 	var xTotal = obj.days;
 	var yTotal = json.sections.length + 1;
-	haxe_Log.trace(xTotal,{ fileName : "/Users/matthijskamstra/Documents/GIT/kluez-gantt/src/MainKluez.hx", lineNumber : 73, className : "MainKluez", methodName : "new"});
-	haxe_Log.trace(yTotal,{ fileName : "/Users/matthijskamstra/Documents/GIT/kluez-gantt/src/MainKluez.hx", lineNumber : 74, className : "MainKluez", methodName : "new"});
+	haxe_Log.trace(xTotal,{ fileName : "src/MainKluez.hx", lineNumber : 73, className : "MainKluez", methodName : "new"});
+	haxe_Log.trace(yTotal,{ fileName : "src/MainKluez.hx", lineNumber : 74, className : "MainKluez", methodName : "new"});
 	this.createTable(xTotal,yTotal,wSize,hSize);
 };
 MainKluez.__name__ = true;
@@ -194,7 +194,7 @@ MainKluez.prototype = {
 		var obj = utils_DateUtil.convert(HxOverrides.strDate(json.start_date),HxOverrides.strDate(json.end_date));
 		var sdate = HxOverrides.strDate(json.start_date);
 		var container = window.document.getElementById("container-date");
-		haxe_Log.trace(container,{ fileName : "/Users/matthijskamstra/Documents/GIT/kluez-gantt/src/MainKluez.hx", lineNumber : 85, className : "MainKluez", methodName : "createDate"});
+		haxe_Log.trace(container,{ fileName : "src/MainKluez.hx", lineNumber : 85, className : "MainKluez", methodName : "createDate"});
 		var _xTotal = Math.round(obj.days * 1.5);
 		var _yTotal = Math.round(3);
 		var row = "";
@@ -205,7 +205,7 @@ MainKluez.prototype = {
 		var i = 0;
 		var dayArr = ["zo","ma","di","wo","do","vr","za"];
 		var jan1 = new Date(sdate.getFullYear(),0,1,0,0,0);
-		haxe_Log.trace(jan1,{ fileName : "/Users/matthijskamstra/Documents/GIT/kluez-gantt/src/MainKluez.hx", lineNumber : 100, className : "MainKluez", methodName : "createDate", customParams : [jan1.getDay(),dayArr[jan1.getDay()]]});
+		haxe_Log.trace(jan1,{ fileName : "src/MainKluez.hx", lineNumber : 100, className : "MainKluez", methodName : "createDate", customParams : [jan1.getDay(),dayArr[jan1.getDay()]]});
 		dayRow += "<div class=\"klz-row klz-row-day\" style=\"width: " + wSize * _xTotal + "px\">";
 		dateRow += "<div class=\"klz-row klz-row-date\" style=\"width: " + wSize * _xTotal + "px\">";
 		var _g = 0;
@@ -364,10 +364,6 @@ StringTools.hex = function(n,digits) {
 };
 var const_ClassNames = function() { };
 const_ClassNames.__name__ = true;
-var haxe_ds_StringMap = function() {
-	this.h = Object.create(null);
-};
-haxe_ds_StringMap.__name__ = true;
 var const_Gantt = function() { };
 const_Gantt.__name__ = true;
 var haxe_Exception = function(message,previous,native) {
@@ -433,6 +429,10 @@ haxe_ValueException.__name__ = true;
 haxe_ValueException.__super__ = haxe_Exception;
 haxe_ValueException.prototype = $extend(haxe_Exception.prototype,{
 });
+var haxe_ds_StringMap = function() {
+	this.h = Object.create(null);
+};
+haxe_ds_StringMap.__name__ = true;
 var haxe_exceptions_PosException = function(message,previous,pos) {
 	haxe_Exception.call(this,message,previous);
 	if(pos == null) {

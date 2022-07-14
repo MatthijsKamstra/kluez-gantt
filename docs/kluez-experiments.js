@@ -327,10 +327,6 @@ StringTools.hex = function(n,digits) {
 };
 var const_ClassNames = function() { };
 const_ClassNames.__name__ = true;
-var haxe_ds_StringMap = function() {
-	this.h = Object.create(null);
-};
-haxe_ds_StringMap.__name__ = true;
 var const_Colors = function() { };
 const_Colors.__name__ = true;
 var const_Gantt = function() { };
@@ -373,6 +369,10 @@ haxe_ValueException.__name__ = true;
 haxe_ValueException.__super__ = haxe_Exception;
 haxe_ValueException.prototype = $extend(haxe_Exception.prototype,{
 });
+var haxe_ds_StringMap = function() {
+	this.h = Object.create(null);
+};
+haxe_ds_StringMap.__name__ = true;
 var haxe_exceptions_PosException = function(message,previous,pos) {
 	haxe_Exception.call(this,message,previous);
 	if(pos == null) {
@@ -747,7 +747,7 @@ kluez_CreateElement.prototype = {
 				xInitial = e.pageX - xOffset;
 				yInitial = e.pageY - yOffset;
 			}
-			div = kluez_El.create("...",xInitial,yInitial,null,10);
+			div = kluez_El.create("...",xInitial,yInitial,null,10,{ });
 			div.classList.add("klz-dotted");
 			window.document.body.append(div);
 			container.onmouseup = onMouseEnd;
@@ -980,12 +980,12 @@ kluez_DynamicStyle.setStyle = function() {
 };
 var kluez_El = function() { };
 kluez_El.__name__ = true;
-kluez_El.create = function(text,x,y,width,height) {
+kluez_El.create = function(text,x,y,width,height,obj) {
 	if(height == null) {
 		height = 50;
 	}
 	var div = window.document.createElement("div");
-	div.innerHTML = "<span>" + text + "</span>";
+	div.innerHTML = "<span>" + text + "</span><!-- " + JSON.stringify(obj,null,"  ") + " -->";
 	div.classList.add("klz-el");
 	div.id = utils_UUID.uuid();
 	div.style.left = "" + x + "px";
@@ -1068,22 +1068,28 @@ kluez_ResizeElement.prototype = {
 	}
 };
 var utils_Convert = function() {
-	this.IS_DEBUG = false;
 };
 utils_Convert.__name__ = true;
 utils_Convert.prototype = {
-	gantt: function(str) {
+	gantt: function(str,isDebug) {
+		if(isDebug == null) {
+			isDebug = true;
+		}
 		var json = { };
 		json["created_date"] = new Date();
 		json["updated_date"] = new Date();
+		json["title"] = "Test";
+		json["excludes"] = "weekends";
+		json["dateFormat"] = "YYYY-MM-DD";
 		json["start_date"] = null;
 		json["end_date"] = null;
-		json["section"] = [];
+		json["total"] = { };
+		json["sections"] = [];
 		var text = str;
 		var lines = text.split("\n");
 		var _sectionArr = [];
 		var _mapBefore_h = Object.create(null);
-		var _mapAfter = new haxe_ds_StringMap();
+		var _mapAfter_h = Object.create(null);
 		var _sectionTitle = "";
 		var _startDateStr = "";
 		var _endDateStr = "";
@@ -1107,39 +1113,45 @@ utils_Convert.prototype = {
 			}
 			if(line.indexOf("section") != -1) {
 				_sectionTitle = StringTools.trim(StringTools.trim(line).substring("section".length));
-				$global.console.info("" + _sectionTitle);
+				var isDebug1 = isDebug;
 			} else {
 				var arrr = line.split(":");
 				var _title = StringTools.trim(arrr[0]);
 				var rest = StringTools.trim(arrr[1]);
 				var restArr = rest.split(",");
 				var oArr = [];
-				$global.console.groupCollapsed(_title);
-				$global.console.log("- \"" + line + "\"");
-				$global.console.info("- \"" + _sectionTitle + "\"");
-				$global.console.info("- \"" + _title + "\"");
-				oArr.push(StringTools.replace(StringTools.replace(line,"\t",""),"  "," "));
+				if(isDebug) {
+					if(isDebug) {
+						if(isDebug) {
+							if(isDebug) {
+								oArr.push(StringTools.replace(StringTools.replace(line,"\t",""),"  "," "));
+							}
+						}
+					}
+				}
 				oArr.push(_title);
 				var _g2 = 0;
 				var _g3 = restArr.length;
 				while(_g2 < _g3) {
 					var j = _g2++;
 					var _restArr = StringTools.trim(restArr[j]);
-					$global.console.log("- " + _restArr);
-					oArr.push(StringTools.trim(_restArr));
+					if(isDebug) {
+						oArr.push(StringTools.trim(_restArr));
+					}
 				}
 				ganttObj["_original"] = oArr;
 				ganttObj["section"] = _sectionTitle;
 				ganttObj["title"] = _title;
 				ganttObj["after_id"] = "";
-				ganttObj["start_date"] = DateTools.format(_previousStartDate,"%F");
+				ganttObj["start_date"] = DateTools.format(_previousEndDate,"%F");
 				if(restArr.length >= 2) {
 					_startDateStr = StringTools.trim(restArr[restArr.length - 2]);
 					if(_startDateStr.split("-").length == 3) {
 						var date = HxOverrides.strDate(_startDateStr);
 						ganttObj["start_date"] = DateTools.format(date,"%F");
-						$global.console.info("start_date (xx-xx-xx): " + DateTools.format(date,"%F"));
-						_previousStartDate = date;
+						if(isDebug) {
+							_previousStartDate = date;
+						}
 						_startDate = date;
 					}
 					if(_startDateStr.length == 2) {
@@ -1161,17 +1173,19 @@ utils_Convert.prototype = {
 						addTime = nr * 24.0 * 60.0 * 60.0 * 1000.0;
 						var date1 = new Date(_previousStartDate.getTime() + addTime);
 						ganttObj["start_date"] = DateTools.format(date1,"%F");
-						$global.console.info("start_date (" + _startDateStr + "): " + DateTools.format(date1,"%F"));
-						_previousStartDate = date1;
+						if(isDebug) {
+							_previousStartDate = date1;
+						}
 						_startDate = date1;
 					}
 					if(_startDateStr.indexOf("after ") != -1) {
 						var getID = StringTools.replace(_startDateStr,"after ","");
-						var date2 = HxOverrides.strDate(_mapAfter.h[getID]);
-						ganttObj["start_date"] = _mapAfter.h[getID];
+						var date2 = HxOverrides.strDate(_mapAfter_h[getID]);
+						ganttObj["start_date"] = _mapAfter_h[getID];
 						ganttObj["after_id"] = "" + getID;
-						$global.console.info("start_date (" + _startDateStr + "): " + getID + " - " + _mapAfter.h[getID]);
-						_previousStartDate = date2;
+						if(isDebug) {
+							_previousStartDate = date2;
+						}
 						_startDate = date2;
 					}
 					if(Reflect.getProperty(json,"start_date") == null) {
@@ -1180,42 +1194,48 @@ utils_Convert.prototype = {
 				}
 				var _endDateStr = StringTools.trim(restArr[restArr.length - 1]);
 				ganttObj["end_date"] = "";
-				if(_endDateStr.split("-").length == 3) {
+				if(_endDateStr.indexOf("-") != -1 && _endDateStr.split("-").length == 3) {
 					var date3 = HxOverrides.strDate(_endDateStr);
 					ganttObj["end_date"] = DateTools.format(date3,"%F");
-					$global.console.info("end_date (xx-xx-xx): " + DateTools.format(date3,"%F"));
-					_previousEndDate = date3;
+					if(isDebug) {
+						_previousEndDate = date3;
+					}
 					_endDate = date3;
 				}
-				if(_endDateStr.length == 2) {
+				if(_endDateStr.indexOf("d") != -1 || _endDateStr.indexOf("w") != -1 || _endDateStr.indexOf("h") != -1) {
 					var nr1 = Std.parseInt(StringTools.trim(StringTools.replace(_endDateStr,"d","")));
-					$global.console.log("days: " + nr1);
+					var isDebug2 = isDebug;
 					var date4 = new Date(_startDate.getTime() + nr1 * 24.0 * 60.0 * 60.0 * 1000.0);
 					ganttObj["end_date"] = DateTools.format(date4,"%F");
-					$global.console.info("end_date (" + _endDateStr + "): " + DateTools.format(date4,"%F"));
+					var isDebug3 = isDebug;
 					_previousEndDate = date4;
 					_endDate = date4;
 				}
 				if(_endDateStr.indexOf("after ") != -1) {
 					var getID1 = StringTools.replace(_endDateStr,"after ","");
-					var date5 = HxOverrides.strDate(_mapAfter.h[getID1]);
-					ganttObj["end_date"] = _mapAfter.h[getID1];
-					$global.console.info("end_date (" + _endDateStr + "): " + getID1 + " - " + _mapAfter.h[getID1]);
-					_previousEndDate = date5;
+					var date5 = HxOverrides.strDate(_mapAfter_h[getID1]);
+					ganttObj["end_date"] = _mapAfter_h[getID1];
+					if(isDebug) {
+						_previousEndDate = date5;
+					}
 					_endDate = date5;
 				}
 				json["end_date"] = DateTools.format(_endDate,"%F");
 				ganttObj["id"] = "";
 				if(restArr.length >= 3) {
 					var _id = StringTools.trim(restArr[restArr.length - 3]);
-					$global.console.info("id: " + _id);
-					ganttObj["id"] = _id;
-					var value = DateTools.format(_previousEndDate,"%F");
-					_mapAfter.h[_id] = value;
+					if(isDebug) {
+						ganttObj["id"] = _id;
+					}
+					_mapAfter_h[_id] = DateTools.format(_previousEndDate,"%F");
 					_mapBefore_h[_id] = DateTools.format(_previousStartDate,"%F");
 				}
-				console.log("src/utils/Convert.hx:218:","start: " + Std.string(_startDate));
-				console.log("src/utils/Convert.hx:219:","end: " + Std.string(_endDate));
+				if(isDebug) {
+					console.log("src/utils/Convert.hx:248:","start: " + Std.string(_startDate));
+				}
+				if(isDebug) {
+					console.log("src/utils/Convert.hx:250:","end: " + Std.string(_endDate));
+				}
 				var milliseconds = _endDate.getTime() - _startDate.getTime();
 				var seconds = Math.floor(milliseconds / 1000);
 				var minutes = Math.floor(seconds / 60);
@@ -1227,20 +1247,37 @@ utils_Convert.prototype = {
 				ganttObj["state"] = "";
 				if(restArr.length >= 4) {
 					var _state = StringTools.trim(restArr[restArr.length - 4]);
-					$global.console.info("state: " + _state);
-					ganttObj["state"] = _state;
+					if(isDebug) {
+						ganttObj["state"] = _state;
+					}
 				}
-				$global.console.groupEnd();
-				ganttObj["date"] = { years : "" + years, months : "" + months, weeks : "" + weeks, days : "" + days, hours : "" + hours, minutes : "" + minutes, seconds : "" + seconds, milliseconds : "" + milliseconds};
+				var dayArr = ["zo","ma","di","wo","do","vr","za"];
+				var monthArr = ["jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
+				ganttObj["date"] = { "start" : { "date" : _startDate, "day" : _startDate.getDay(), "month" : _startDate.getMonth(), "year" : _startDate.getFullYear(), "day_str" : dayArr[_startDate.getDay()], "month_str" : monthArr[_startDate.getMonth()]}, "end" : { "date" : _endDate, "day" : _endDate.getDay(), "month" : _endDate.getMonth(), "year" : _endDate.getFullYear(), "day_str" : dayArr[_endDate.getDay()], "month_str" : monthArr[_endDate.getMonth()]}};
+				ganttObj["total"] = { years : years, months : months, weeks : weeks, days : days, hours : hours, minutes : minutes, seconds : seconds, milliseconds : milliseconds};
 				_sectionArr.push(ganttObj);
 			}
 		}
-		json["section"] = _sectionArr;
-		if(this.IS_DEBUG) {
-			$global.console.log("map after: " + JSON.stringify(_mapAfter));
-		}
+		var tempStart = Reflect.getProperty(json,"start_date");
+		var tempEnd = Reflect.getProperty(json,"end_date");
+		json["total"] = utils_DateUtil.convert(HxOverrides.strDate(tempStart),HxOverrides.strDate(tempEnd));
+		json["sections"] = _sectionArr;
+		var isDebug1 = isDebug;
 		return json;
 	}
+};
+var utils_DateUtil = function() { };
+utils_DateUtil.__name__ = true;
+utils_DateUtil.convert = function(startDate,endDate) {
+	var milliseconds = Math.round(endDate.getTime() - startDate.getTime());
+	var seconds = Math.floor(milliseconds / 1000);
+	var minutes = Math.floor(seconds / 60);
+	var hours = Math.floor(minutes / 60);
+	var days = Math.floor(hours / 24);
+	var weeks = Math.floor(days / 7);
+	var years = Math.floor(weeks / 52);
+	var months = Math.floor(years / 12);
+	return { years : years, months : months, weeks : weeks, days : days, hours : hours, minutes : minutes, seconds : seconds, milliseconds : milliseconds};
 };
 var utils_MathUtil = function() { };
 utils_MathUtil.__name__ = true;

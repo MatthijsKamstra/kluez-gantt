@@ -5,17 +5,15 @@
 
 # Uncomment (#) more build scripts if you need more
 -cmd echo '\n----- build all (projectname: kluez) -----'
--cmd echo '> build target js (build-kluez.hxml)'
+
+-cmd echo '> the application code: build target js (build-kluez.hxml)'
 -cmd haxe build-kluez.hxml
 
--cmd echo '> build target js (build.hxml)'
+-cmd echo '> the test code: build target js (build.hxml)'
 -cmd haxe build.hxml
 
-
-
-
+-cmd echo '> run tests (test.hxml)'
 --cmd haxe test.hxml
---cmd haxe build.hxml
 
 
 # Add an other target (for example JavaScript)
