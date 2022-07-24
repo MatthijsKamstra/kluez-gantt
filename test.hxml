@@ -1,0 +1,5 @@
+--library buddy
+--class-path src
+-D analyzer-optimize
+-main tests.TestsDateUtil
+--interp
