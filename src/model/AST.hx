@@ -48,6 +48,7 @@ typedef Total = {
 	var months:Int;
 	var weeks:Int;
 	var days:Int;
+	var working_days:Int;
 	var hours:Int;
 	var minutes:Int;
 	var seconds:Int;

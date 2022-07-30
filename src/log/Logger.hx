@@ -56,4 +56,22 @@ class Logger {
 		console.warn(${v})
 		#end
 	}
+
+	// syntatic sugar for hl
+	public static inline function hili(v:Dynamic) {
+		hl(v);
+	}
+
+	// syntatic sugar for hl
+	public static inline function hi(v:Dynamic) {
+		hl(v);
+	}
+
+	public static inline function hl(v:Dynamic) {
+		#if sys
+		Sys.println('${GREEN_BACKGROUND_BRIGHT}→ ${v} ${RESET}');
+		#else
+		console.warn(${v})
+		#end
+	}
 }

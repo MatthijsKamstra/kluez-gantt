@@ -135,9 +135,9 @@ class TestsDateUtil extends buddy.SingleSuite {
 			});
 		});
 
-		@include
+		// @include
 		describe("Maandag + 7 dagen", {
-			var json:GanttObj = cast new Convert().gantt('     Maandag + 7 dagen            :2022-07-11, 7d');
+			var json:GanttObj = cast new Convert().gantt('Maandag + 7 dagen:2022-07-11,7d', false);
 			var section:Section = json.sections[0];
 			it('start date', {
 				section.start_date.should.be('2022-07-11');
@@ -149,13 +149,58 @@ class TestsDateUtil extends buddy.SingleSuite {
 				section.date.start.day_str.should.be('ma');
 			});
 			it('end day', {
-				section.date.end.day_str.should.be('ma');
+				section.date.end.day_str.should.be('di');
 			});
 			it('total days', {
 				section.total.days.should.be(7);
 			});
 			it('total weeks', {
 				section.total.weeks.should.be(1);
+			});
+		});
+
+		// @include
+		describe("Vrijdag + 1d", {
+			var json:GanttObj = cast new Convert().gantt('Vrijdag+ 1d:2022-07-15,1d');
+			var section:Section = json.sections[0];
+			it('start date', {
+				section.start_date.should.be('2022-07-15');
+			});
+			it('end date', {
+				section.end_date.should.be('2022-07-15');
+			});
+			it('total days', {
+				section.total.days.should.be(1);
+			});
+			it('start day', {
+				section.date.start.day_str.should.be('vr');
+			});
+			it('end day', {
+				section.date.end.day_str.should.be('vr');
+			});
+		});
+
+		@include
+		describe("Vrijdag + 2d", {
+			var json:GanttObj = cast new Convert().gantt('Vrijdag + 2d:2022-07-15,2d', true);
+			var section:Section = json.sections[0];
+			it('start date', {
+				section.start_date.should.be('2022-07-15');
+			});
+			it('end date', {
+				section.end_date.should.be('2022-07-18');
+			});
+			it('total days', {
+				section.total.days.should.be(4);
+			});
+			it('total working days', {
+				section.total.working_days.should.be(2);
+			});
+			it('start day', {
+				section.date.start.day_str.should.be('vr');
+			});
+			it('end day', {
+				section.date.end.day_str.should.be('ma');
 			});
 		});
 

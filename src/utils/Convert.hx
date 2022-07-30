@@ -13,12 +13,46 @@ import log.Logger.*;
 class Convert {
 	var IS_DEBUG = false;
 
+	// dutch sortnames for days of the week and months
+	var dayArr = ['zo', 'ma', 'di', 'wo', 'do', 'vr', 'za'];
+	var monthArr = [
+		'jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'
+	];
+
 	public function new() {
 		// your code
 	}
 
-	function convertNoDate(str) {
-		return 2;
+	/**
+	 * convert `5d`, `5h`, `5w` to a timestmap
+	 *
+	 * @param str	a time indication string (example  `5d`, `5h`, `5w` )
+	 *
+	 * @return Float	Converts a number to a timestamp.
+	 */
+	function convertNoDate(str):Float {
+		var nr:Int;
+		var timestamp = 0.0;
+		if (str.indexOf('h') != -1) {
+			// hours
+			nr = Std.parseInt(str.replace('h', '').trim());
+			timestamp = DateTools.hours(nr);
+		}
+		if (str.indexOf('d') != -1) {
+			// days
+			nr = Std.parseInt(str.replace('d', '').trim());
+			timestamp = DateTools.days(nr);
+		}
+		if (str.indexOf('w') != -1) {
+			// weeks
+			nr = Std.int(Std.parseInt(str.replace('w', '').trim()) * 7);
+			timestamp = DateTools.days(nr);
+		}
+		// nr = Std.parseInt(str.replace('d', '').trim());
+		// timestamp = DateTools.days(nr);
+		// var date = DateTools.delta(_previousStartDate, addTime);
+
+		return timestamp;
 	}
 
 	/**
@@ -30,6 +64,10 @@ class Convert {
 		// log("this is a log message");
 		// warn("this is a warn message");
 		// info("this is a info message");
+
+		if (isDebug) {
+			warn("GANTT convert");
+		}
 
 		var json = {};
 
@@ -203,15 +241,20 @@ class Convert {
 				}
 				// end if loop (line >= then 2 items)
 
+				///////////////////////////
 				// END DATE
+				///////////////////////////
 				var _endDateStr = restArr[restArr.length - 1].trim();
 				Reflect.setField(ganttObj, 'end_date', '');
 				// lets figure this value out
+				///////////////////////////
 				// END DATE // 2014-01-06
+				///////////////////////////
 				if (_endDateStr.indexOf('-') != -1 && _endDateStr.split('-').length == 3) {
 					if (isDebug) {
 						log('// END date (xxxx-xx-xx)');
 					}
+					// FIXME: make sure the enddate is 23:59:59
 					var date = Date.fromString(_endDateStr);
 					Reflect.setField(ganttObj, 'end_date', DateTools.format(date, "%F"));
 					if (isDebug) {
@@ -223,16 +266,34 @@ class Convert {
 					_endDate = date;
 				}
 
+				///////////////////////////
 				// END DATE // 5d
-				// if (_endDateStr.length == 2) {
+				///////////////////////////
+				var hardcodedNR:Int = 0;
 				if (_endDateStr.indexOf('d') != -1 || _endDateStr.indexOf('w') != -1 || _endDateStr.indexOf('h') != -1) {
-					if (isDebug) {
-						log('// END date (5d)');
-					}
 					// TODO fix d, w, h
-					var nr = Std.parseInt(_endDateStr.replace('d', '').trim());
+					var nr:Int = 0;
+					nr = Std.parseInt(_endDateStr.replace('d', '').trim());
+					hardcodedNR = nr;
 					if (isDebug) {
+						log('// END date (${nr}d)');
 						log('days: ' + nr);
+					}
+					// FIXME: friday + 2 should ignore weekend (sa, su)... so add +2 to nr?
+					if (isDebug) {
+						hili('total nr: $nr');
+						hili(_startDate.getDay());
+						hili(dayArr[_startDate.getDay()]);
+
+						for (i in 0...nr) {
+							var d = DateTools.delta(_startDate, DateTools.days(i));
+							hili(d.getDay());
+							hili(dayArr[d.getDay()]);
+							if (d.getDay() == 6) {
+								nr += 2;
+							}
+						}
+						hili('total nr (after): $nr');
 					}
 					// FIXME: make sure a job can start on monday and end on monday
 					// via timestamp - 1
@@ -302,6 +363,7 @@ class Convert {
 				var minutes = Math.floor(seconds / 60);
 				var hours = Math.floor(minutes / 60);
 				var days = Math.floor(hours / 24);
+				var working_days = Math.floor(hardcodedNR);
 				var weeks = Math.floor(days / 7);
 				var years = Math.floor(weeks / 52);
 				var months = Math.floor(years / 12);
@@ -311,6 +373,7 @@ class Convert {
 					months: months,
 					weeks: weeks,
 					days: days,
+					working_days: working_days,
 					hours: hours,
 					minutes: minutes,
 					seconds: seconds,
@@ -336,11 +399,6 @@ class Convert {
 					Reflect.setField(ganttObj, 'state', _state);
 				}
 				// console.groupEnd();
-
-				var dayArr = ['zo', 'ma', 'di', 'wo', 'do', 'vr', 'za'];
-				var monthArr = [
-					'jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'
-				];
 
 				Reflect.setField(ganttObj, 'date', {
 					'start': {
