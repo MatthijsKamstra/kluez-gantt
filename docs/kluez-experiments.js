@@ -710,9 +710,9 @@ kluez_CombiElement.prototype = {
 var kluez_ConnectEl = function(el1,el2) {
 	var div1 = el1;
 	var div2 = el2;
-	var svg = "<svg data-id=\"gen\" id=\"svg_" + kluez_ConnectEl.COUNTER + "\" style=\"position: absolute;top: 0;left: 0;\"><line id=\"line_" + kluez_ConnectEl.COUNTER + "\" stroke=\"black\" /></svg>";
+	var svg = "<svg data-id=\"gen\" id=\"svg_" + kluez_ConnectEl.COUNTER + "\" style=\"position: absolute;top: 0;left: 0;width: 100%;height: 100%;z-index: 0\"><line id=\"line_" + kluez_ConnectEl.COUNTER + "\" stroke=\"black\" /></svg>";
 	var frag = window.document.createRange().createContextualFragment(svg);
-	var line = div2.parentElement.appendChild(frag);
+	div2.parentElement.prepend(frag);
 	var line = window.document.getElementById("line_" + kluez_ConnectEl.COUNTER);
 	var x1 = div1.offsetLeft + div1.offsetWidth / 2;
 	var y1 = div1.offsetTop + div1.offsetHeight / 2;

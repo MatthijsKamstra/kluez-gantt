@@ -12,9 +12,9 @@ class ConnectEl {
 		var div1:DivElement = cast el1;
 		var div2:DivElement = cast el2;
 
-		var svg = '<svg data-id="gen" id="svg_${COUNTER}" style="position: absolute;top: 0;left: 0;"><line id="line_${COUNTER}" stroke="black" /></svg>';
+		var svg = '<svg data-id="gen" id="svg_${COUNTER}" style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;z-index: 0"><line id="line_${COUNTER}" stroke="black" /></svg>';
 		var frag = document.createRange().createContextualFragment(svg);
-		var line = div2.parentElement.appendChild(cast frag);
+		div2.parentElement.prepend(cast frag);
 
 		var line = document.getElementById('line_${COUNTER}');
 
