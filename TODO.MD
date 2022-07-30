@@ -8,13 +8,15 @@
 - [x] combine drag and resize
 - [x] create grid (pattern) on screen
 - [x] move/drag on grid
-- [ ] resize on grid
+- [x] resize on grid
 - [ ] line between divs
   - [ ] svg right
   - [ ] svg curved
 - [x] read mermaid files (https://mermaid-js.github.io/mermaid/#/gantt / https://mermaid-js.github.io/mermaid/#/gantt?id=syntax)
   - [x] week, days, hours convert
   - [x] convert to json
+- [x] test convert
+- [x] test excluding weekend (fixed for now)
 
 ## svg
 
