@@ -1,7 +1,7 @@
 -lib hxColorToolkit
 --library buddy
 -cp src
--main Main
+-main MainExperiments
 -js docs/kluez-experiments.js
 -D source-map-content
 -debug

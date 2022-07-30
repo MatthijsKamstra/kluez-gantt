@@ -1,5 +1,6 @@
 package;
 
+import kluez.ConnectEl;
 import kluez.KlzGrid;
 import kluez.CreateTable;
 import utils.Convert;
@@ -19,7 +20,7 @@ import js.Browser.*;
 using hxColorToolkit.ColorToolkit;
 using StringTools;
 
-class Main {
+class MainExperiments {
 	public function new() {
 		console.info('Kluez');
 		DynamicStyle.setStyle();
@@ -45,6 +46,13 @@ class Main {
 		setupCombi(document.getElementById('overstufff'));
 
 		// new KlzGrid(cast document.getElementById('kluez-grid-container'));
+
+		// kluez-connect-container
+		var aa = cast document.getElementById('aa');
+		var bb = cast document.getElementById('bb');
+		var cc = cast document.getElementById('cc');
+		new ConnectEl(aa, bb);
+		new ConnectEl(bb, cc);
 	}
 
 	/**
@@ -96,6 +104,6 @@ class Main {
 	}
 
 	static public function main() {
-		var app = new Main();
+		var app = new MainExperiments();
 	}
 }

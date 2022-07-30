@@ -145,7 +145,7 @@ HxOverrides.substr = function(s,pos,len) {
 HxOverrides.now = function() {
 	return Date.now();
 };
-var Main = function() {
+var MainExperiments = function() {
 	$global.console.info("Kluez");
 	kluez_DynamicStyle.setStyle();
 	var json = new utils_Convert().gantt(const_Gantt.TEST_1);
@@ -155,12 +155,17 @@ var Main = function() {
 	this.setupCombi(window.document.getElementById("kluez-combi-container"));
 	new kluez_CreateTable(window.document.getElementById("kluez-table-container"));
 	this.setupCombi(window.document.getElementById("overstufff"));
+	var aa = window.document.getElementById("aa");
+	var bb = window.document.getElementById("bb");
+	var cc = window.document.getElementById("cc");
+	new kluez_ConnectEl(aa,bb);
+	new kluez_ConnectEl(bb,cc);
 };
-Main.__name__ = true;
-Main.main = function() {
-	var app = new Main();
+MainExperiments.__name__ = true;
+MainExperiments.main = function() {
+	var app = new MainExperiments();
 };
-Main.prototype = {
+MainExperiments.prototype = {
 	setupResize: function(container) {
 		var i = 0;
 		var gridH = 64;
@@ -327,6 +332,10 @@ StringTools.hex = function(n,digits) {
 };
 var const_ClassNames = function() { };
 const_ClassNames.__name__ = true;
+var haxe_ds_StringMap = function() {
+	this.h = Object.create(null);
+};
+haxe_ds_StringMap.__name__ = true;
 var const_Colors = function() { };
 const_Colors.__name__ = true;
 var const_Gantt = function() { };
@@ -369,10 +378,6 @@ haxe_ValueException.__name__ = true;
 haxe_ValueException.__super__ = haxe_Exception;
 haxe_ValueException.prototype = $extend(haxe_Exception.prototype,{
 });
-var haxe_ds_StringMap = function() {
-	this.h = Object.create(null);
-};
-haxe_ds_StringMap.__name__ = true;
 var haxe_exceptions_PosException = function(message,previous,pos) {
 	haxe_Exception.call(this,message,previous);
 	if(pos == null) {
@@ -702,6 +707,34 @@ kluez_CombiElement.prototype = {
 		this.el.onmousedown = onMouseDown;
 	}
 };
+var kluez_ConnectEl = function(el1,el2) {
+	var div1 = el1;
+	var div2 = el2;
+	var svg = "<svg data-id=\"gen\" id=\"svg_" + kluez_ConnectEl.COUNTER + "\" style=\"position: absolute;top: 0;left: 0;\"><line id=\"line_" + kluez_ConnectEl.COUNTER + "\" stroke=\"black\" /></svg>";
+	var frag = window.document.createRange().createContextualFragment(svg);
+	var line = div2.parentElement.appendChild(frag);
+	var line = window.document.getElementById("line_" + kluez_ConnectEl.COUNTER);
+	var x1 = div1.offsetLeft + div1.offsetWidth / 2;
+	var y1 = div1.offsetTop + div1.offsetHeight / 2;
+	var x2 = div2.offsetLeft + div2.offsetWidth / 2;
+	var y2 = div2.offsetTop + div2.offsetHeight / 2;
+	console.log("src/kluez/ConnectEl.hx:26:",div1);
+	console.log("src/kluez/ConnectEl.hx:27:","div1.offsetLeft: " + div1.offsetLeft);
+	console.log("src/kluez/ConnectEl.hx:28:","div1.offsetTop: " + div1.offsetTop);
+	console.log("src/kluez/ConnectEl.hx:29:","x1: " + x1);
+	console.log("src/kluez/ConnectEl.hx:30:","y1: " + y1);
+	console.log("src/kluez/ConnectEl.hx:31:",div2);
+	console.log("src/kluez/ConnectEl.hx:32:","div2.offsetLeft: " + div2.offsetLeft);
+	console.log("src/kluez/ConnectEl.hx:33:","div2.offsetTop: " + div2.offsetTop);
+	console.log("src/kluez/ConnectEl.hx:34:","x2: " + x2);
+	console.log("src/kluez/ConnectEl.hx:35:","y2: " + y2);
+	line.setAttribute("x1","" + x1);
+	line.setAttribute("y1","" + y1);
+	line.setAttribute("x2","" + x2);
+	line.setAttribute("y2","" + y2);
+	kluez_ConnectEl.COUNTER++;
+};
+kluez_ConnectEl.__name__ = true;
 var kluez_CreateElement = function(container) {
 	this.init(container);
 };
@@ -1420,6 +1453,7 @@ const_Colors.colorMap = (function($this) {
 	return $r;
 }(this));
 const_Gantt.TEST_1 = "\n  section A section\n     Completed task            :done,    des1, 2014-01-06,2014-01-08\n     Active task               :active,  des2, 2014-01-09, 3d\n     Future task               :         des3, after des2, 5d\n     Future task2              :         des4, after des3, 5d\n     Future task3              :        2d\n";
+kluez_ConnectEl.COUNTER = 0;
 kluez_DynamicStyle.colorMap = (function($this) {
 	var $r;
 	var _g = new haxe_ds_StringMap();
@@ -1432,7 +1466,7 @@ kluez_DynamicStyle.colorMap = (function($this) {
 	$r = _g;
 	return $r;
 }(this));
-Main.main();
+MainExperiments.main();
 })(typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
 
 //# sourceMappingURL=kluez-experiments.js.map
