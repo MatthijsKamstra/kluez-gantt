@@ -162,6 +162,51 @@ class TestsDateUtil extends buddy.SingleSuite {
 			});
 		});
 
+		@include
+		describe("Maandag + 15 dagen", {
+			var json:GanttObj = cast new Convert().gantt('Maandag + 15 dagen:2022-07-11,15d', false);
+			var section:Section = json.sections[0];
+			it('start date (${section.start_date})', {
+				section.start_date.should.be('2022-07-11');
+			});
+			it('end date (${section.end_date})', {
+				section.end_date.should.be('2022-07-29');
+			});
+			it('start day (${section.date.start.day_str})', {
+				section.date.start.day_str.should.be('ma');
+			});
+			it('end day (${section.date.end.day_str})', {
+				section.date.end.day_str.should.be('vr');
+			});
+			it('total days (${section.total.days})', {
+				section.total.days.should.be(19);
+			});
+			it('total working days (${section.total.working_days})', {
+				section.total.working_days.should.be(15);
+			});
+		});
+
+		// @include
+		describe("Vrijdag tot dinsdag", {
+			var json:GanttObj = cast new Convert().gantt('Vrijdag tot dinsdag :2022-07-15,2022-07-19', false);
+			var section:Section = json.sections[0];
+			it('start date', {
+				section.start_date.should.be('2022-07-15');
+			});
+			it('end date', {
+				section.end_date.should.be('2022-07-19');
+			});
+			it('total days', {
+				section.total.days.should.be(4);
+			});
+			it('start day', {
+				section.date.start.day_str.should.be('vr');
+			});
+			it('end day', {
+				section.date.end.day_str.should.be('di');
+			});
+		});
+
 		// @include
 		describe("Vrijdag + 1d", {
 			var json:GanttObj = cast new Convert().gantt('Vrijdag+ 1d:2022-07-15,1d');
@@ -172,8 +217,11 @@ class TestsDateUtil extends buddy.SingleSuite {
 			it('end date', {
 				section.end_date.should.be('2022-07-15');
 			});
-			it('total days', {
+			it('total days (${section.total.days})', {
 				section.total.days.should.be(1);
+			});
+			it('total working days (${section.total.working_days})', {
+				section.total.working_days.should.be(1);
 			});
 			it('start day', {
 				section.date.start.day_str.should.be('vr');
@@ -183,7 +231,7 @@ class TestsDateUtil extends buddy.SingleSuite {
 			});
 		});
 
-		@include
+		// @include
 		describe("Vrijdag + 2d", {
 			var json:GanttObj = cast new Convert().gantt('Vrijdag + 2d:2022-07-15,2d', false);
 			var section:Section = json.sections[0];
@@ -207,31 +255,8 @@ class TestsDateUtil extends buddy.SingleSuite {
 			});
 		});
 
-		describe("Vrijdag tot dinsdag", {
-			var json:GanttObj = cast new Convert().gantt(' Vrijdag tot dinsdag         :2022-07-15,2022-07-19');
-			var section:Section = json.sections[0];
-			it('start date', {
-				section.start_date.should.be('2022-07-15');
-			});
-			it('end date', {
-				section.end_date.should.be('2022-07-19');
-			});
-			it('total days', {
-				section.total.days.should.be(4);
-			});
-			it('start day', {
-				section.date.start.day_str.should.be('ma');
-			});
-			it('end day', {
-				section.date.end.day_str.should.be('ma');
-			});
-		});
-
-		// FIXME! test above has also the weekend (-2 days)
-		// total days should be 2
-
-		describe("Vrijdag + 5", {
-			var json:GanttObj = cast new Convert().gantt(' Vrijdag + 5        :2022-07-15,5d');
+		describe("Vrijdag + 5d", {
+			var json:GanttObj = cast new Convert().gantt(' Vrijdag + 5d        :2022-07-15,5d');
 			var section:Section = json.sections[0];
 			it('start date', {
 				section.start_date.should.be('2022-07-15');
@@ -239,13 +264,13 @@ class TestsDateUtil extends buddy.SingleSuite {
 			it('end date', {
 				section.end_date.should.be('2022-07-21');
 			});
-			it('total days', {
-				section.total.days.should.be(5);
+			it('total working days', {
+				section.total.working_days.should.be(5);
 			});
 		});
 
-		describe("Vrijdag + 10", {
-			var json:GanttObj = cast new Convert().gantt(' Vrijdag + 10        :2022-07-15,10d');
+		describe("Vrijdag + 10d", {
+			var json:GanttObj = cast new Convert().gantt(' Vrijdag + 10d        :2022-07-15,10d');
 			var section:Section = json.sections[0];
 			it('start date', {
 				section.start_date.should.be('2022-07-15');
@@ -253,8 +278,8 @@ class TestsDateUtil extends buddy.SingleSuite {
 			it('end date', {
 				section.end_date.should.be('2022-07-28');
 			});
-			it('total days', {
-				section.total.days.should.be(10);
+			it('total working_days', {
+				section.total.working_days.should.be(10);
 			});
 		});
 
