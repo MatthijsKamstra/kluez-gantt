@@ -1068,12 +1068,34 @@ kluez_ResizeElement.prototype = {
 	}
 };
 var utils_Convert = function() {
+	this.monthArr = ["jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
+	this.dayArr = ["zo","ma","di","wo","do","vr","za"];
 };
 utils_Convert.__name__ = true;
 utils_Convert.prototype = {
-	gantt: function(str,isDebug) {
+	convertNoDate: function(str) {
+		var nr;
+		var timestamp = 0.0;
+		if(str.indexOf("h") != -1) {
+			nr = Std.parseInt(StringTools.trim(StringTools.replace(str,"h","")));
+			timestamp = nr * 60.0 * 60.0 * 1000.0;
+		}
+		if(str.indexOf("d") != -1) {
+			nr = Std.parseInt(StringTools.trim(StringTools.replace(str,"d","")));
+			timestamp = nr * 24.0 * 60.0 * 60.0 * 1000.0;
+		}
+		if(str.indexOf("w") != -1) {
+			nr = Std.parseInt(StringTools.trim(StringTools.replace(str,"w",""))) * 7 | 0;
+			timestamp = nr * 24.0 * 60.0 * 60.0 * 1000.0;
+		}
+		return timestamp;
+	}
+	,gantt: function(str,isDebug) {
 		if(isDebug == null) {
-			isDebug = true;
+			isDebug = false;
+		}
+		if(isDebug) {
+			$global.console.warn("GANTT convert");
 		}
 		var json = { };
 		json["created_date"] = new Date();
@@ -1113,7 +1135,9 @@ utils_Convert.prototype = {
 			}
 			if(line.indexOf("section") != -1) {
 				_sectionTitle = StringTools.trim(StringTools.trim(line).substring("section".length));
-				var isDebug1 = isDebug;
+				if(isDebug) {
+					$global.console.info("" + _sectionTitle);
+				}
 			} else {
 				var arrr = line.split(":");
 				var _title = StringTools.trim(arrr[0]);
@@ -1121,14 +1145,11 @@ utils_Convert.prototype = {
 				var restArr = rest.split(",");
 				var oArr = [];
 				if(isDebug) {
-					if(isDebug) {
-						if(isDebug) {
-							if(isDebug) {
-								oArr.push(StringTools.replace(StringTools.replace(line,"\t",""),"  "," "));
-							}
-						}
-					}
+					$global.console.log("- line: \"" + line + "\"");
+					$global.console.info("- sectionTitle: \"" + _sectionTitle + "\"");
+					$global.console.info("- title: \"" + _title + "\"");
 				}
+				oArr.push(StringTools.replace(StringTools.replace(line,"\t",""),"  "," "));
 				oArr.push(_title);
 				var _g2 = 0;
 				var _g3 = restArr.length;
@@ -1136,8 +1157,9 @@ utils_Convert.prototype = {
 					var j = _g2++;
 					var _restArr = StringTools.trim(restArr[j]);
 					if(isDebug) {
-						oArr.push(StringTools.trim(_restArr));
+						$global.console.log("------ restline info: " + _restArr);
 					}
+					oArr.push(StringTools.trim(_restArr));
 				}
 				ganttObj["_original"] = oArr;
 				ganttObj["section"] = _sectionTitle;
@@ -1145,16 +1167,29 @@ utils_Convert.prototype = {
 				ganttObj["after_id"] = "";
 				ganttObj["start_date"] = DateTools.format(_previousEndDate,"%F");
 				if(restArr.length >= 2) {
+					if(isDebug) {
+						$global.console.warn("line >= then 2 items");
+					}
 					_startDateStr = StringTools.trim(restArr[restArr.length - 2]);
 					if(_startDateStr.split("-").length == 3) {
+						if(isDebug) {
+							$global.console.log("// START date (xxxx-xx-xx)");
+						}
 						var date = HxOverrides.strDate(_startDateStr);
 						ganttObj["start_date"] = DateTools.format(date,"%F");
 						if(isDebug) {
-							_previousStartDate = date;
+							var v = "start_date (xx-xx-xx): " + DateTools.format(date,"%F");
+							$global.console.info(v);
+							var v1 = "start_date (xx-xx-xx): " + Std.string(date);
+							$global.console.info(v1);
 						}
+						_previousStartDate = date;
 						_startDate = date;
 					}
 					if(_startDateStr.length == 2) {
+						if(isDebug) {
+							$global.console.log("// START date (5d)");
+						}
 						var nr;
 						var addTime = 0.0;
 						if(_startDateStr.indexOf("h") != -1) {
@@ -1174,18 +1209,25 @@ utils_Convert.prototype = {
 						var date1 = new Date(_previousStartDate.getTime() + addTime);
 						ganttObj["start_date"] = DateTools.format(date1,"%F");
 						if(isDebug) {
-							_previousStartDate = date1;
+							var v2 = "start_date (" + _startDateStr + "): " + DateTools.format(date1,"%F");
+							$global.console.info(v2);
 						}
+						_previousStartDate = date1;
 						_startDate = date1;
 					}
 					if(_startDateStr.indexOf("after ") != -1) {
+						if(isDebug) {
+							$global.console.log("// start date (after)");
+						}
 						var getID = StringTools.replace(_startDateStr,"after ","");
 						var date2 = HxOverrides.strDate(_mapAfter_h[getID]);
 						ganttObj["start_date"] = _mapAfter_h[getID];
 						ganttObj["after_id"] = "" + getID;
 						if(isDebug) {
-							_previousStartDate = date2;
+							var v3 = "start_date (" + _startDateStr + "): " + getID + " - " + _mapAfter_h[getID];
+							$global.console.info(v3);
 						}
+						_previousStartDate = date2;
 						_startDate = date2;
 					}
 					if(Reflect.getProperty(json,"start_date") == null) {
@@ -1195,29 +1237,79 @@ utils_Convert.prototype = {
 				var _endDateStr = StringTools.trim(restArr[restArr.length - 1]);
 				ganttObj["end_date"] = "";
 				if(_endDateStr.indexOf("-") != -1 && _endDateStr.split("-").length == 3) {
+					if(isDebug) {
+						$global.console.log("// END date (xxxx-xx-xx)");
+					}
 					var date3 = HxOverrides.strDate(_endDateStr);
 					ganttObj["end_date"] = DateTools.format(date3,"%F");
 					if(isDebug) {
-						_previousEndDate = date3;
+						var v4 = "end_date (xxxx-xx-xx): " + DateTools.format(date3,"%F");
+						$global.console.info(v4);
+						var v5 = "end_date (xxxx-xx-xx): " + Std.string(date3);
+						$global.console.info(v5);
 					}
+					_previousEndDate = date3;
 					_endDate = date3;
 				}
+				var hardcodedNR = 0;
 				if(_endDateStr.indexOf("d") != -1 || _endDateStr.indexOf("w") != -1 || _endDateStr.indexOf("h") != -1) {
-					var nr1 = Std.parseInt(StringTools.trim(StringTools.replace(_endDateStr,"d","")));
-					var isDebug2 = isDebug;
-					var date4 = new Date(_startDate.getTime() + nr1 * 24.0 * 60.0 * 60.0 * 1000.0);
+					var nr1 = 0;
+					nr1 = Std.parseInt(StringTools.trim(StringTools.replace(_endDateStr,"d","")));
+					hardcodedNR = nr1;
+					if(isDebug) {
+						$global.console.log("// END date (" + nr1 + ") (" + _endDateStr + ")");
+						var v6 = "timestamp (_endDateStr): " + this.convertNoDate(_endDateStr);
+						$global.console.warn(v6);
+						$global.console.log("nr: " + nr1);
+					}
+					if(isDebug) {
+						var v7 = _startDate.getDay();
+						$global.console.warn(v7);
+						var v8 = this.dayArr[_startDate.getDay()];
+						$global.console.warn(v8);
+					}
+					var _g4 = 0;
+					var _g5 = nr1;
+					while(_g4 < _g5) {
+						var i1 = _g4++;
+						var d = new Date(_startDate.getTime() + i1 * 24.0 * 60.0 * 60.0 * 1000.0);
+						if(isDebug) {
+							$global.console.warn("total nr: " + nr1);
+							var v9 = d.getDay();
+							$global.console.warn(v9);
+							var v10 = this.dayArr[d.getDay()];
+							$global.console.warn(v10);
+						}
+						if(d.getDay() == 6) {
+							nr1 += 2;
+						}
+					}
+					if(isDebug) {
+						$global.console.warn("total nr (after): " + nr1);
+					}
+					var date4 = new Date(_startDate.getTime() + (nr1 * 24.0 * 60.0 * 60.0 * 1000.0 - 1));
 					ganttObj["end_date"] = DateTools.format(date4,"%F");
-					var isDebug3 = isDebug;
+					if(isDebug) {
+						var v11 = "end_date (" + _endDateStr + "): " + DateTools.format(date4,"%F");
+						$global.console.info(v11);
+						var v12 = "end_date (" + _endDateStr + "): " + Std.string(date4);
+						$global.console.info(v12);
+					}
 					_previousEndDate = date4;
 					_endDate = date4;
 				}
 				if(_endDateStr.indexOf("after ") != -1) {
+					if(isDebug) {
+						$global.console.log("// end date (after)");
+					}
 					var getID1 = StringTools.replace(_endDateStr,"after ","");
 					var date5 = HxOverrides.strDate(_mapAfter_h[getID1]);
 					ganttObj["end_date"] = _mapAfter_h[getID1];
 					if(isDebug) {
-						_previousEndDate = date5;
+						var v13 = "end_date (" + _endDateStr + "): " + getID1 + " - " + _mapAfter_h[getID1];
+						$global.console.info(v13);
 					}
+					_previousEndDate = date5;
 					_endDate = date5;
 				}
 				json["end_date"] = DateTools.format(_endDate,"%F");
@@ -1225,36 +1317,41 @@ utils_Convert.prototype = {
 				if(restArr.length >= 3) {
 					var _id = StringTools.trim(restArr[restArr.length - 3]);
 					if(isDebug) {
-						ganttObj["id"] = _id;
+						$global.console.info("id: " + _id);
 					}
+					ganttObj["id"] = _id;
 					_mapAfter_h[_id] = DateTools.format(_previousEndDate,"%F");
 					_mapBefore_h[_id] = DateTools.format(_previousStartDate,"%F");
 				}
 				if(isDebug) {
-					console.log("src/utils/Convert.hx:248:","start: " + Std.string(_startDate));
+					var v14 = "-- start: " + Std.string(_startDate);
+					$global.console.info(v14);
+					var v15 = Reflect.getProperty(ganttObj,"start_date");
+					$global.console.info(v15);
+					var v16 = "-- end: " + Std.string(_endDate);
+					$global.console.info(v16);
+					var v17 = Reflect.getProperty(ganttObj,"end_date");
+					$global.console.info(v17);
 				}
-				if(isDebug) {
-					console.log("src/utils/Convert.hx:250:","end: " + Std.string(_endDate));
-				}
-				var milliseconds = _endDate.getTime() - _startDate.getTime();
+				var milliseconds = _endDate.getTime() + 1 - _startDate.getTime();
 				var seconds = Math.floor(milliseconds / 1000);
 				var minutes = Math.floor(seconds / 60);
 				var hours = Math.floor(minutes / 60);
 				var days = Math.floor(hours / 24);
+				var working_days = Math.floor(hardcodedNR);
 				var weeks = Math.floor(days / 7);
 				var years = Math.floor(weeks / 52);
 				var months = Math.floor(years / 12);
+				ganttObj["total"] = { years : years, months : months, weeks : weeks, days : days, working_days : working_days, hours : hours, minutes : minutes, seconds : seconds, milliseconds : milliseconds};
 				ganttObj["state"] = "";
 				if(restArr.length >= 4) {
-					var _state = StringTools.trim(restArr[restArr.length - 4]);
+					_state = StringTools.trim(restArr[restArr.length - 4]);
 					if(isDebug) {
-						ganttObj["state"] = _state;
+						$global.console.info("state: " + _state);
 					}
+					ganttObj["state"] = _state;
 				}
-				var dayArr = ["zo","ma","di","wo","do","vr","za"];
-				var monthArr = ["jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"];
-				ganttObj["date"] = { "start" : { "date" : _startDate, "day" : _startDate.getDay(), "month" : _startDate.getMonth(), "year" : _startDate.getFullYear(), "day_str" : dayArr[_startDate.getDay()], "month_str" : monthArr[_startDate.getMonth()]}, "end" : { "date" : _endDate, "day" : _endDate.getDay(), "month" : _endDate.getMonth(), "year" : _endDate.getFullYear(), "day_str" : dayArr[_endDate.getDay()], "month_str" : monthArr[_endDate.getMonth()]}};
-				ganttObj["total"] = { years : years, months : months, weeks : weeks, days : days, hours : hours, minutes : minutes, seconds : seconds, milliseconds : milliseconds};
+				ganttObj["date"] = { "start" : { "date" : _startDate, "day" : _startDate.getDay(), "month" : _startDate.getMonth(), "year" : _startDate.getFullYear(), "day_str" : this.dayArr[_startDate.getDay()], "month_str" : this.monthArr[_startDate.getMonth()]}, "end" : { "date" : _endDate, "day" : _endDate.getDay(), "month" : _endDate.getMonth(), "year" : _endDate.getFullYear(), "day_str" : this.dayArr[_endDate.getDay()], "month_str" : this.monthArr[_endDate.getMonth()]}};
 				_sectionArr.push(ganttObj);
 			}
 		}

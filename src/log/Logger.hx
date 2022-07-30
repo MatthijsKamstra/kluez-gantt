@@ -28,7 +28,11 @@ class Logger {
 		// now we are going to overwrite the default trace with our own
 		haxe.Log.trace = function(v:Dynamic, ?infos:haxe.PosInfos) {
 			var str = '${BLUE} → ${RED}${infos.fileName}:${infos.lineNumber} ${RED_BOLD}${v}${RESET}';
+			#if sys
 			Sys.println(str);
+			#else
+			console.log(${v});
+			#end
 		}
 	}
 
@@ -37,7 +41,7 @@ class Logger {
 		// Sys.println('> ' + v);
 		Sys.println('${BLUE}→ ${WHITE}${v}${RESET}');
 		#else
-		console.log(${v})
+		console.log(${v});
 		#end
 	}
 
@@ -45,7 +49,7 @@ class Logger {
 		#if sys
 		Sys.println('${BLUE}♥ ${GREEN}${v}${RESET}');
 		#else
-		console.info(${v})
+		console.info(${v});
 		#end
 	}
 
@@ -53,7 +57,7 @@ class Logger {
 		#if sys
 		Sys.println('${BLUE}⚠ ${BLACK}${RED_BACKGROUND}${v}${RESET}');
 		#else
-		console.warn(${v})
+		console.warn(${v});
 		#end
 	}
 
@@ -71,7 +75,7 @@ class Logger {
 		#if sys
 		Sys.println('${GREEN_BACKGROUND_BRIGHT}→ ${v} ${RESET}');
 		#else
-		console.warn(${v})
+		console.warn(${v});
 		#end
 	}
 }
