@@ -26,11 +26,13 @@ class Convert {
 	/**
 	 * convert `5d`, `5h`, `5w` to a timestmap
 	 *
+	 * @example		convertNoDate('8h'); //
+	 *
 	 * @param str	a time indication string (example  `5d`, `5h`, `5w` )
 	 *
 	 * @return Float	Converts a number to a timestamp.
 	 */
-	function convertNoDate(str):Float {
+	function convertNoDate(str:String):Float {
 		var nr:Int;
 		var timestamp = 0.0;
 		if (str.indexOf('h') != -1) {
@@ -272,12 +274,15 @@ class Convert {
 				var hardcodedNR:Int = 0;
 				if (_endDateStr.indexOf('d') != -1 || _endDateStr.indexOf('w') != -1 || _endDateStr.indexOf('h') != -1) {
 					// TODO fix d, w, h
+
 					var nr:Int = 0;
 					nr = Std.parseInt(_endDateStr.replace('d', '').trim());
 					hardcodedNR = nr;
+
 					if (isDebug) {
-						log('// END date (${nr}d)');
-						log('days: ' + nr);
+						log('// END date (${nr}) (${_endDateStr})');
+						hi('timestamp (_endDateStr): ${convertNoDate(_endDateStr)}');
+						log('nr: ' + nr);
 					}
 					// FIXME: friday + 2 should ignore weekend (sa, su)... so add +2 to nr?
 					if (isDebug) {
@@ -299,7 +304,7 @@ class Convert {
 						hili('total nr (after): $nr');
 					}
 
-					// FIXME: make sure a job can start on monday and end on monday
+					// NOTE: make sure a job can start on monday and end on monday
 					// via timestamp - 1
 					var date = DateTools.delta(_startDate, DateTools.days(nr) - 1);
 					Reflect.setField(ganttObj, 'end_date', DateTools.format(date, "%F"));
