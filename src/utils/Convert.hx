@@ -281,20 +281,24 @@ class Convert {
 					}
 					// FIXME: friday + 2 should ignore weekend (sa, su)... so add +2 to nr?
 					if (isDebug) {
-						hili('total nr: $nr');
 						hili(_startDate.getDay());
 						hili(dayArr[_startDate.getDay()]);
-
-						for (i in 0...nr) {
-							var d = DateTools.delta(_startDate, DateTools.days(i));
+					}
+					for (i in 0...nr) {
+						var d = DateTools.delta(_startDate, DateTools.days(i));
+						if (isDebug) {
+							hili('total nr: $nr');
 							hili(d.getDay());
 							hili(dayArr[d.getDay()]);
-							if (d.getDay() == 6) {
-								nr += 2;
-							}
 						}
+						if (d.getDay() == 6) {
+							nr += 2;
+						}
+					}
+					if (isDebug) {
 						hili('total nr (after): $nr');
 					}
+
 					// FIXME: make sure a job can start on monday and end on monday
 					// via timestamp - 1
 					var date = DateTools.delta(_startDate, DateTools.days(nr) - 1);
