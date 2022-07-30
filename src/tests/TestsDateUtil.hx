@@ -54,7 +54,6 @@ class TestsDateUtil extends buddy.SingleSuite {
 			});
 		});
 
-		// @include
 		describe("Maandag tot vrijdag", {
 			var json:GanttObj = cast new Convert().gantt('Maandag tot vrijdag            :2022-07-11,2022-07-15');
 			var section:Section = json.sections[0];
@@ -69,19 +68,53 @@ class TestsDateUtil extends buddy.SingleSuite {
 			});
 		});
 
-		describe("Maandag + 2 dagen", {
+		// @include
+		describe("Maandag (2022-07-11) + 1 dagen", {
+			var json:GanttObj = cast new Convert().gantt('Maandag + 1 dagen:2022-07-11, 1d', false);
+			var section:Section = json.sections[0];
+
+			// return;
+
+			it('start date', {
+				section.start_date.should.be('2022-07-11');
+			});
+			it('end date (starts on monday ends on monday)', {
+				section.end_date.should.be('2022-07-11');
+			});
+			it('total days', {
+				section.total.days.should.be(1);
+			});
+			it('start day', {
+				section.date.start.day_str.should.be('ma');
+			});
+			it('end day', {
+				section.date.end.day_str.should.be('ma');
+			});
+
+			// trace(haxe.Json.stringify(section, '  '));
+		});
+
+		// @include
+		describe("Maandag (2022-07-11) + 2 dagen", {
 			var json:GanttObj = cast new Convert().gantt('    Maandag + 2 dagen            :2022-07-11, 2d');
 			var section:Section = json.sections[0];
 			it('start date', {
 				section.start_date.should.be('2022-07-11');
 			});
-			it('end date', {
+			it('end date (starts on monday ends on thuesday)', {
 				section.end_date.should.be('2022-07-12');
 			});
 			it('total days', {
 				section.total.days.should.be(2);
 			});
+			it('start day', {
+				section.date.start.day_str.should.be('ma');
+			});
+			it('end day', {
+				section.date.end.day_str.should.be('di');
+			});
 		});
+
 		describe("Maandag + 5 dagen", {
 			var json:GanttObj = cast new Convert().gantt('    Maandag + 5 dagen            :2022-07-11, 5d');
 			var section:Section = json.sections[0];
@@ -94,8 +127,15 @@ class TestsDateUtil extends buddy.SingleSuite {
 			it('total days', {
 				section.total.days.should.be(5);
 			});
+			it('start day', {
+				section.date.start.day_str.should.be('ma');
+			});
+			it('end day', {
+				section.date.end.day_str.should.be('vr');
+			});
 		});
 
+		@include
 		describe("Maandag + 7 dagen", {
 			var json:GanttObj = cast new Convert().gantt('     Maandag + 7 dagen            :2022-07-11, 7d');
 			var section:Section = json.sections[0];
@@ -104,6 +144,12 @@ class TestsDateUtil extends buddy.SingleSuite {
 			});
 			it('end date', {
 				section.end_date.should.be('2022-07-19');
+			});
+			it('start day', {
+				section.date.start.day_str.should.be('ma');
+			});
+			it('end day', {
+				section.date.end.day_str.should.be('ma');
 			});
 			it('total days', {
 				section.total.days.should.be(7);
@@ -124,6 +170,12 @@ class TestsDateUtil extends buddy.SingleSuite {
 			});
 			it('total days', {
 				section.total.days.should.be(4);
+			});
+			it('start day', {
+				section.date.start.day_str.should.be('ma');
+			});
+			it('end day', {
+				section.date.end.day_str.should.be('ma');
 			});
 		});
 

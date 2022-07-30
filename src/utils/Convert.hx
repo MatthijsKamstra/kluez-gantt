@@ -61,6 +61,7 @@ class Convert {
 		var _previousStartDate:Date = Date.now();
 		var _previousEndDate:Date = Date.now();
 
+		// read all lines
 		for (i in 0...lines.length) {
 			var ganttObj = {};
 
@@ -102,7 +103,7 @@ class Convert {
 				for (j in 0...restArr.length) {
 					var _restArr = restArr[j].trim();
 					if (isDebug) {
-						log('- arr: $_restArr');
+						log('------ restline info: $_restArr');
 					}
 					oArr.push(_restArr.trim());
 				}
@@ -115,7 +116,13 @@ class Convert {
 				// START DATE
 				Reflect.setField(ganttObj, 'after_id', "");
 				Reflect.setField(ganttObj, 'start_date', DateTools.format(_previousEndDate, "%F"));
+
+				// START DATE
+				// if split (,) line >= then 2 items
 				if (restArr.length >= 2) {
+					if (isDebug) {
+						warn('line >= then 2 items');
+					}
 					_startDateStr = restArr[restArr.length - 2].trim();
 					// Reflect.setField(ganttObj, '__start_date', _startDateStr);
 					// // console.log(_startDateStr.split('-').length);
@@ -124,12 +131,14 @@ class Convert {
 					// lets figure this value out
 					// START DATE // 2014-01-06
 					if (_startDateStr.split('-').length == 3) {
-						if (isDebug)
-							log('// start date (xxxx-xx-xx)');
+						if (isDebug) {
+							log('// START date (xxxx-xx-xx)');
+						}
 						var date = Date.fromString(_startDateStr);
 						Reflect.setField(ganttObj, 'start_date', DateTools.format(date, "%F"));
 						if (isDebug) {
 							info('start_date (xx-xx-xx): ' + DateTools.format(date, "%F"));
+							info('start_date (xx-xx-xx): ' + date);
 						}
 
 						_previousStartDate = date;
@@ -138,8 +147,9 @@ class Convert {
 
 					// START DATE // 5d
 					if (_startDateStr.length == 2) {
-						if (isDebug)
-							log('// start date (5d)');
+						if (isDebug) {
+							log('// START date (5d)');
+						}
 						var nr:Int;
 						var addTime = 0.0;
 						if (_startDateStr.indexOf('h') != -1) {
@@ -187,9 +197,11 @@ class Convert {
 					}
 
 					// make sure to set this value only once!
-					if (Reflect.getProperty(json, 'start_date') == null)
+					if (Reflect.getProperty(json, 'start_date') == null) {
 						Reflect.setField(json, 'start_date', DateTools.format(_startDate, "%F"));
+					}
 				}
+				// end if loop (line >= then 2 items)
 
 				// END DATE
 				var _endDateStr = restArr[restArr.length - 1].trim();
@@ -197,12 +209,14 @@ class Convert {
 				// lets figure this value out
 				// END DATE // 2014-01-06
 				if (_endDateStr.indexOf('-') != -1 && _endDateStr.split('-').length == 3) {
-					if (isDebug)
-						log('// end date (xxxx-xx-xx)');
+					if (isDebug) {
+						log('// END date (xxxx-xx-xx)');
+					}
 					var date = Date.fromString(_endDateStr);
 					Reflect.setField(ganttObj, 'end_date', DateTools.format(date, "%F"));
 					if (isDebug) {
 						info('end_date (xxxx-xx-xx): ' + DateTools.format(date, "%F"));
+						info('end_date (xxxx-xx-xx): ' + date);
 					}
 
 					_previousEndDate = date;
@@ -212,16 +226,21 @@ class Convert {
 				// END DATE // 5d
 				// if (_endDateStr.length == 2) {
 				if (_endDateStr.indexOf('d') != -1 || _endDateStr.indexOf('w') != -1 || _endDateStr.indexOf('h') != -1) {
-					if (isDebug)
-						log('// end date (5d)');
+					if (isDebug) {
+						log('// END date (5d)');
+					}
+					// TODO fix d, w, h
 					var nr = Std.parseInt(_endDateStr.replace('d', '').trim());
 					if (isDebug) {
 						log('days: ' + nr);
 					}
-					var date = DateTools.delta(_startDate, DateTools.days(nr));
+					// FIXME: make sure a job can start on monday and end on monday
+					// via timestamp - 1
+					var date = DateTools.delta(_startDate, DateTools.days(nr) - 1);
 					Reflect.setField(ganttObj, 'end_date', DateTools.format(date, "%F"));
 					if (isDebug) {
 						info('end_date ($_endDateStr): ' + DateTools.format(date, "%F"));
+						info('end_date ($_endDateStr): ' + date);
 					}
 
 					_previousEndDate = date;
@@ -230,8 +249,9 @@ class Convert {
 
 				// END DATE // after
 				if (_endDateStr.indexOf('after ') != -1) {
-					if (isDebug)
+					if (isDebug) {
 						log('// end date (after)');
+					}
 					var getID = _endDateStr.replace('after ', '');
 					//	if (isDebug) { // console.log(_map.get(getID)); }
 					var date = Date.fromString(_mapAfter.get(getID));
@@ -269,13 +289,15 @@ class Convert {
 				// trace(_endDate.getTime());
 
 				if (isDebug) {
-					info('start: ' + _startDate);
+					info('-- start: ' + _startDate);
 					info(Reflect.getProperty(ganttObj, 'start_date'));
-					info('end: ' + _endDate);
+					info('-- end: ' + _endDate);
 					info(Reflect.getProperty(ganttObj, 'end_date'));
 				}
 
-				var milliseconds = (_endDate.getTime() - _startDate.getTime());
+				// FIXME: make sure the milleseconds work with rounded numbers
+				// via getTime() + 1 (see _endTime conversion)
+				var milliseconds = ((_endDate.getTime() + 1) - _startDate.getTime());
 				var seconds = Math.floor(milliseconds / 1000);
 				var minutes = Math.floor(seconds / 60);
 				var hours = Math.floor(minutes / 60);
@@ -283,6 +305,17 @@ class Convert {
 				var weeks = Math.floor(days / 7);
 				var years = Math.floor(weeks / 52);
 				var months = Math.floor(years / 12);
+
+				Reflect.setField(ganttObj, 'total', {
+					years: years,
+					months: months,
+					weeks: weeks,
+					days: days,
+					hours: hours,
+					minutes: minutes,
+					seconds: seconds,
+					milliseconds: milliseconds,
+				});
 
 				// trace('milliseconds: ' + milliseconds);
 				// trace('seconds: ' + seconds);
@@ -326,17 +359,6 @@ class Convert {
 						'day_str': dayArr[_endDate.getDay()],
 						'month_str': monthArr[_endDate.getMonth()],
 					}
-				});
-
-				Reflect.setField(ganttObj, 'total', {
-					years: years,
-					months: months,
-					weeks: weeks,
-					days: days,
-					hours: hours,
-					minutes: minutes,
-					seconds: seconds,
-					milliseconds: milliseconds,
 				});
 
 				_sectionArr.push(ganttObj);

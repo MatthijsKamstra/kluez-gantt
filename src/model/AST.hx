@@ -39,7 +39,7 @@ typedef Section = {
 	var end_date:String;
 	var id:String;
 	var state:String;
-	var date:Date;
+	var date:Datez;
 	var total:Total;
 };
 
@@ -54,11 +54,16 @@ typedef Total = {
 	var milliseconds:Int;
 };
 
-typedef Date = {
+typedef Datezz = {
 	var date:Date;
 	var day:Int;
 	var month:Int;
 	var year:Int;
 	var day_str:String;
 	var month_str:String;
+};
+
+typedef Datez = {
+	var start:Datezz;
+	var end:Datezz;
 };

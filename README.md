@@ -2,6 +2,8 @@
 
 WIP experiment to create a flexible gantt planning
 
+- https://mermaid-js.github.io/mermaid/#/gantt
+
 This is a [Haxe](http://www.haxe.org) project, read more about it in the [README_HAXE.MD](README_HAXE.MD)!
 
 ![](icon.png)
