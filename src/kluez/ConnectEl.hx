@@ -12,11 +12,12 @@ class ConnectEl {
 		var div1:DivElement = cast el1;
 		var div2:DivElement = cast el2;
 
-		var svg = '<svg data-id="gen" id="svg_${COUNTER}" style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;z-index: 0"><line id="line_${COUNTER}" stroke="black" /></svg>';
+		var svg = '<svg data-id="gen" id="svg_${COUNTER}" style="position: absolute;top: 0;left: 0;width: 100%;height: 100%;z-index: 0"><line id="line_${COUNTER}" stroke="black" /><rect id="rect_${COUNTER}" stroke="black"/></svg>';
 		var frag = document.createRange().createContextualFragment(svg);
 		div2.parentElement.prepend(cast frag);
 
 		var line = document.getElementById('line_${COUNTER}');
+		var rect = document.getElementById('rect_${COUNTER}');
 
 		var x1 = div1.offsetLeft + (div1.offsetWidth / 2);
 		var y1 = div1.offsetTop + (div1.offsetHeight / 2);
@@ -34,10 +35,18 @@ class ConnectEl {
 		trace('x2: ' + x2);
 		trace('y2: ' + y2);
 
-		line.setAttribute("x1", '$x1');
-		line.setAttribute("y1", '$y1');
-		line.setAttribute("x2", '$x2');
-		line.setAttribute("y2", '$y2');
+		line.setAttribute("x1", '${x1}px');
+		line.setAttribute("y1", '${y1}px');
+		line.setAttribute("x2", '${x2}px');
+		line.setAttribute("y2", '${y2}px');
+
+		rect.setAttribute('width', '${x2 - x1}px');
+		rect.setAttribute('height', '${y2 - y1}px');
+		rect.setAttribute('fill', 'none');
+		rect.setAttribute('stroke', 'red');
+		rect.setAttribute('stroke-width', '2');
+		rect.setAttribute('x', '${x1}px');
+		rect.setAttribute('y', '${y1}px');
 
 		COUNTER++;
 	}
