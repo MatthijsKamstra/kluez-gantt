@@ -54,8 +54,8 @@ class TestsDateUtil extends buddy.SingleSuite {
 			});
 		});
 
-		describe("Maandag tot vrijdag", {
-			var json:GanttObj = cast new Convert().gantt('Maandag tot vrijdag            :2022-07-11,2022-07-15');
+		describe("Maandag till vrijdag", {
+			var json:GanttObj = cast new Convert().gantt('Maandag till vrijdag            :2022-07-11,2022-07-15');
 			var section:Section = json.sections[0];
 			it('start date', {
 				section.start_date.should.be('2022-07-11');
@@ -72,9 +72,6 @@ class TestsDateUtil extends buddy.SingleSuite {
 		describe("Maandag (2022-07-11) + 1 dagen", {
 			var json:GanttObj = cast new Convert().gantt('Maandag + 1 dagen:2022-07-11, 1d', false);
 			var section:Section = json.sections[0];
-
-			// return;
-
 			it('start date', {
 				section.start_date.should.be('2022-07-11');
 			});
@@ -90,8 +87,6 @@ class TestsDateUtil extends buddy.SingleSuite {
 			it('end day', {
 				section.date.end.day_str.should.be('ma');
 			});
-
-			// trace(haxe.Json.stringify(section, '  '));
 		});
 
 		// @include
@@ -187,8 +182,8 @@ class TestsDateUtil extends buddy.SingleSuite {
 		});
 
 		// @include
-		describe("Vrijdag tot dinsdag", {
-			var json:GanttObj = cast new Convert().gantt('Vrijdag tot dinsdag :2022-07-15,2022-07-19', false);
+		describe("Vrijdag till dinsdag", {
+			var json:GanttObj = cast new Convert().gantt('Vrijdag till dinsdag :2022-07-15,2022-07-19', false);
 			var section:Section = json.sections[0];
 			it('start date', {
 				section.start_date.should.be('2022-07-15');
