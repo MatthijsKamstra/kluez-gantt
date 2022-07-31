@@ -186,9 +186,9 @@ class TestsDateUtil extends buddy.SingleSuite {
 			});
 		});
 
-		// @include
+		@include
 		describe("Vrijdag tot dinsdag", {
-			var json:GanttObj = cast new Convert().gantt('Vrijdag tot dinsdag :2022-07-15,2022-07-19', false);
+			var json:GanttObj = cast new Convert().gantt('Vrijdag tot dinsdag :2022-07-15,2022-07-19', true);
 			var section:Section = json.sections[0];
 			it('start date', {
 				section.start_date.should.be('2022-07-15');
@@ -197,12 +197,15 @@ class TestsDateUtil extends buddy.SingleSuite {
 				section.end_date.should.be('2022-07-19');
 			});
 			it('total days', {
-				section.total.days.should.be(4);
+				section.total.days.should.be(5);
 			});
-			it('start day', {
+			it('total working_days', {
+				section.total.working_days.should.be(3);
+			});
+			it('start day (${section.date.start.day_str})', {
 				section.date.start.day_str.should.be('vr');
 			});
-			it('end day', {
+			it('end day (${section.date.end.day_str})', {
 				section.date.end.day_str.should.be('di');
 			});
 		});

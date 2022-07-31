@@ -332,10 +332,6 @@ StringTools.hex = function(n,digits) {
 };
 var const_ClassNames = function() { };
 const_ClassNames.__name__ = true;
-var haxe_ds_StringMap = function() {
-	this.h = Object.create(null);
-};
-haxe_ds_StringMap.__name__ = true;
 var const_Colors = function() { };
 const_Colors.__name__ = true;
 var const_Gantt = function() { };
@@ -378,6 +374,10 @@ haxe_ValueException.__name__ = true;
 haxe_ValueException.__super__ = haxe_Exception;
 haxe_ValueException.prototype = $extend(haxe_Exception.prototype,{
 });
+var haxe_ds_StringMap = function() {
+	this.h = Object.create(null);
+};
+haxe_ds_StringMap.__name__ = true;
 var haxe_exceptions_PosException = function(message,previous,pos) {
 	haxe_Exception.call(this,message,previous);
 	if(pos == null) {

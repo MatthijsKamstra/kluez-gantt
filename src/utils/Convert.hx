@@ -256,8 +256,14 @@ class Convert {
 					if (isDebug) {
 						log('// END date (xxxx-xx-xx)');
 					}
-					// FIXME: make sure the enddate is 23:59:59
-					var date = Date.fromString(_endDateStr);
+					// NOTE: make sure the enddate is 23:59:59
+					var date_not23_50_59 = Date.fromString(_endDateStr);
+					var date = DateTools.delta(date_not23_50_59, (DateTools.days(1) - 1));
+
+					if (isDebug) {
+						hi(date);
+					}
+
 					Reflect.setField(ganttObj, 'end_date', DateTools.format(date, "%F"));
 					if (isDebug) {
 						info('end_date (xxxx-xx-xx): ' + DateTools.format(date, "%F"));

@@ -168,7 +168,7 @@ var MainKluez = function() {
 		var startObj = utils_DateUtil.convert(HxOverrides.strDate(json.start_date),HxOverrides.strDate(section.start_date));
 		var xpos = startObj.days * wSize;
 		var ypos = i * hSize + Math.round(pSize / 2);
-		var w = section.total.days * wSize;
+		var w = section.total.working_days * wSize;
 		var h = hSize - pSize;
 		var el = kluez_El.create(title,xpos,ypos,w,h,section);
 		el.classList.add(const_ClassNames.DRAGGABLE,const_ClassNames.RESIZEABLE);
@@ -1133,7 +1133,7 @@ DateTools.MONTH_SHORT_NAMES = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","
 DateTools.MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
 const_ClassNames.DRAGGABLE = "draggable";
 const_ClassNames.RESIZEABLE = "resizeable";
-const_Gantt.TEST_2 = "\n  section Duidelijk 5 day vs 7 days\n     Maandag tot vrijdag            :2022-07-11,2022-07-15\n     Maandag + 5 dagen            :2022-07-11, 5d\n     Maandag + 7 dagen            :2022-07-11, 7d\n     Vrijdag tot dinsdag         :2022-07-15,2022-07-19\n     Vrijdag + 5        :2022-07-15,5d\n     Vrijdag + 10        :2022-07-15,10d\n\n";
+const_Gantt.TEST_2 = "\n  section Duidelijk 5 day vs 7 days\n     Maandag tot vrijdag            :2022-07-11,2022-07-15\n     Maandag + 5 dagen            :2022-07-11, 5d\n     Maandag + 7 dagen            :2022-07-11, 7d\n     Maandag + 10 dagen            :2022-07-11, 10d\n     Vrijdag tot dinsdag         :2022-07-15,2022-07-19\n     Vrijdag + 5        :2022-07-15,5d\n     Vrijdag + 10        :2022-07-15,10d\n\n";
 kluez_DynamicStyle.colorMap = (function($this) {
 	var $r;
 	var _g = new haxe_ds_StringMap();
