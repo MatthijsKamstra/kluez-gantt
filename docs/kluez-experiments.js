@@ -1275,13 +1275,18 @@ utils_Convert.prototype = {
 						json["start_date"] = DateTools.format(_startDate,"%F");
 					}
 				}
+				var hardcodedNR = 0;
 				var _endDateStr = StringTools.trim(restArr[restArr.length - 1]);
 				ganttObj["end_date"] = "";
 				if(_endDateStr.indexOf("-") != -1 && _endDateStr.split("-").length == 3) {
 					if(isDebug) {
 						$global.console.log("// END date (xxxx-xx-xx)");
 					}
-					var date3 = HxOverrides.strDate(_endDateStr);
+					var date_not23_50_59 = HxOverrides.strDate(_endDateStr);
+					var date3 = new Date(date_not23_50_59.getTime() + 86399999.);
+					if(isDebug) {
+						$global.console.warn(date3);
+					}
 					ganttObj["end_date"] = DateTools.format(date3,"%F");
 					if(isDebug) {
 						var v4 = "end_date (xxxx-xx-xx): " + DateTools.format(date3,"%F");
@@ -1291,8 +1296,8 @@ utils_Convert.prototype = {
 					}
 					_previousEndDate = date3;
 					_endDate = date3;
+					hardcodedNR = this.convert2Workingdays(_startDate,_endDate);
 				}
-				var hardcodedNR = 0;
 				if(_endDateStr.indexOf("d") != -1 || _endDateStr.indexOf("w") != -1 || _endDateStr.indexOf("h") != -1) {
 					var nr1 = 0;
 					nr1 = Std.parseInt(StringTools.trim(StringTools.replace(_endDateStr,"d","")));
@@ -1402,6 +1407,21 @@ utils_Convert.prototype = {
 		json["sections"] = _sectionArr;
 		var isDebug1 = isDebug;
 		return json;
+	}
+	,convert2Workingdays: function(_startDate,_endDate) {
+		var count = 0;
+		var _g = 0;
+		while(_g < 1000) {
+			var i = _g++;
+			var date = new Date(_startDate.getTime() + i * 24.0 * 60.0 * 60.0 * 1000.0);
+			if(date.getDay() != 0 && date.getDay() != 6) {
+				++count;
+			}
+			if(date.getDate() == _endDate.getDate() && date.getMonth() == _endDate.getMonth() && date.getFullYear() == _endDate.getFullYear()) {
+				break;
+			}
+		}
+		return count;
 	}
 };
 var utils_DateUtil = function() { };

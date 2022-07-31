@@ -246,6 +246,7 @@ class Convert {
 				///////////////////////////
 				// END DATE
 				///////////////////////////
+				var hardcodedNR:Int = 0;
 				var _endDateStr = restArr[restArr.length - 1].trim();
 				Reflect.setField(ganttObj, 'end_date', '');
 				// lets figure this value out
@@ -272,12 +273,16 @@ class Convert {
 
 					_previousEndDate = date;
 					_endDate = date;
+
+					hardcodedNR = convert2Workingdays(_startDate, _endDate);
+
+					// warn(hardcodedNR);
 				}
 
 				///////////////////////////
 				// END DATE // 5d
 				///////////////////////////
-				var hardcodedNR:Int = 0;
+
 				if (_endDateStr.indexOf('d') != -1 || _endDateStr.indexOf('w') != -1 || _endDateStr.indexOf('h') != -1) {
 					// TODO fix d, w, h
 
@@ -453,5 +458,21 @@ class Convert {
 		}
 
 		return cast(json);
+	}
+
+	function convert2Workingdays(_startDate:Date, _endDate:Date):Int {
+		var count = 0;
+		for (i in 0...1000) {
+			var date = DateTools.delta(_startDate, DateTools.days(i));
+			if (date.getDay() != 0 && date.getDay() != 6)
+				count++;
+
+			if (date.getDate() == _endDate.getDate()
+				&& date.getMonth() == _endDate.getMonth()
+				&& date.getFullYear() == _endDate.getFullYear())
+				break;
+		}
+
+		return count;
 	}
 }
