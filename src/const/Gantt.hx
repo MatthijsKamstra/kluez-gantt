@@ -19,11 +19,11 @@ class Gantt {
 ';
 	public static final TEST_2 = '
   section Duidelijk 5 day vs 7 days
-     Maandag tot vrijdag            :2022-07-11,2022-07-15
+     Maandag till vrijdag            :2022-07-11,2022-07-15
      Maandag + 5 dagen            :2022-07-11, 5d
      Maandag + 7 dagen            :2022-07-11, 7d
      Maandag + 10 dagen            :2022-07-11, 10d
-     Vrijdag tot dinsdag         :2022-07-15,2022-07-19
+     Vrijdag till dinsdag         :2022-07-15,2022-07-19
      Vrijdag + 5        :2022-07-15,5d
      Vrijdag + 10        :2022-07-15,10d
 

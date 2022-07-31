@@ -332,6 +332,10 @@ StringTools.hex = function(n,digits) {
 };
 var const_ClassNames = function() { };
 const_ClassNames.__name__ = true;
+var haxe_ds_StringMap = function() {
+	this.h = Object.create(null);
+};
+haxe_ds_StringMap.__name__ = true;
 var const_Colors = function() { };
 const_Colors.__name__ = true;
 var const_Gantt = function() { };
@@ -374,10 +378,6 @@ haxe_ValueException.__name__ = true;
 haxe_ValueException.__super__ = haxe_Exception;
 haxe_ValueException.prototype = $extend(haxe_Exception.prototype,{
 });
-var haxe_ds_StringMap = function() {
-	this.h = Object.create(null);
-};
-haxe_ds_StringMap.__name__ = true;
 var haxe_exceptions_PosException = function(message,previous,pos) {
 	haxe_Exception.call(this,message,previous);
 	if(pos == null) {
@@ -733,12 +733,21 @@ var kluez_ConnectEl = function(el1,el2) {
 	line.setAttribute("y1","" + y1 + "px");
 	line.setAttribute("x2","" + x2 + "px");
 	line.setAttribute("y2","" + y2 + "px");
-	rect.setAttribute("width","" + (x2 - x1) + "px");
-	rect.setAttribute("height","" + (y2 - y1) + "px");
+	var w = x2 - x1;
+	if(w < 0) {
+		w *= -1;
+	}
+	var h = y2 - y1;
+	var xrect = x1;
+	if(x1 > x2) {
+		xrect = x2;
+	}
+	rect.setAttribute("width","" + w + "px");
+	rect.setAttribute("height","" + h + "px");
 	rect.setAttribute("fill","none");
 	rect.setAttribute("stroke","red");
 	rect.setAttribute("stroke-width","2");
-	rect.setAttribute("x","" + x1 + "px");
+	rect.setAttribute("x","" + xrect + "px");
 	rect.setAttribute("y","" + y1 + "px");
 	kluez_ConnectEl.COUNTER++;
 };

@@ -40,12 +40,22 @@ class ConnectEl {
 		line.setAttribute("x2", '${x2}px');
 		line.setAttribute("y2", '${y2}px');
 
-		rect.setAttribute('width', '${x2 - x1}px');
-		rect.setAttribute('height', '${y2 - y1}px');
+		var w = x2 - x1;
+		if (w < 0)
+			w *= -1;
+		var h = y2 - y1;
+		var xrect = x1;
+		if (x1 > x2)
+			xrect = x2;
+
+		rect.setAttribute('width', '${w}px');
+		rect.setAttribute('height', '${h}px');
+		// rect.setAttribute('width', '${x2 - x1}px');
+		// rect.setAttribute('height', '${y2 - y1}px');
 		rect.setAttribute('fill', 'none');
 		rect.setAttribute('stroke', 'red');
 		rect.setAttribute('stroke-width', '2');
-		rect.setAttribute('x', '${x1}px');
+		rect.setAttribute('x', '${xrect}px');
 		rect.setAttribute('y', '${y1}px');
 
 		COUNTER++;
