@@ -54,7 +54,7 @@ class MainKluez {
 
 			var xpos = (startObj.days * wSize);
 			var ypos = (i * (hSize)) + Math.round(pSize / 2);
-			var w = section.total.days * wSize;
+			var w = section.total.working_days * wSize;
 			var h = hSize - pSize;
 			var el = El.create(title, xpos, ypos, w, h, section);
 			el.classList.add(ClassNames.DRAGGABLE, ClassNames.RESIZEABLE);
